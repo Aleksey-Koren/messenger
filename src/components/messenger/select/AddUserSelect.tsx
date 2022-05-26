@@ -1,22 +1,22 @@
 import React, {Dispatch, SetStateAction, useState} from "react";
-import {AppState} from "../../../index";
+// import {AppState} from "../../../index";
 import AsyncSelect from "react-select/async";
 import {connect, ConnectedProps} from "react-redux";
-import {User} from "../../../model/User";
+// import {User} from "../../../model/User";
 
-import {findUsersPerPage} from "../../../service/userService";
+// import {findUsersPerPage} from "../../../service/userService";
 import {MultiValue} from "react-select";
 
 const AddUserSelect: React.FC<TProps> = (props: TProps) => {
 
     const [isSearchable, setIsSearchable] = useState<boolean>(true)
 
-    const onChange = (users: MultiValue<User>) => {
-        props.setSelectedUsers([...users]);
-        setIsSearchable(users.length < 10);
-        console.log(users.length);
-        console.log(isSearchable);
-    }
+    // const onChange = (users: MultiValue<User>) => {
+    //     props.setSelectedUsers([...users]);
+    //     setIsSearchable(users.length < 10);
+    //     console.log(users.length);
+    //     console.log(isSearchable);
+    // }
 
 
     return (
@@ -27,12 +27,12 @@ const AddUserSelect: React.FC<TProps> = (props: TProps) => {
             option: (base, state) => ({...base, color: state.isFocused ? "black" : "white", borderRadius: '20px'}),
             placeholder: (base, state) => ({...base, color: "white"})
         }}
-                     loadOptions={promiseOptions(props.selectedRoom.id)}
+                     // loadOptions={promiseOptions(props.selectedRoom.id)}
                      isMulti
-                     getOptionLabel={s => s.title}
+                     getOptionLabel={s => "label"}
                      getOptionValue={s => JSON.stringify(s)}
                      maxMenuHeight={300}
-                     onChange={onChange}
+                     onChange={() => {}}
                      placeholder={'Search...'}
                      noOptionsMessage={({inputValue}) => inputValue ? "No results found" : ""}
                      isSearchable={isSearchable}
@@ -41,22 +41,23 @@ const AddUserSelect: React.FC<TProps> = (props: TProps) => {
 }
 
 function promiseOptions (roomId: number) {
-    return (inputValue: string): Promise<User[]> => {
-        return findUsersPerPage(0, 20, {title: inputValue, notInRoom: roomId}).then(s => s.data.content)
-    }
+    return new Promise(resolve => null);
+    // return (inputValue: string): Promise<User[]> => {
+    //     return findUsersPerPage(0, 20, {title: inputValue, notInRoom: roomId}).then(s => s.data.content)
+    // }
 }
 
-interface OwnProps {
-    setSelectedUsers:  Dispatch<SetStateAction<User[]>>;
-    selectedUsers: User[];
-    isDisabled: boolean;
-}
+// interface OwnProps {
+//     setSelectedUsers:  Dispatch<SetStateAction<User[]>>;
+//     selectedUsers: User[];
+//     isDisabled: boolean;
+// }
 
-const mapStateToProps = (state: AppState, ownProps: OwnProps) => ({
-    selectedRoom: state.messenger.selectedRoom,
-    selectedUsers: ownProps.selectedUsers,
-    setSelectedUsers: ownProps.setSelectedUsers,
-    isDisabled: ownProps.isDisabled,
+const mapStateToProps = () => ({
+    // selectedRoom: state.messenger.selectedRoom,
+    // selectedUsers: ownProps.selectedUsers,
+    // setSelectedUsers: ownProps.setSelectedUsers,
+    // isDisabled: ownProps.isDisabled,
 })
 
 const connector = connect(mapStateToProps);

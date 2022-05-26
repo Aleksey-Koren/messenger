@@ -1,5 +1,5 @@
 import React from "react";
-import {setIsNewRoomModalOpened} from "../../../redux/messenger/messengerActions";
+// import {setIsNewRoomModalOpened} from "../../../redux/messenger/messengerActions";
 import {connect, ConnectedProps} from "react-redux";
 import style from "../Messenger.module.css";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
@@ -9,7 +9,7 @@ const CreateRoomButton: React.FC<TProps> = (props) => {
     return (
         <div className={style.new_room_button_container}>
             <button className={style.new_room_button}
-                    onClick={() => props.setIsNewRoomModalOpened(true)}
+                    onClick={() => {}}
             >
 
                 <div className={style.button_content}>
@@ -23,7 +23,7 @@ const CreateRoomButton: React.FC<TProps> = (props) => {
 }
 
 const mapDispatchToProps = {
-    setIsNewRoomModalOpened: setIsNewRoomModalOpened
+
 }
 
 const connector = connect(null, mapDispatchToProps);
