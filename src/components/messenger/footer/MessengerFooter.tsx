@@ -20,26 +20,26 @@ function MessengerFooter(props: MessengerFooterProps) {
 
     // const selectedRoom = useAppSelector(state => state.messenger.selectedRoom);
 
-    const textFieldInputProps = {
-        startAdornment:
-            /*props.editedMessage*/ true && (
-                <InputAdornment position="start">
-                    <IconButton onClick={() => {
-                        props.setMessageText('');
-                        // props.setEditedMessage(null);
-                    }}>
-                        <CloseIcon style={{color: 'white'}}/>
-                    </IconButton>
-                </InputAdornment>
-            ),
-    };
+    // const textFieldInputProps = {
+    //     startAdornment:
+    //         props.editedMessage && (
+    //             <InputAdornment position="start">
+    //                 <IconButton onClick={() => {
+    //                     props.setMessageText('');
+    //                     // props.setEditedMessage(null);
+    //                 }}>
+    //                     <CloseIcon style={{color: 'white'}}/>
+    //                 </IconButton>
+    //             </InputAdornment>
+    //         ),
+    // };
 
     return (
         <Grid item>
             <Grid container className={style.message_input_container}>
                 <Grid item xs={11}>
                     <TextField className={style.message_input_field}
-                               InputProps={textFieldInputProps}
+                               // InputProps={textFieldInputProps}
                                placeholder="Type your message"
                                fullWidth
                                value={props.messageText}

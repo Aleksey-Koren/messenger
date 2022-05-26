@@ -48,11 +48,11 @@ function MessagesList(props: MessagesListProps) {
                                 </div>
                             }
 
-                            {4 + 4 === 8 &&     // if message is system
-                                <div className={style.system_message}>
-                                    <span>This is system message</span>
-                                </div>
-                            }
+                        </Grid>
+                        <Grid item xs={12}>
+                            <div className={style.system_message}>
+                                <span>This is system message</span>
+                            </div>
                         </Grid>
                     </Grid>
                 </ListItem>

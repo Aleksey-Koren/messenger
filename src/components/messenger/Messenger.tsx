@@ -35,8 +35,8 @@ const Messenger: React.FC<TProps> = (props) => {
                                         onClick={() => {
                                         }}>
                             <ListItemText className={style.unread_message_text}
-                                          style={{visibility: (2 - 2 === 0 ? "hidden" : "visible")}}> {/* If amount of unread messages = 0  => hidden */}
-                                Amount of unread messages
+                                          style={{visibility: (2 - 2 === 1 ? "hidden" : "visible")}}> {/* If amount of unread messages = 0  => hidden */}
+                                0
                             </ListItemText>
                             <ListItemText>Room title</ListItemText>
                         </ListItemButton>
@@ -58,7 +58,7 @@ const Messenger: React.FC<TProps> = (props) => {
 
                     <MessagesList currentUserId={2} setMessageText={setMessageText}/>
 
-                    <MessengerFooter editedMessage={{}} messageText={messageText} setMessageText={setMessageText}/>
+                    <MessengerFooter /*editedMessage={{}}*/ messageText={messageText} setMessageText={setMessageText}/>
 
                 </Grid>
             </Grid>

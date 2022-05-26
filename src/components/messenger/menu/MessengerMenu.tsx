@@ -50,13 +50,14 @@ function MessengerMenu() {
                     </div>
                 }
 
+                {3 === 3 &&     // if room type is private or current user is room admin
+                    <MenuItem onClick={() => {}}>
+                        <DeleteOutlineOutlinedIcon style={{marginRight: '10px', color: 'red'}} fontSize={'medium'}/>
+                        <span style={{color: 'red'}}>Delete room</span>
+                    </MenuItem>
+                }
             </Menu>
-            {3 === 3 &&     // if room type is private or current user is room admin
-                <MenuItem onClick={() => {}}>
-                    <DeleteOutlineOutlinedIcon style={{marginRight: '10px', color: 'red'}} fontSize={'medium'}/>
-                    <span style={{color: 'red'}}>Delete room</span>
-                </MenuItem>
-            }
+
         </div>
     );
 }
