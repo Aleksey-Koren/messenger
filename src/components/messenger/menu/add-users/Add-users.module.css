@@ -1,0 +1,22 @@
+.add_users_dialog {
+
+}
+
+.dialog_container {
+    background-color: #262424;
+    /*max-height: 400px;*/
+}
+.dialog_content {
+
+}
+
+.dialog_title {
+    color: #ecca19;
+    text-align: center;
+    margin: auto;
+}
+
+.select {
+    width: 500px;
+    height: 400px;
+}

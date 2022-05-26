@@ -1,0 +1,43 @@
+.dialog__title {
+    text-align: center;
+    background: #262424;
+    color: #ecca19;
+    border: 2px #60ad60 solid;
+}
+
+.dialog__content {
+    background: #262424;
+    border-left: 2px #60ad60 solid;
+    border-right: 2px #60ad60 solid;
+}
+
+.dialog__content_text {
+    color: white !important;
+    margin-top: 15px !important;
+}
+
+.dialog__text_field input {
+    color: white !important;
+}
+
+.dialog__actions {
+    display: flex !important;
+    justify-content: space-around !important;
+    background: #262424;
+    border: 2px #60ad60 solid;
+}
+
+.dialog__actions button {
+    color: white;
+    font-size: 15px;
+    width: 100px;
+    border-radius: 20px;
+}
+
+.dialog__actions button:hover {
+    color: #ecca19;
+}
+
+label {
+    color: white !important;
+}

@@ -1,0 +1,55 @@
+.dialog__title {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    padding: 10px;
+    color: #de1f1f;
+    background: #312d2d;
+    border: #60ad60 2px solid;
+    font-weight: bold;
+    font-size: 20px !important;
+}
+
+.dialog__title_icon {
+    margin-right: 20px;
+    color: #de1f1f;
+}
+
+.dialog__content {
+    height: fit-content;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #312d2d;
+    border-left: 2px #60ad60 solid;
+    border-right: 2px #60ad60 solid;
+    font-size: 18px;
+}
+
+.dialog__content_text {
+    padding-top: 20px;
+    color: white;
+}
+
+.dialog__actions {
+    height: 20px !important;
+    display: flex !important;
+    justify-content: space-around !important;
+    background: #312d2d;
+    border: 2px #60ad60 solid;
+}
+
+.dialog__actions button {
+    color: white;
+    font-size: 15px;
+    width: 100px;
+    border-radius: 20px;
+}
+
+.dialog__disagree_button:hover {
+    color: #de1f1f;
+}
+
+.dialog__agree_button:hover{
+    color: #00b600;
+}

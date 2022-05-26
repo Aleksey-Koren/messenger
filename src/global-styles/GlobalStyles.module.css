@@ -1,0 +1,58 @@
+/* ------------ PAGE WRAPPER ------------ */
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* ------------ TITLE ------------ */
+.page_title {
+    display: flex;
+    justify-content: center;
+    color: white;
+    margin: 10px 0;
+    letter-spacing: 5px;
+}
+
+/* ------------ TABLE HEADER CHECKBOX ------------ */
+.header_checkbox {
+    color: #ecca19 !important;
+    padding-left: 12px !important;
+}
+
+/* ------------ TABLE BODY CHECKBOX ------------ */
+.body_checkbox {
+    color: white !important;
+}
+
+/* ------------ DELETE ICON ------------ */
+.delete_icon {
+    position: fixed;
+    left: 20px;
+    bottom: 90px;
+    padding: 10px;
+    color: white;
+    background: red;
+    border-radius: 50%;
+    transition: all .3s ease-in-out !important;
+}
+
+.delete_icon:hover {
+    transform: scale(1.2);
+}
+
+/* ------------ ADD ICON ------------ */
+.add_icon {
+    position: fixed;
+    left: 20px;
+    bottom: 20px;
+    padding: 10px;
+    color: white;
+    background: #60ad60;
+    border-radius: 50%;
+    transition: all .3s ease-in-out !important;
+}
+
+.add_icon:hover {
+    transform: scale(1.2);
+}

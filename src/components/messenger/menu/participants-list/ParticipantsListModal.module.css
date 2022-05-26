@@ -1,0 +1,37 @@
+.dialog__app_bar {
+    position: relative !important;
+    background: #262424 !important;
+}
+
+.dialog__close_icon {
+    color: gold;
+    transition: 500ms linear;
+}
+
+.dialog__close_icon:hover {
+    color: red;
+}
+
+.dialog__participants_list{
+    max-height: 400px;
+    background: #262424 ;
+    overflow-y: auto;
+}
+
+.dialog__remove_icon{
+    color: #cb2727 !important;
+}
+
+.dialog__star_icon{
+    color: gold !important;
+}
+
+.dialog__person_icon{
+    color: white !important;
+}
+
+.dialog__person_title{
+    color: white;
+    font-weight: bold;
+    font-size: 15px;
+}

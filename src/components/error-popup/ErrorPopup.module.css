@@ -1,0 +1,20 @@
+
+.popup_footer{
+    text-align: center;
+    padding-top: 5px;
+}
+
+.refresh_button{
+    width: 100px;
+    padding: 2px;
+    font-size: 15px;
+    font-weight: bold;
+    border-bottom: 2px black solid;
+    background: inherit;
+    transition: all .3s ease-in-out;
+}
+
+.refresh_button:hover{
+    background: #d33131;
+}
+

@@ -1,0 +1,40 @@
+/*TABLE CONTAINER*/
+.table_container {
+    width: max-content !important;
+    margin: auto;
+}
+
+.tableCell_head {
+    font-size: 20px !important;
+    border: 2px #60ad60 solid !important;
+    color:  #ecca19 !important;
+    text-align: center !important;
+}
+
+.tableCell_body {
+    border: 2px #60ad60 solid !important;
+    color:  white !important;
+}
+
+.tablePagination_root {
+    box-sizing: border-box;
+    height: 50px !important;
+    color: white !important;
+}
+
+.tablePagination_root button {
+    color: white;
+}
+
+/* DISABLED PAGINATION BUTTONS */
+.tablePagination_root button:disabled {
+    color: grey;
+}
+
+.actions {
+    color: white !important;
+}
+
+.spacer {
+    max-width: 0 !important;
+}
