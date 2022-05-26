@@ -15,7 +15,7 @@ interface MessengerFooterProps {
     editedMessage: MessageEntity;
     messageText: string;
     setMessageText: Dispatch<SetStateAction<string>>;
-    setEditedMessage: Dispatch<SetStateAction<MessageEntity>>;
+    setEditedMessage?: Dispatch<SetStateAction<MessageEntity>>;
 }
 
 
