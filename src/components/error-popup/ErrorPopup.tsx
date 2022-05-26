@@ -14,7 +14,8 @@ function ErrorPopup(props: ErrorPopupProps) {
 
     return (
         <Snackbar open={props.isError} anchorOrigin={{vertical: 'bottom', horizontal: "right"}}
-                  autoHideDuration={props.autoHideDuration} onClose={() => props.handlePopupClose ? props.handlePopupClose() : ''}
+                  autoHideDuration={props.autoHideDuration}
+                  onClose={() => props.handlePopupClose ? props.handlePopupClose() : ''}
         >
             <Alert severity="error" sx={{width: '100%'}}>
                 <strong>{props.errorMessage}</strong>
