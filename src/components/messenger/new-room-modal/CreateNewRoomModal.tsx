@@ -1,11 +1,11 @@
 import * as yup from "yup";
-import {useAppDispatch, useAppSelector} from "../../../index";
-import {
-    createNewPublicRoomTF,
-    setEditTitleOpen, setIsAddUsersModalOpened,
-    setIsNewRoomModalOpened,
-    updateRoomTitle
-} from "../../../redux/messenger/messengerActions";
+// import {useAppDispatch, useAppSelector} from "../../../index";
+// import {
+//     createNewPublicRoomTF,
+//     setEditTitleOpen, setIsAddUsersModalOpened,
+//     setIsNewRoomModalOpened,
+//     updateRoomTitle
+// } from "../../../redux/messenger/messengerActions";
 import {Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField} from "@mui/material";
 import style from "../../../global-styles/ModalWindow.module.css";
 import {Form, Formik} from "formik";
@@ -16,18 +16,18 @@ const validationSchema = yup.object().shape({
 })
 
 function CreateNewRoomModal() {
-    const isOpen = useAppSelector(state => state.messenger.isNewRoomModalOpened);
-    const dispatch = useAppDispatch();
-
-    const onClose = () => dispatch(setIsNewRoomModalOpened(false));
+    // const isOpen = useAppSelector(state => state.messenger.isNewRoomModalOpened);
+    // const dispatch = useAppDispatch();
+    //
+    // const onClose = () => dispatch(setIsNewRoomModalOpened(false));
 
     return (
-            <Dialog open={isOpen} onClose={onClose} maxWidth={"sm"} fullWidth>
+            <Dialog open={false} onClose={() => {}} maxWidth={"sm"} fullWidth>
                 <DialogTitle className={style.dialog__title}>Enter room title</DialogTitle>
                 <Formik
                     initialValues={{title: ''}}
                     onSubmit={(values) => {
-                        dispatch(createNewPublicRoomTF(values.title))
+                        // dispatch(createNewPublicRoomTF(values.title))
                     }}
                     validationSchema={validationSchema}
                 >
@@ -45,7 +45,7 @@ function CreateNewRoomModal() {
                                     />
                                 </DialogContent>
                                 <DialogActions className={style.dialog__actions}>
-                                    <Button onClick={onClose}>Cancel</Button>
+                                    <Button onClick={() => {}}>Cancel</Button>
                                     <Button type={"submit"} disabled={!formik.isValid}>Create</Button>
                                 </DialogActions>
                             </Form>

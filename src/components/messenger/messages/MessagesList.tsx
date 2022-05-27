@@ -7,28 +7,18 @@ import {IconButton} from "@mui/material";
 import BorderColorIcon from "@mui/icons-material/BorderColor";
 import Divider from "@mui/material/Divider";
 import React, {Dispatch, SetStateAction} from "react";
-import {useAppSelector} from "../../../index";
-import {MessageEntity} from "../../../model/messenger/message/MessageEntity";
-import {MessengerService} from "../../../service/messenger/MessengerService";
-import {MessageType} from "../../../model/messenger/message/MessageType";
 
 interface MessagesListProps {
     currentUserId: number;
-    setEditedMessage: Dispatch<SetStateAction<MessageEntity>>;
     setMessageText: Dispatch<SetStateAction<string>>;
 }
 
 function MessagesList(props: MessagesListProps) {
-    const messages = useAppSelector(state => state.messenger.messages);
-    const selectedRoom = useAppSelector(state => state.messenger.selectedRoom);
 
-    const createEditIcon = (message: MessageEntity) => (
-        props.currentUserId === message.senderId &&
-        <IconButton className={style.message_edit_button}
-                    onClick={() => {
-                        props.setEditedMessage(message);
-                        props.setMessageText(message.message)
-                    }}>
+    const createEditIcon = (message: any) => (
+        props.currentUserId === 2 &&           //if current user is message sender => create Edit Icon
+        <IconButton className={style.message_edit_button} onClick={() => {
+        }}>
             <BorderColorIcon fontSize={"small"}/>
         </IconButton>
     );
@@ -36,37 +26,41 @@ function MessagesList(props: MessagesListProps) {
     return (
         <Grid item>
             <List className={style.message_list} id={'list'}>
-                {messages.get(selectedRoom?.id)?.map(message => (
-                    <ListItem key={message.id}>
-                        <Grid container>
-                            <Grid item xs={12}>
-                                {message.messageType === MessageType.CHAT &&
-                                    <div className={style.message_container} style={{
-                                        float: (message.senderId === props.currentUserId ? 'right' : 'left'),
-                                        background: (message.senderId === props.currentUserId ? '#60ad60' : 'grey')
-                                    }}>
-                                        <ListItemText>
+                {/* This place should start a loop for room messages and create ListItem for each message */}
+                <ListItem key={2}>
+                    <Grid container>
+                        <Grid item xs={12}>
+                            {3 + 2 === 5 &&     // if message is not a system
+                                <div className={style.message_container} style={{
+                                    float: (2 === 2 ? 'right' : 'left'), // my messages - right, others - left
+                                    background: (2 === 2 ? '#60ad60' : 'grey') // my messages #60ad60, others - grey
+                                }}>
+                                    <ListItemText>
                                     <span className={style.message_info}>
-                                        {createEditIcon(message)}
-                                        {MessengerService.generateMessageInfo(message)}
+                                        {createEditIcon({})}
+                                        Message create time and owner title
                                     </span>
-                                        </ListItemText>
+                                    </ListItemText>
 
-                                        <ListItemText>
-                                            <span className={style.message}>{message.message}</span>
-                                        </ListItemText>
-                                    </div>
-                                }
-
-                                {message.messageType === MessageType.SYSTEM &&
-                                    <div className={style.system_message}>
-                                        <span>{message.message}</span>
-                                    </div>
-                                }
-                            </Grid>
+                                    <ListItemText>
+                                        <span className={style.message}>Message text</span>
+                                    </ListItemText>
+                                </div>
+                            }
                         </Grid>
-                    </ListItem>
-                ))}
+                    </Grid>
+                </ListItem>
+
+                <ListItem key={3}>
+                    <Grid container>
+                        <Grid item xs={12}>
+                            <div className={style.system_message}>
+                                <span>This is system message</span>
+                            </div>
+                        </Grid>
+                    </Grid>
+                </ListItem>
+
             </List>
             <Divider style={{background: '#ecca19'}}/>
         </Grid>

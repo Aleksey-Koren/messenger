@@ -1,6 +1,6 @@
 import {Button, Dialog, DialogActions, DialogTitle} from "@mui/material";
-import {useAppDispatch, useAppSelector} from "../../../index";
-import {setIsTitleAlreadyExistsModalOpened} from "../../../redux/messenger/messengerActions";
+// import {useAppDispatch, useAppSelector} from "../../../index";
+// import {setIsTitleAlreadyExistsModalOpened} from "../../../redux/messenger/messengerActions";
 import style from "../../../global-styles/ModalWindow.module.css";
 
 interface IProps {
@@ -9,18 +9,18 @@ interface IProps {
 
 function TitleAlreadyExistsModal(props: IProps) {
 
-    const isOpened = useAppSelector(state => state.messenger.isTitleAlreadyExistsModalOpened);
-    const dispatch = useAppDispatch();
+    // const isOpened = useAppSelector(state => state.messenger.isTitleAlreadyExistsModalOpened);
+    // const dispatch = useAppDispatch();
 
-    function handleClose() {
-        dispatch(setIsTitleAlreadyExistsModalOpened(false));
-    }
+    // function handleClose() {
+    //     dispatch(setIsTitleAlreadyExistsModalOpened(false));
+    // }
 
     return (
             <div>
                 <Dialog
-                    open={isOpened}
-                    onClose={handleClose}
+                    open={false}
+                    onClose={() => {}}
                     aria-labelledby="alert-dialog-title"
                     aria-describedby="alert-dialog-description"
                 >
@@ -28,7 +28,7 @@ function TitleAlreadyExistsModal(props: IProps) {
                         {`Room with title "${props.title}" already exists`}
                     </DialogTitle>
                     <DialogActions className={style.dialog__actions}>
-                        <Button onClick={handleClose}>Ok</Button>
+                        <Button onClick={() => {}}>Ok</Button>
                     </DialogActions>
                 </Dialog>
             </div>

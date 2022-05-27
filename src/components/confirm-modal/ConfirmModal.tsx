@@ -1,7 +1,5 @@
 import {Button, Dialog, DialogActions, DialogContent, DialogTitle} from "@mui/material";
 import {connect, ConnectedProps} from "react-redux";
-import {AppState} from "../../index";
-import {closeConfirmModal} from "../../redux/app/appActions";
 import React from "react";
 import ReportIcon from '@mui/icons-material/Report';
 import style from './ConfirmModal.module.css'
@@ -9,23 +7,22 @@ import style from './ConfirmModal.module.css'
 const ConfirmModal: React.FC<Props> = (props) => {
 
     return (
-        <Dialog open={props.isOpen}>
+        <Dialog open={false}>
             <DialogTitle className={style.dialog__title}>
                 <ReportIcon fontSize={'medium'} className={style.dialog__title_icon}/>
                 Are you sure?
             </DialogTitle>
 
             <DialogContent className={style.dialog__content}>
-                <span className={style.dialog__content_text}>{props.modalProps?.confirmMessage}</span>
+                <span className={style.dialog__content_text}>Your question could be here</span>
             </DialogContent>
 
             <DialogActions className={style.dialog__actions}>
-                <Button onClick={() => props.closeConfirmModal()} className={style.dialog__disagree_button}>
+                <Button onClick={() => {
+                }} className={style.dialog__disagree_button}>
                     No
                 </Button>
                 <Button className={style.dialog__agree_button} onClick={() => {
-                    props.closeConfirmModal();
-                    props.modalProps.onConfirmModalAccept();
                 }}>
                     Yes
                 </Button>
@@ -34,14 +31,9 @@ const ConfirmModal: React.FC<Props> = (props) => {
     );
 }
 
-const mapStateToProps = (state: AppState) => ({
-    isOpen: state.app.isConfirmModalOpen,
-    modalProps: state.app.confirmModalProps
-})
+const mapStateToProps = (state: any) => ({})
 
-const mapDispatchToProps = {
-    closeConfirmModal
-}
+const mapDispatchToProps = {}
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
