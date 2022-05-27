@@ -47,8 +47,12 @@ function MessagesList(props: MessagesListProps) {
                                     </ListItemText>
                                 </div>
                             }
-
                         </Grid>
+                    </Grid>
+                </ListItem>
+
+                <ListItem key={3}>
+                    <Grid container>
                         <Grid item xs={12}>
                             <div className={style.system_message}>
                                 <span>This is system message</span>
@@ -56,6 +60,7 @@ function MessagesList(props: MessagesListProps) {
                         </Grid>
                     </Grid>
                 </ListItem>
+
             </List>
             <Divider style={{background: '#ecca19'}}/>
         </Grid>

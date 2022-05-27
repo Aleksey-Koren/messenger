@@ -40,6 +40,28 @@ const Messenger: React.FC<TProps> = (props) => {
                             </ListItemText>
                             <ListItemText>Room title</ListItemText>
                         </ListItemButton>
+
+                        <ListItemButton key={2} className={style.room_button}
+                                        style={{color: '#60ad60'}} //color for selected room
+                                        onClick={() => {
+                                        }}>
+                            <ListItemText className={style.unread_message_text}
+                                          style={{visibility: (2 - 2 === 1 ? "hidden" : "visible")}}> {/* If amount of unread messages = 0  => hidden */}
+                                0
+                            </ListItemText>
+                            <ListItemText>Room title</ListItemText>
+                        </ListItemButton>
+
+                        <ListItemButton key={3} className={style.room_button}
+                                        style={{color: '#60ad60'}} //color for selected room
+                                        onClick={() => {
+                                        }}>
+                            <ListItemText className={style.unread_message_text}
+                                          style={{visibility: (2 - 2 === 1 ? "hidden" : "visible")}}> {/* If amount of unread messages = 0  => hidden */}
+                                0
+                            </ListItemText>
+                            <ListItemText>Room title</ListItemText>
+                        </ListItemButton>
                     </List>
                 </Grid>
                 <Grid container direction={'column'} item xs={9}>
