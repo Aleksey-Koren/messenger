@@ -1,0 +1,37 @@
+.dialog__content_container {
+    background: #262424;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+
+}
+
+.dialog__content_row {
+    width: 100%;
+    margin: 10px 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dialog__content_row:last-child {
+    margin-bottom: 0;
+}
+
+.dialog__content_row_label {
+    color: white;
+}
+
+.dialog__input_field {
+    width: 400px;
+    overflow-y: hidden;
+    border-radius: 20px;
+    padding: 10px 10px;
+    font-size: 15px;
+    resize: none;
+}
+
+.dialog__input_field:focus {
+    box-shadow: #ecca19 2px 2px 10px;
+}
