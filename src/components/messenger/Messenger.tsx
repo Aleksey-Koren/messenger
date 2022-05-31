@@ -10,16 +10,21 @@ import MessengerFooter from "./footer/MessengerFooter";
 import MessagesList from "./messages/MessagesList";
 import ListItemButton from '@mui/material/ListItemButton';
 import MessengerMenu from "./menu/MessengerMenu";
-import EditTitleModal from "./menu/edit-title/EditTitleModal";
-import AddUsersModal from "./menu/add-users/AddUsersModal";
 import MessengerSelect from "./select/MessengerSelect";
-import ParticipantsListModal from "./menu/participants-list/ParticipantsListModal";
-import CreateNewRoomModal from "./new-room-modal/CreateNewRoomModal";
 import CreateRoomButton from "./new-room-modal/CreateRoomButton";
+import WelcomeModal from "../authorization/welcome-modal/WelcomeModal";
+import LoginModal from "../authorization/login-modal/LoginModal";
+import RegistrationModal from "../authorization/registration/RegistrationModal";
+import {AppState} from "../../index";
+import {setIsWelcomeModalOpen} from "../../redux/authorization/authorizationActions";
 
 
 const Messenger: React.FC<TProps> = (props) => {
     const [messageText, setMessageText] = useState<string>('');
+
+    useEffect(() => {
+        props.setIsWelcomeModalOpen(true)
+    }, []);
 
     return (
         <div className={style.wrapper}>
@@ -85,18 +90,19 @@ const Messenger: React.FC<TProps> = (props) => {
                 </Grid>
             </Grid>
 
-            <EditTitleModal/>
-            <AddUsersModal/>
-            <ParticipantsListModal/>
-            <CreateNewRoomModal/>
+            <WelcomeModal/>
+            <LoginModal/>
+            <RegistrationModal/>
         </div>
     );
 }
 
 
-const mapStateToProps = (state: any) => ({})
+const mapStateToProps = (state: AppState) => ({})
 
-const mapDispatchToProps = {}
+const mapDispatchToProps = {
+    setIsWelcomeModalOpen
+}
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
