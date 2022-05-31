@@ -17,6 +17,8 @@ import LoginModal from "../authorization/login-modal/LoginModal";
 import RegistrationModal from "../authorization/registration/RegistrationModal";
 import {AppState} from "../../index";
 import {setIsWelcomeModalOpen} from "../../redux/authorization/authorizationActions";
+import ErrorPopup from "../error-popup/ErrorPopup";
+import {setErrorPopupState} from "../../redux/error-popup/errorPopupActions";
 
 
 const Messenger: React.FC<TProps> = (props) => {
@@ -93,6 +95,7 @@ const Messenger: React.FC<TProps> = (props) => {
             <WelcomeModal/>
             <LoginModal/>
             <RegistrationModal/>
+            <ErrorPopup autoHideDuration={5000} handlePopupClose={() => props.setErrorPopupState(false)}/>
         </div>
     );
 }
@@ -101,7 +104,8 @@ const Messenger: React.FC<TProps> = (props) => {
 const mapStateToProps = (state: AppState) => ({})
 
 const mapDispatchToProps = {
-    setIsWelcomeModalOpen
+    setIsWelcomeModalOpen,
+    setErrorPopupState
 }
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
