@@ -7,9 +7,11 @@ import {combineReducers, configureStore} from "@reduxjs/toolkit";
 import thunk from "redux-thunk";
 import promise from "redux-promise-middleware";
 import {authorizationReducer} from "./redux/authorization/authorizationReducer";
+import {errorPopupReducer} from "./redux/error-popup/errorPopupReducer";
 
 const reducers = combineReducers({
-    authorization: authorizationReducer
+    authorization: authorizationReducer,
+    errorPopup: errorPopupReducer
 });
 
 export const store = configureStore({reducer: reducers, devTools: true, middleware: [thunk, promise]})
