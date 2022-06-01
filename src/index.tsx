@@ -8,10 +8,12 @@ import thunk from "redux-thunk";
 import promise from "redux-promise-middleware";
 import {authorizationReducer} from "./redux/authorization/authorizationReducer";
 import {errorPopupReducer} from "./redux/error-popup/errorPopupReducer";
+import {contextReducer} from "./redux/context/contextReducer";
 
 const reducers = combineReducers({
     authorization: authorizationReducer,
-    errorPopup: errorPopupReducer
+    errorPopup: errorPopupReducer,
+    context: contextReducer
 });
 
 export const store = configureStore({reducer: reducers, devTools: true, middleware: [thunk, promise]})

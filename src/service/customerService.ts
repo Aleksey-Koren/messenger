@@ -10,7 +10,7 @@ export class CustomerService {
 
     static getCustomer(customerId: string) {
 
-        return axiosApi.get(`customers/${customerId}`)
+        return axiosApi.get<Customer>(`customers/${customerId}`)
     }
 
     static delete(customer: Customer) {
