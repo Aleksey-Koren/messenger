@@ -1,5 +1,5 @@
 
 export class Chat {
-    chat: string | null = null;
+    id: string | null = null;
     title: string | null = null;
 }

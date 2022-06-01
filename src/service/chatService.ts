@@ -1,11 +1,12 @@
 import {axiosApi} from "../http/axios";
 import {Customer} from "../model/customer";
+import {Message} from "../model/message";
 
 export class ChatService {
 
     static getChats(receiverId: string) {
 
-        return axiosApi.get<string[]>('chats', {
+        return axiosApi.get<Message[]>('chats', {
             params: {
                 'receiver': receiverId
             }
@@ -16,6 +17,4 @@ export class ChatService {
 
         return axiosApi.get<Customer[]>(`chats/${chatId}/participants`)
     }
-
-
 }

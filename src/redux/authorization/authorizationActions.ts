@@ -3,7 +3,7 @@ import {IPlainDataAction} from "../redux-types";
 import {AppDispatch, AppState} from "../../index";
 import {CustomerService} from "../../service/customerService";
 import {areKeysValid, retrieveUnit8Array} from "./authorizationActionsUtil";
-import {setUser} from "../context/contextActions";
+import {setUser} from "../messenger/messengerActions";
 import {LocalStorageService} from "../../service/localStorageService";
 import {setErrorPopupState} from "../error-popup/errorPopupActions";
 import {User} from "../../model/user";
@@ -28,7 +28,7 @@ export function setIsLoginModalOpen(isOpen: boolean): IPlainDataAction<boolean> 
     }
 }
 
-export function setIsRegistrationModalOpen(isOpen: boolean): IPlainDataAction<boolean> {
+export function setIsRegistrationModalOpen(isOpen: boolean): IPlainDataAction<boolean>{
 
     return {
         type: SET_IS_REGISTRATION_MODAL_OPEN,
@@ -43,7 +43,7 @@ export function authenticateTF(id: string, privateKeyStr: string) {
                 const customer = response.data;
                 const publicKey = retrieveUnit8Array(customer.pk!);
                 const privateKey = retrieveUnit8Array(privateKeyStr);
-                if (areKeysValid(publicKey, privateKey)) {
+                if(areKeysValid(publicKey, privateKey)) {
                     const user = new User();
                     user.id = customer.id;
                     user.publicKey = publicKey;
@@ -55,11 +55,11 @@ export function authenticateTF(id: string, privateKeyStr: string) {
                     dispatch(setIsLoginModalOpen(false))
 
                     LocalStorageService.userToStorage(user);
-                } else {
+                }else{
                     dispatch(setErrorPopupState(true, 'ID or PRIVATE KEY is incorrect'))
                 }
             }).catch(reason => {
-            dispatch(setErrorPopupState(true, 'ID or PRIVATE KEY is incorrect'))
+                dispatch(setErrorPopupState(true, 'ID or PRIVATE KEY is incorrect'))
         })
     }
 }
