@@ -20,17 +20,20 @@ const RegistrationModal: React.FC<Props> = (props) => {
                 <div className={style.dialog__info_container}>
                     <div className={style.dialog__content_row}>
                         <strong className={style.dialog__content_row_label}>ID: </strong>
-                        <textarea rows={1} className={style.dialog__content_row_input}/>
+                        <textarea rows={1} readOnly className={style.dialog__content_row_input}
+                                  defaultValue={props.userId!}/>
                     </div>
 
                     <div className={style.dialog__content_row}>
                         <strong className={style.dialog__content_row_label}>Private Key:</strong>
-                        <textarea rows={3} className={style.dialog__content_row_input}/>
+                        <textarea rows={3} readOnly className={style.dialog__content_row_input}
+                                  defaultValue={props.privateKey?.join(',')}/>
                     </div>
 
                     <div className={style.dialog__content_row}>
                         <strong className={style.dialog__content_row_label}>Public Key:</strong>
-                        <textarea rows={3} className={style.dialog__content_row_input}/>
+                        <textarea rows={3} readOnly className={style.dialog__content_row_input}
+                                  defaultValue={props.publicKey?.join(',')}/>
                     </div>
                 </div>
             </DialogContent>
@@ -43,7 +46,10 @@ const RegistrationModal: React.FC<Props> = (props) => {
 }
 
 const mapStateToProps = (state: AppState) => ({
-    isOpen: state.authorization.isRegistrationModalOpen
+    isOpen: state.authorization.isRegistrationModalOpen,
+    userId: state.context.user?.id,
+    publicKey: state.context.user?.publicKey,
+    privateKey: state.context.user?.privateKey
 })
 
 const mapDispatchToProps = {

@@ -1,6 +1,6 @@
 import nacl from "tweetnacl";
 
-export function areKeysValid(publicKey: Uint8Array, privateKey: Uint8Array) : boolean {
+export function areKeysValid(publicKey: Uint8Array, privateKey: Uint8Array): boolean {
     const encoder = new TextEncoder();
     const decoder = new TextDecoder();
     const test = encoder.encode('test');

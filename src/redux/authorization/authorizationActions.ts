@@ -7,6 +7,9 @@ import {setUser} from "../context/contextActions";
 import {LocalStorageService} from "../../service/localStorageService";
 import {setErrorPopupState} from "../error-popup/errorPopupActions";
 import {User} from "../../model/user";
+import {Builder} from "builder-pattern";
+import {Customer} from "../../model/customer";
+import nacl from "tweetnacl";
 
 
 export function setIsWelcomeModalOpen(isOpen: boolean): IPlainDataAction<boolean> {
@@ -25,7 +28,7 @@ export function setIsLoginModalOpen(isOpen: boolean): IPlainDataAction<boolean> 
     }
 }
 
-export function setIsRegistrationModalOpen(isOpen: boolean): IPlainDataAction<boolean>{
+export function setIsRegistrationModalOpen(isOpen: boolean): IPlainDataAction<boolean> {
 
     return {
         type: SET_IS_REGISTRATION_MODAL_OPEN,
@@ -40,7 +43,7 @@ export function authenticateTF(id: string, privateKeyStr: string) {
                 const customer = response.data;
                 const publicKey = retrieveUnit8Array(customer.pk!);
                 const privateKey = retrieveUnit8Array(privateKeyStr);
-                if(areKeysValid(publicKey, privateKey)) {
+                if (areKeysValid(publicKey, privateKey)) {
                     const user = new User();
                     user.id = customer.id;
                     user.publicKey = publicKey;
@@ -52,11 +55,37 @@ export function authenticateTF(id: string, privateKeyStr: string) {
                     dispatch(setIsLoginModalOpen(false))
 
                     LocalStorageService.userToStorage(user);
-                }else{
+                } else {
                     dispatch(setErrorPopupState(true, 'ID or PRIVATE KEY is incorrect'))
                 }
             }).catch(reason => {
-                dispatch(setErrorPopupState(true, 'ID or PRIVATE KEY is incorrect'))
+            dispatch(setErrorPopupState(true, 'ID or PRIVATE KEY is incorrect'))
+        })
+    }
+}
+
+export function registerTF() {
+
+    return (dispatch: AppDispatch) => {
+        const keyPair = nacl.box.keyPair();
+
+        const customer = Builder(Customer)
+            .pk(keyPair.publicKey.join(","))
+            .build();
+
+        CustomerService.register(customer).then(resp => {
+            const user = Builder(User)
+                .id(resp.data.id)
+                .publicKey(retrieveUnit8Array(resp.data.pk!))
+                .privateKey(keyPair.secretKey)
+                .build();
+
+            dispatch(setIsRegistrationModalOpen(true));
+            dispatch(setUser(user));
+            LocalStorageService.userToStorage(user);
+
+        }).catch(err => {
+            dispatch(setErrorPopupState(true, 'Something went wrong.'))
         })
     }
 }

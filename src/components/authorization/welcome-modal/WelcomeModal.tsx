@@ -1,11 +1,12 @@
 import {Button, Dialog, DialogActions, DialogTitle} from "@mui/material";
 import style from "./WelcomeModal.module.css";
 import React from "react";
-import {useAppDispatch, useAppSelector} from "../../../index";
-import {setIsLoginModalOpen, setIsRegistrationModalOpen} from "../../../redux/authorization/authorizationActions";
+import {useAppSelector} from "../../../index";
+import {registerTF, setIsLoginModalOpen} from "../../../redux/authorization/authorizationActions";
+import {useDispatch} from "react-redux";
 
 function WelcomeModal() {
-    const dispatch = useAppDispatch();
+    const dispatch = useDispatch();
     const isOpen = useAppSelector(state => state.authorization.isWelcomeModalOpen);
 
     return (
@@ -15,7 +16,7 @@ function WelcomeModal() {
             </DialogTitle>
 
             <DialogActions className={style.dialog__actions}>
-                <Button onClick={() => dispatch(setIsRegistrationModalOpen(true))}
+                <Button onClick={() => dispatch(registerTF())}
                         className={style.dialog__disagree_button}>
                     I'm new user
                 </Button>
