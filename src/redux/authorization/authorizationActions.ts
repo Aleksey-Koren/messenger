@@ -45,15 +45,18 @@ export function authenticateTF(id: string, privateKeyStr: string) {
                     user.id = customer.id;
                     user.publicKey = publicKey;
                     user.privateKey = privateKey;
-
                     //todo we have to fetch and set to state full context but not only user. E.g. chats[], activeChat, users
                     dispatch(setUser(user));
+
+
                     dispatch(setIsLoginModalOpen(false))
 
                     LocalStorageService.userToStorage(user);
                 }else{
-                    dispatch(setErrorPopupState(true, 'Id or private key is incorrect'))
+                    dispatch(setErrorPopupState(true, 'ID or PRIVATE KEY is incorrect'))
                 }
-            })
+            }).catch(reason => {
+                dispatch(setErrorPopupState(true, 'ID or PRIVATE KEY is incorrect'))
+        })
     }
 }
