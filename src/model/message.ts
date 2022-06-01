@@ -7,6 +7,6 @@ export class Message {
     public chat: string | null = null;
     public type: MessageType | null = null;
     public data: string | null = null;
-    public nonce: string | null = null;
+    public nonce: string | Uint8Array | null = null;
     public created: Date | null = null;
 }

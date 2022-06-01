@@ -5,7 +5,7 @@ import {Chat} from "../../model/chat";
 export interface IMessengerState {
     user: User | null;
     chats: Chat[] | null;
-    users: User[] | null;
+    users: Map<string, User> | null;
     currentChat: Chat | null;
 }
 

@@ -13,7 +13,7 @@ import {messengerReducer} from "./redux/messenger/messengerReducer";
 const reducers = combineReducers({
     authorization: authorizationReducer,
     errorPopup: errorPopupReducer,
-    context: messengerReducer
+    messenger: messengerReducer
 });
 
 export const store = configureStore({reducer: reducers, devTools: true, middleware: [thunk, promise]})
@@ -22,7 +22,6 @@ export type AppDispatch = typeof store.dispatch
 export type AppState = ReturnType<typeof store.getState>
 export const useAppDispatch = () => useDispatch<AppDispatch>()
 export const useAppSelector: TypedUseSelectorHook<AppState> = useSelector
-
 
 ReactDOM.render(
     <Provider store={store}>

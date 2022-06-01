@@ -1,8 +1,8 @@
 import {SET_IS_LOGIN_MODAL_OPEN, SET_IS_REGISTRATION_MODAL_OPEN, SET_IS_WELCOME_MODAL_OPEN} from "./authorizationTypes";
 import {IPlainDataAction} from "../redux-types";
-import {AppDispatch, AppState} from "../../index";
+import {AppDispatch} from "../../index";
 import {CustomerApi} from "../../api/customerApi";
-import {areKeysValid, retrieveUnit8Array} from "./authorizationActionsUtil";
+import {AuthorizationService} from "../../service/authorizationService";
 import {setUser} from "../messenger/messengerActions";
 import {LocalStorageService} from "../../service/localStorageService";
 import {setErrorPopupState} from "../error-popup/errorPopupActions";
@@ -37,13 +37,12 @@ export function setIsRegistrationModalOpen(isOpen: boolean): IPlainDataAction<bo
 }
 
 export function authenticateTF(id: string, privateKeyStr: string) {
-    return (dispatch: AppDispatch, getState: () => AppState) => {
+    return (dispatch: AppDispatch) => {
         CustomerApi.getCustomer(id)
-            .then(response => {
-                const customer = response.data;
-                const publicKey = retrieveUnit8Array(customer.pk!);
-                const privateKey = retrieveUnit8Array(privateKeyStr);
-                if(areKeysValid(publicKey, privateKey)) {
+            .then(customer => {
+                const publicKey = customer.pk! as Uint8Array;
+                const privateKey = AuthorizationService.JSONByteStringToUint8(privateKeyStr);
+                if(AuthorizationService.areKeysValid(publicKey, privateKey)) {
                     const user = new User();
                     user.id = customer.id;
                     user.publicKey = publicKey;
@@ -58,7 +57,7 @@ export function authenticateTF(id: string, privateKeyStr: string) {
                 }else{
                     dispatch(setErrorPopupState(true, 'ID or PRIVATE KEY is incorrect'))
                 }
-            }).catch(reason => {
+            }).catch(() => {
                 dispatch(setErrorPopupState(true, 'ID or PRIVATE KEY is incorrect'))
         })
     }
@@ -76,7 +75,7 @@ export function registerTF() {
         CustomerApi.register(customer).then(resp => {
             const user = Builder(User)
                 .id(resp.data.id)
-                .publicKey(retrieveUnit8Array(resp.data.pk!))
+                .publicKey(AuthorizationService.JSONByteStringToUint8(resp.data.pk! as string))
                 .privateKey(keyPair.secretKey)
                 .build();
 
@@ -84,7 +83,7 @@ export function registerTF() {
             dispatch(setUser(user));
             LocalStorageService.userToStorage(user);
 
-        }).catch(err => {
+        }).catch(() => {
             dispatch(setErrorPopupState(true, 'Something went wrong.'))
         })
     }
