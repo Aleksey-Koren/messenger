@@ -2,7 +2,7 @@ import {axiosApi} from "../http/axios";
 import {Customer} from "../model/customer";
 import {Message} from "../model/message";
 
-export class ChatService {
+export class ChatApi {
 
     static getChats(receiverId: string) {
 

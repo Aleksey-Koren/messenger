@@ -1,7 +1,7 @@
 import {SET_IS_LOGIN_MODAL_OPEN, SET_IS_REGISTRATION_MODAL_OPEN, SET_IS_WELCOME_MODAL_OPEN} from "./authorizationTypes";
 import {IPlainDataAction} from "../redux-types";
 import {AppDispatch, AppState} from "../../index";
-import {CustomerService} from "../../service/customerService";
+import {CustomerApi} from "../../api/customerApi";
 import {areKeysValid, retrieveUnit8Array} from "./authorizationActionsUtil";
 import {setUser} from "../messenger/messengerActions";
 import {LocalStorageService} from "../../service/localStorageService";
@@ -38,7 +38,7 @@ export function setIsRegistrationModalOpen(isOpen: boolean): IPlainDataAction<bo
 
 export function authenticateTF(id: string, privateKeyStr: string) {
     return (dispatch: AppDispatch, getState: () => AppState) => {
-        CustomerService.getCustomer(id)
+        CustomerApi.getCustomer(id)
             .then(response => {
                 const customer = response.data;
                 const publicKey = retrieveUnit8Array(customer.pk!);
@@ -73,7 +73,7 @@ export function registerTF() {
             .pk(keyPair.publicKey.join(","))
             .build();
 
-        CustomerService.register(customer).then(resp => {
+        CustomerApi.register(customer).then(resp => {
             const user = Builder(User)
                 .id(resp.data.id)
                 .publicKey(retrieveUnit8Array(resp.data.pk!))

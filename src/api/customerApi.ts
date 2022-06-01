@@ -1,7 +1,7 @@
 import {Customer} from "../model/customer";
 import {axiosApi} from "../http/axios";
 
-export class CustomerService {
+export class CustomerApi {
 
     static register(customer: Customer) {
 

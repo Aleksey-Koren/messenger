@@ -1,7 +1,7 @@
 import {Message} from "../model/message";
 import {axiosApi} from "../http/axios";
 
-export class MessageService {
+export class MessageApi {
 
     static sendMessages(messages: Message[]) {
 
