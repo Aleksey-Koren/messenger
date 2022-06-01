@@ -3,7 +3,7 @@ import {IPlainDataAction} from "../redux-types";
 import {AppDispatch, AppState} from "../../index";
 import {CustomerService} from "../../service/customerService";
 import {areKeysValid, retrieveUnit8Array} from "./authorizationActionsUtil";
-import {setUser} from "../context/contextActions";
+import {setUser} from "../messenger/messengerActions";
 import {LocalStorageService} from "../../service/localStorageService";
 import {setErrorPopupState} from "../error-popup/errorPopupActions";
 import {User} from "../../model/user";
@@ -60,3 +60,4 @@ export function authenticateTF(id: string, privateKeyStr: string) {
         })
     }
 }
+
