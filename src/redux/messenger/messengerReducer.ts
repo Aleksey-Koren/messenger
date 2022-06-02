@@ -6,6 +6,7 @@ import {User} from "../../model/user";
 const initialState: IMessengerState = {
     user: null,
     chats: null,
+    messages: null,
     users: null,
     currentChat: null
 }
@@ -24,6 +25,7 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
             castedAction = action as IPlainDataAction<User>;
             return {...state, user: castedAction.payload};
 
-        default: return state;
+        default:
+            return state;
     }
 }

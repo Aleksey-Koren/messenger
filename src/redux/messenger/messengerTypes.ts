@@ -1,10 +1,12 @@
 import {IPlainDataAction} from "../redux-types";
 import {User} from "../../model/user";
 import {Chat} from "../../model/chat";
+import {Message} from "../../model/message";
 
 export interface IMessengerState {
     user: User | null;
     chats: Chat[] | null;
+    messages: Message[] | null;
     users: Map<string, User> | null;
     currentChat: Chat | null;
 }

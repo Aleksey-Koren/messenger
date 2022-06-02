@@ -11,6 +11,10 @@ export class MessageApi {
        return axiosApi.put<Message[]>('messages', messages);
     }
 
+    static sendSingleMessage(message: Message, publicKey: string) {
+
+    }
+
 
     static async getMessages(receiverId: string, created?: Date, chatId?: string) {
 
