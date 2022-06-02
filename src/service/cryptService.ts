@@ -1,11 +1,11 @@
 import {Message} from "../model/message";
 import {fromByteArray, toByteArray} from "base64-js";
-import nacl from "tweetnacl";
 import {store} from "../index";
 import {CustomerApi} from "../api/customerApi";
+import nacl from "tweetnacl";
+import naclUtil from "tweetnacl-util";
 
 export class CryptService {
-
 
 
     static encrypt(message: Message, publicKeyToEncrypt: Uint8Array) {
@@ -19,14 +19,10 @@ export class CryptService {
             }
         }
         const user = store.getState().messenger.user;
-        console.log("USER    " + JSON.stringify(user))
-        console.log("PUBLIC KEY    " + JSON.stringify(publicKeyToEncrypt))
-        console.log("MESSAGE    " + JSON.stringify(message))
-        message.data = fromByteArray(nacl.box(CryptService.stringToUint8(message.data!) as Uint8Array,
+        message.data = fromByteArray(nacl.box(CryptService.stringToUint8(message.data!),
             message.nonce as Uint8Array,
-            publicKeyToEncrypt as Uint8Array,
-            user?.privateKey!) as Uint8Array)
-        console.log("NONCE  ----   " + message.nonce)
+            publicKeyToEncrypt,
+            user?.privateKey!))
         message.nonce = fromByteArray(message.nonce);
 
         return message;
@@ -34,16 +30,12 @@ export class CryptService {
 
     static decrypt(message: Message, publicKeyToVerify: Uint8Array) {
         const user = store.getState().messenger.user;
-        console.log("USER    " + JSON.stringify(user))
-        console.log("PUBLIC KEY    " + JSON.stringify(publicKeyToVerify))
-        console.log("MESSAGE    " + JSON.stringify(message))
         message.data = CryptService.uint8ToString(nacl.box.open(toByteArray(message.data!),
                                                                     toByteArray(message.nonce! as string),
                                                                     publicKeyToVerify,
                                                                     user?.privateKey!)!);
 
         message.nonce = toByteArray(message.nonce! as string);
-
         return message;
     }
 
@@ -61,12 +53,10 @@ export class CryptService {
     }
 
     static uint8ToString(array: Uint8Array) {
-        console.log("Arr" + array);
-        console.log("Buff" + array.buffer);
-        return new TextDecoder().decode(array);
+        return naclUtil.encodeUTF8(array);
     }
 
     static stringToUint8(string: string) {
-        return new TextEncoder().encode(string) as Uint8Array;
+        return naclUtil.decodeUTF8(string);
     }
 }

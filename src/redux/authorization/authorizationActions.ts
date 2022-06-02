@@ -49,7 +49,6 @@ export function authenticateTF(id: string, privateKeyStr: string) {
                     user.id = customer.id;
                     user.publicKey = publicKey;
                     user.privateKey = privateKey;
-                    // //todo we have to fetch and set to state full context but not only user. E.g. chats[], activeChat, users
                     dispatch(setUser(user));
                     dispatch(fetchMessengerStateTF(user));
                     dispatch(setIsLoginModalOpen(false));

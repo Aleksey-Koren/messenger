@@ -1,14 +1,14 @@
 import {IMessengerState, SET_MESSENGER_STATE, SET_USER} from "./messengerTypes";
 import {IPlainDataAction} from "../redux-types";
 import {User} from "../../model/user";
-import {AppDispatch, AppState} from "../../index";
+import {AppState} from "../../index";
 import {ChatApi} from "../../api/chatApi";
 import {MessageApi} from "../../api/messageApi";
 import {Message} from "../../model/message";
 import {Chat} from "../../model/chat";
 import {MessageService} from "../../service/messageService";
 import {CustomerService} from "../../service/customerService";
-import {Action, Dispatch} from "redux";
+import {Action} from "redux";
 import {ThunkDispatch} from "redux-thunk";
 
 export function setUser(user: User): IPlainDataAction<User> {
@@ -45,18 +45,15 @@ export function fetchMessengerStateTF(user: User) {
 
             const messagesRequest = MessageApi.getMessages(user.id!, currentChat?.id!);
             const participantsRequest = ChatApi.getParticipants(currentChat?.id!)
-            console.log("!!!!!!!!!!!!!!!!!!!!!!!" + currentChat + " " + messagesRequest + " " + participantsRequest);
             Promise.all([messagesRequest, participantsRequest])
                 .then(([messagesResp, participantsResp]) => {
-                    console.log("INTO THEN!!!!!!!")
-                    const participants = participantsResp.data;
+                    const participants = participantsResp;
 
                     messagesResp.forEach(message => MessageService.processMessage(message, messages, users, currentChat, participants, user));
 
                     if (participants.length !== users.size) {
                         CustomerService.processUnknownChatParticipants(participants, users, currentChat, user.id!);
                     }
-                    console.log("USERS --- " + JSON.stringify(users));
                     dispatch(setMessengerState({chats, users, user, currentChat, messages}));
                 })
         })

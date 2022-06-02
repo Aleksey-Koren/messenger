@@ -1,6 +1,8 @@
 import {axiosApi} from "../http/axios";
 import {Customer} from "../model/customer";
 import {Message} from "../model/message";
+import {CryptService} from "../service/cryptService";
+import {AuthorizationService} from "../service/authorizationService";
 
 export class ChatApi {
 
@@ -13,8 +15,12 @@ export class ChatApi {
         })
     }
 
-    static getParticipants(chatId: string) {
+    static async getParticipants(chatId: string) {
+        const customers: Customer[] = (await axiosApi.get<Customer[]>(`chats/${chatId}/participants`)).data;
 
-        return axiosApi.get<Customer[]>(`chats/${chatId}/participants`)
+        return customers.map(customer => {
+            customer.pk = AuthorizationService.JSONByteStringToUint8(customer.pk as string);
+            return customer;
+        })
     }
 }

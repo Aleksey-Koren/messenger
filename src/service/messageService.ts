@@ -41,7 +41,7 @@ function processWhoMessage(currentChat: Chat, user: User, message: Message, part
         .type(MessageType.iam)
         .sender(user.id!)
         .receiver(message.sender)
-        .data(user.title!)
+        .data(user.title ? user.title : user.id)
         .build();
 
     MessageApi.sendSingleMessage(iamMessage, participants.find(participant => participant.id === message.sender)?.pk! as Uint8Array)
