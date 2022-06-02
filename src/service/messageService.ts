@@ -3,7 +3,7 @@ import {User} from "../model/user";
 import {MessageType} from "../model/messageType";
 import {Builder} from "builder-pattern";
 import {MessageApi} from "../api/messageApi";
-import {retrieveUnit8Array} from "../redux/authorization/authorizationActionsUtil";
+
 import {Chat} from "../model/chat";
 import {Customer} from "../model/customer";
 
@@ -44,7 +44,7 @@ function processWhoMessage(currentChat: Chat, user: User, message: Message, part
         .data(user.title!)
         .build();
 
-    MessageApi.sendSingleMessage(iamMessage, participants.find(participant => participant.id === message.sender)?.pk!)
+    MessageApi.sendSingleMessage(iamMessage, participants.find(participant => participant.id === message.sender)?.pk! as Uint8Array)
 }
 
 function processIamMessage(message: Message, participants: Customer[], users: Map<String, User>) {
@@ -52,7 +52,7 @@ function processIamMessage(message: Message, participants: Customer[], users: Ma
     const chatUser = Builder(User)
         .id(message.sender)
         .title(message.data)
-        .publicKey(retrieveUnit8Array(participants.find(participant => participant.id === message.sender)?.pk!))
+        .publicKey((participants.find(participant => participant.id === message.sender)?.pk!) as Uint8Array)
         .build();
 
     users.set(chatUser.id!, chatUser);

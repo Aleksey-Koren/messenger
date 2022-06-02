@@ -8,7 +8,7 @@ export class LocalStorageService {
             user: {
                 id: user.id,
                 publicKey: Array.from(user.publicKey!),
-                secretKey: Array.from(user.privateKey!),
+                privateKey: Array.from(user.privateKey!),
             }
         };
 

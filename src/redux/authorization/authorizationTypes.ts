@@ -1,4 +1,8 @@
 import {IPlainDataAction} from "../redux-types";
+import {ThunkAction} from "redux-thunk";
+import {AnyAction} from "redux";
+import {RootState} from "@reduxjs/toolkit/dist/query/core/apiState";
+import {AppState} from "../../index";
 
 interface IAuthorizationState {
     isWelcomeModalOpen: boolean;

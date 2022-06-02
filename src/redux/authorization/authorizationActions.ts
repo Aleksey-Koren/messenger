@@ -1,15 +1,17 @@
 import {SET_IS_LOGIN_MODAL_OPEN, SET_IS_REGISTRATION_MODAL_OPEN, SET_IS_WELCOME_MODAL_OPEN} from "./authorizationTypes";
 import {IPlainDataAction} from "../redux-types";
-import {AppDispatch} from "../../index";
+import {AppDispatch, AppState} from "../../index";
 import {CustomerApi} from "../../api/customerApi";
 import {AuthorizationService} from "../../service/authorizationService";
-import {setUser} from "../messenger/messengerActions";
+import {fetchMessengerStateTF, setUser} from "../messenger/messengerActions";
 import {LocalStorageService} from "../../service/localStorageService";
 import {setErrorPopupState} from "../error-popup/errorPopupActions";
 import {User} from "../../model/user";
 import {Builder} from "builder-pattern";
 import {Customer} from "../../model/customer";
 import nacl from "tweetnacl";
+import {Action, Dispatch} from "redux";
+import {ThunkDispatch} from "redux-thunk";
 
 
 export function setIsWelcomeModalOpen(isOpen: boolean): IPlainDataAction<boolean> {
@@ -37,7 +39,7 @@ export function setIsRegistrationModalOpen(isOpen: boolean): IPlainDataAction<bo
 }
 
 export function authenticateTF(id: string, privateKeyStr: string) {
-    return (dispatch: AppDispatch) => {
+    return (dispatch: ThunkDispatch<AppState, void, Action>) => {
         CustomerApi.getCustomer(id)
             .then(customer => {
                 const publicKey = customer.pk! as Uint8Array;
@@ -47,12 +49,10 @@ export function authenticateTF(id: string, privateKeyStr: string) {
                     user.id = customer.id;
                     user.publicKey = publicKey;
                     user.privateKey = privateKey;
-                    //todo we have to fetch and set to state full context but not only user. E.g. chats[], activeChat, users
+                    // //todo we have to fetch and set to state full context but not only user. E.g. chats[], activeChat, users
                     dispatch(setUser(user));
-
-
-                    dispatch(setIsLoginModalOpen(false))
-
+                    dispatch(fetchMessengerStateTF(user));
+                    dispatch(setIsLoginModalOpen(false));
                     LocalStorageService.userToStorage(user);
                 }else{
                     dispatch(setErrorPopupState(true, 'ID or PRIVATE KEY is incorrect'))

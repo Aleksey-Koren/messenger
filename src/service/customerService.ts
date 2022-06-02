@@ -1,6 +1,5 @@
 import {Builder} from "builder-pattern";
 import {User} from "../model/user";
-import {retrieveUnit8Array} from "../redux/authorization/authorizationActionsUtil";
 import {Message} from "../model/message";
 import {MessageType} from "../model/messageType";
 import {MessageApi} from "../api/messageApi";
@@ -15,7 +14,7 @@ export class CustomerService {
         unknownParticipants.forEach(unknownParticipant => {
             const userWithoutTitle = Builder(User)
                 .id(unknownParticipant?.id!)
-                .publicKey(retrieveUnit8Array(unknownParticipant?.pk!))
+                .publicKey(unknownParticipant?.pk! as Uint8Array)
                 .build();
 
             users.set(unknownParticipant?.id!, userWithoutTitle)
@@ -25,9 +24,10 @@ export class CustomerService {
                 .type(MessageType.who)
                 .sender(senderId)
                 .receiver(unknownParticipant!.id)
+                .data(" rgfhsrgfh")
                 .build();
 
-            MessageApi.sendSingleMessage(whoMessage, unknownParticipant!.pk!);
+            MessageApi.sendSingleMessage(whoMessage, unknownParticipant!.pk! as Uint8Array);
         })
     }
 
