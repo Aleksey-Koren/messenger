@@ -1,5 +1,5 @@
 import AsyncSelect from "react-select/async";
-// import {MessengerService} from "../../../service/messenger/MessengerService";
+// import {MessageService} from "../../../service/messenger/MessageService";
 import React, {useState} from "react";
 // import {ChatSearchOption, ChatSearchOptionType} from "../../../model/messenger/chatSearchOptiom/ChatSearchOption";
 // import {Room} from "../../../model/messenger/room/Room";
@@ -19,7 +19,7 @@ const MessengerSelect: React.FC<TProps> = (props) => {
     //         setSelectValue(null);
     //     } else {
     //
-    //         MessengerService.createPrivateRoomWith(option.payload.id)
+    //         MessageService.createPrivateRoomWith(option.payload.id)
     //             .then(createdRoom => {
     //                 dispatch(setRoomsToState([...props.rooms, createdRoom.data]));
     //                 dispatch(openRoomTF(createdRoom.data))
@@ -36,7 +36,7 @@ const MessengerSelect: React.FC<TProps> = (props) => {
             option: (base, state) => ({...base, color: state.isFocused ? "black" : "white", borderRadius: '20px'}),
             placeholder: (base, state) => ({...base, color: "white"})
         }}
-                     // loadOptions={MessengerService.promiseOptions}
+                     // loadOptions={MessageService.promiseOptions}
                      getOptionLabel={s => "label"}
                      getOptionValue={s => JSON.stringify(s)}
                      maxMenuHeight={500}

@@ -13,7 +13,7 @@ import {messengerReducer} from "./redux/messenger/messengerReducer";
 const reducers = combineReducers({
     authorization: authorizationReducer,
     errorPopup: errorPopupReducer,
-    context: messengerReducer
+    messenger: messengerReducer
 });
 
 export const store = configureStore({reducer: reducers, devTools: true, middleware: [thunk, promise]})

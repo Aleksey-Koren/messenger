@@ -47,9 +47,9 @@ const RegistrationModal: React.FC<Props> = (props) => {
 
 const mapStateToProps = (state: AppState) => ({
     isOpen: state.authorization.isRegistrationModalOpen,
-    userId: state.context.user?.id,
-    publicKey: state.context.user?.publicKey,
-    privateKey: state.context.user?.privateKey
+    userId: state.messenger.user?.id,
+    publicKey: state.messenger.user?.publicKey,
+    privateKey: state.messenger.user?.privateKey
 })
 
 const mapDispatchToProps = {

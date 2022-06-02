@@ -8,7 +8,11 @@ export class MessageApi {
         return axiosApi.put<Message[]>('messages', messages);
     }
 
-    static getMessages(receiverId: string, created?: Date, chatId?: string) {
+    static sendSingleMessage(message: Message, publicKey: string) {
+
+    }
+
+    static getMessages(receiverId: string, chatId?: string, created?: Date) {
 
         return axiosApi.get<Message[]>('messages', {
             params: {
