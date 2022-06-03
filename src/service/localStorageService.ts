@@ -9,6 +9,7 @@ export class LocalStorageService {
                 id: user.id,
                 publicKey: Array.from(user.publicKey!),
                 privateKey: Array.from(user.privateKey!),
+                title: user.title
             }
         };
 

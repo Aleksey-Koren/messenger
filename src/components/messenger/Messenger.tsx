@@ -23,16 +23,8 @@ import ParticipantsListModal from "./menu/participants-list/ParticipantsListModa
 import {SchedulerService} from "../../service/schedulerService";
 import {User} from "../../model/user";
 import {Builder} from 'builder-pattern';
-import {AuthorizationService} from '../../service/authorizationService';
 import {setUser} from "../../redux/messenger/messengerActions";
-
-
-interface LocalStorageUser {
-    id: string,
-    publicKey: number[],
-    privateKey: number[],
-    title: string
-}
+import {LocalStorageUser} from "../../model/localStorageUser";
 
 const Messenger: React.FC<TProps> = (props) => {
     const [messageText, setMessageText] = useState<string>('');
@@ -96,7 +88,7 @@ const Messenger: React.FC<TProps> = (props) => {
 
                     <MessagesList/>
 
-                    <MessengerFooter /*editedMessage={{}}*/ messageText={messageText} setMessageText={setMessageText}/>
+                    <MessengerFooter messageText={messageText} setMessageText={setMessageText}/>
 
                 </Grid>
             </Grid>

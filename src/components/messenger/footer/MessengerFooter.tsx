@@ -6,6 +6,9 @@ import CloseIcon from "@mui/icons-material/Close";
 import Fab from "@mui/material/Fab/Fab";
 import SendIcon from "@mui/icons-material/Send";
 import React, {Dispatch, SetStateAction} from "react";
+import {useDispatch} from "react-redux";
+import {sendMessage} from "../../../redux/messenger/messengerActions";
+
 // import {useAppSelector} from "../../../index";
 
 interface MessengerFooterProps {
@@ -17,6 +20,7 @@ interface MessengerFooterProps {
 
 
 function MessengerFooter(props: MessengerFooterProps) {
+    const dispatch = useDispatch();
 
     // const selectedRoom = useAppSelector(state => state.messenger.selectedRoom);
 
@@ -39,7 +43,7 @@ function MessengerFooter(props: MessengerFooterProps) {
             <Grid container className={style.message_input_container}>
                 <Grid item xs={11}>
                     <TextField className={style.message_input_field}
-                               // InputProps={textFieldInputProps}
+                        // InputProps={textFieldInputProps}
                                placeholder="Type your message"
                                fullWidth
                                value={props.messageText}
@@ -50,7 +54,7 @@ function MessengerFooter(props: MessengerFooterProps) {
                 <Grid item xs={1}>
                     <Fab className={style.send_icon} size={"large"}
                          onClick={() => {
-                             // sendMessage(selectedRoom.id, retrieveUserId(), props.messageText, props.editedMessage);
+                             dispatch(sendMessage(props.messageText));
                              props.setMessageText('');
                              // props.setEditedMessage(null);
                          }}

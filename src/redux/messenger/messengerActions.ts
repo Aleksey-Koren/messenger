@@ -1,7 +1,7 @@
-import {IMessengerState, SET_MESSENGER_STATE, SET_USER} from "./messengerTypes";
+import {IMessengerState, SET_MESSAGES, SET_MESSENGER_STATE, SET_USER} from "./messengerTypes";
 import {IPlainDataAction} from "../redux-types";
 import {User} from "../../model/user";
-import {AppState} from "../../index";
+import {AppDispatch, AppState} from "../../index";
 import {ChatApi} from "../../api/chatApi";
 import {MessageApi} from "../../api/messageApi";
 import {Message} from "../../model/message";
@@ -10,6 +10,8 @@ import {MessageService} from "../../service/messageService";
 import {CustomerService} from "../../service/customerService";
 import {Action} from "redux";
 import {ThunkDispatch} from "redux-thunk";
+import {Builder} from "builder-pattern";
+import {MessageType} from "../../model/messageType";
 
 export function setUser(user: User): IPlainDataAction<User> {
     return {
@@ -22,6 +24,43 @@ export function setMessengerState(context: IMessengerState): IPlainDataAction<IM
     return {
         type: SET_MESSENGER_STATE,
         payload: context
+    }
+}
+
+export function setMessages(messages: Message[]): IPlainDataAction<Message[]> {
+
+    return {
+        type: SET_MESSAGES,
+        payload: messages
+    }
+}
+
+export function sendMessage(messageText: string) {
+
+    return (dispatch: AppDispatch, getState: () => AppState) => {
+        const currentChat = getState().messenger.currentChat;
+        const user = getState().messenger.user;
+        const chatMessages = getState().messenger.messages;
+        const chatParticipants = getState().messenger.users;
+        const messagesToSend: Message[] = []
+
+        chatParticipants?.forEach(member => {
+            const message = Builder(Message)
+                .chat(currentChat?.id!)
+                .data(messageText)
+                .type(MessageType.whisper)
+                .sender(user?.id!)
+                .receiver(member.id)
+                .build();
+
+            if (user?.id === member.id) {
+                dispatch(setMessages([...chatMessages!, message]))
+            }
+
+            messagesToSend.push(message);
+        })
+
+        MessageApi.sendMessages(messagesToSend);
     }
 }
 
@@ -38,7 +77,7 @@ export function fetchMessengerStateTF(user: User) {
 
             const currentChat = getState().messenger.currentChat || chats[0];
 
-            if(!currentChat) {
+            if (!currentChat) {
                 dispatch(setUser(user));
                 return;
             }

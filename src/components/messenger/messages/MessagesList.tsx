@@ -40,7 +40,7 @@ const MessagesList: React.FC<Props> = (props) => {
                                     <ListItemText>
                                     <span className={style.message_info}>
                                         {createEditIcon(message)}
-                                        {`${message.created} | ${props.chatParticipants?.get(message.sender!)?.title || message.sender}`}
+                                        {`${message.created || 'sending...'} | ${props.chatParticipants?.get(message.sender!)?.title || message.sender}`}
                                     </span>
                                     </ListItemText>
 
