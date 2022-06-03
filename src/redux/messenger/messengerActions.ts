@@ -34,7 +34,7 @@ export function fetchMessengerStateTF(user: User) {
         let chats: Chat[] = [];
 
         ChatApi.getChats(user.id!).then(chatResp => {
-            chats = chatResp.data.map<Chat>(chat => ({id: chat.chat, title: chat.data}));
+            chats = chatResp.map<Chat>(chat => ({id: chat.chat, title: chat.data}));
 
             const currentChat = getState().messenger.currentChat || chats[0];
 

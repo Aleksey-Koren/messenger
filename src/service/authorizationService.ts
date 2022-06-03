@@ -12,9 +12,5 @@ export class AuthorizationService {
         return 'test' === CryptService.uint8ToString(decrypted!);
     }
 
-    static JSONByteStringToUint8(userInput: string) {
-        return Uint8Array.from(userInput.split(",")
-            .map(str => parseInt(str))
-        );
-    }
+
 }
