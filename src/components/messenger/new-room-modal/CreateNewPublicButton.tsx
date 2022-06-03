@@ -4,7 +4,7 @@ import {connect, ConnectedProps} from "react-redux";
 import style from "../Messenger.module.css";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 
-const CreateRoomButton: React.FC<TProps> = (props) => {
+const CreateNewPublicButton: React.FC<TProps> = (props) => {
 
     return (
         <div className={style.new_room_button_container}>
@@ -30,4 +30,4 @@ const connector = connect(null, mapDispatchToProps);
 
 type TProps = ConnectedProps<typeof connector>;
 
-export default connector(CreateRoomButton);
+export default connector(CreateNewPublicButton);

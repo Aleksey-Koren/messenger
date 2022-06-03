@@ -23,7 +23,6 @@ export class CryptService {
 
         dto.nonce = fromByteArray(message.nonce);
 
-        console.log("DTO -- " + JSON.stringify(dto));
         return dto;
     }
 

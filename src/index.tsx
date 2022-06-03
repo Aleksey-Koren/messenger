@@ -10,12 +10,14 @@ import {authorizationReducer} from "./redux/authorization/authorizationReducer";
 import {errorPopupReducer} from "./redux/error-popup/errorPopupReducer";
 import {messengerReducer} from "./redux/messenger/messengerReducer";
 import {messengerMenuReducer} from "./redux/messenger-menu/messengerMenuReducer";
+import {messengerControlsReducer} from "./redux/messenger-controls/messengerControlsReducer";
 
 const reducers = combineReducers({
     authorization: authorizationReducer,
     errorPopup: errorPopupReducer,
     messenger: messengerReducer,
-    messengerMenu: messengerMenuReducer
+    messengerMenu: messengerMenuReducer,
+    messengerControls: messengerControlsReducer
 });
 
 export const store = configureStore({reducer: reducers, devTools: true, middleware: [thunk, promise]})

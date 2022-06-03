@@ -11,7 +11,6 @@ import MessagesList from "./messages/MessagesList";
 import ListItemButton from '@mui/material/ListItemButton';
 import MessengerMenu from "./menu/MessengerMenu";
 import MessengerSelect from "./select/MessengerSelect";
-import CreateRoomButton from "./new-room-modal/CreateRoomButton";
 import WelcomeModal from "../authorization/welcome-modal/WelcomeModal";
 import LoginModal from "../authorization/login-modal/LoginModal";
 import RegistrationModal from "../authorization/registration/RegistrationModal";
@@ -25,6 +24,9 @@ import {User} from "../../model/user";
 import {Builder} from 'builder-pattern';
 import {AuthorizationService} from '../../service/authorizationService';
 import {setUser} from "../../redux/messenger/messengerActions";
+import CreateNewPrivateModal from "./new-private/CreateNewPrivateModal";
+import CreateNewPrivateButton from "./new-private/CreateNewPrivateButton";
+import CreateNewPublicButton from "./new-room-modal/CreateNewPublicButton";
 
 
 interface LocalStorageUser {
@@ -82,10 +84,13 @@ const Messenger: React.FC<TProps> = (props) => {
                 </Grid>
                 <Grid container direction={'column'} item xs={9}>
                     <Grid container item className={style.room_title_container}>
-                        <Grid item xs={2.1}>
-                            <CreateRoomButton/>
+                        <Grid item xs={1.5}>
+                            <CreateNewPublicButton/>
                         </Grid>
-                        <Grid item xs={8.9} className={style.room_title}>
+                        <Grid item xs={1.5}>
+                            <CreateNewPrivateButton/>
+                        </Grid>
+                        <Grid item xs={8} className={style.room_title}>
                             <strong>{props.currentChat?.title}</strong>
                         </Grid>
 
@@ -105,6 +110,7 @@ const Messenger: React.FC<TProps> = (props) => {
             <LoginModal/>
             <RegistrationModal/>
             <ParticipantsListModal/>
+            <CreateNewPrivateModal/>
             <ErrorPopup autoHideDuration={5000} handlePopupClose={() => props.setErrorPopupState(false)}/>
         </div>
     );
