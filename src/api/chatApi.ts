@@ -1,26 +1,25 @@
 import {axiosApi} from "../http/axios";
-import {Customer} from "../model/customer";
-import {Message} from "../model/message";
-import {CryptService} from "../service/cryptService";
-import {AuthorizationService} from "../service/authorizationService";
+import {MessageMapper} from "../mapper/messageMapper";
+import {MessageDto} from "../dto/messageDto";
+import {CustomerDto} from "../dto/CustomerDto";
+import {CustomerMapper} from "../mapper/customerMapper";
 
 export class ChatApi {
 
-    static getChats(receiverId: string) {
+    static async getChats(receiverId: string) {
 
-        return axiosApi.get<Message[]>('chats', {
+        const dto = (await axiosApi.get<MessageDto[]>('chats', {
             params: {
                 'receiver': receiverId
             }
-        })
+        })).data
+
+        return await Promise.all(dto.map(async dto => await MessageMapper.toEntity(dto)));
     }
 
     static async getParticipants(chatId: string) {
-        const customers: Customer[] = (await axiosApi.get<Customer[]>(`chats/${chatId}/participants`)).data;
+        const dto = (await axiosApi.get<CustomerDto[]>(`chats/${chatId}/participants`)).data;
 
-        return customers.map(customer => {
-            customer.pk = AuthorizationService.JSONByteStringToUint8(customer.pk as string);
-            return customer;
-        })
+        return dto.map(dto => CustomerMapper.toEntity(dto))
     }
 }

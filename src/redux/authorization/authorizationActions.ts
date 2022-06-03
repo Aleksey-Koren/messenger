@@ -10,8 +10,9 @@ import {User} from "../../model/user";
 import {Builder} from "builder-pattern";
 import {Customer} from "../../model/customer";
 import nacl from "tweetnacl";
-import {Action, Dispatch} from "redux";
+import {Action} from "redux";
 import {ThunkDispatch} from "redux-thunk";
+import {CryptService} from "../../service/cryptService";
 
 
 export function setIsWelcomeModalOpen(isOpen: boolean): IPlainDataAction<boolean> {
@@ -42,8 +43,8 @@ export function authenticateTF(id: string, privateKeyStr: string) {
     return (dispatch: ThunkDispatch<AppState, void, Action>) => {
         CustomerApi.getCustomer(id)
             .then(customer => {
-                const publicKey = customer.pk! as Uint8Array;
-                const privateKey = AuthorizationService.JSONByteStringToUint8(privateKeyStr);
+                const publicKey = customer.pk!;
+                const privateKey = CryptService.JSONByteStringToUint8(privateKeyStr);
                 if(AuthorizationService.areKeysValid(publicKey, privateKey)) {
                     const user = new User();
                     user.id = customer.id;
@@ -68,13 +69,13 @@ export function registerTF() {
         const keyPair = nacl.box.keyPair();
 
         const customer = Builder(Customer)
-            .pk(keyPair.publicKey.join(","))
+            .pk(keyPair.publicKey)
             .build();
 
         CustomerApi.register(customer).then(resp => {
             const user = Builder(User)
-                .id(resp.data.id)
-                .publicKey(AuthorizationService.JSONByteStringToUint8(resp.data.pk! as string))
+                .id(resp.id)
+                .publicKey(resp.pk!)
                 .privateKey(keyPair.secretKey)
                 .build();
 
