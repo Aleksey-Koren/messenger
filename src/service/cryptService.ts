@@ -16,18 +16,21 @@ export class CryptService {
         }
 
         const privateKey = store.getState().messenger.user?.privateKey;
-        message.data = fromByteArray(nacl.box(CryptService.stringToUint8(message.data!),
+        dto.data = fromByteArray(nacl.box(CryptService.stringToUint8(message.data!),
             message.nonce,
             publicKeyToEncrypt,
             privateKey!))
 
         dto.nonce = fromByteArray(message.nonce);
+
+        console.log("DTO -- " + JSON.stringify(dto));
         return dto;
     }
 
     static decrypt(dto: MessageDto, message: Message , publicKeyToVerify: Uint8Array) {
         const privateKey = store.getState().messenger.user?.privateKey;
         message.nonce = toByteArray(dto.nonce!);
+
         message.data = CryptService.uint8ToString(nacl.box.open(toByteArray(dto.data!),
                                                                     message.nonce,
                                                                     publicKeyToVerify,

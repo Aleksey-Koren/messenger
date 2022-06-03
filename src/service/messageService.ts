@@ -44,7 +44,7 @@ function processWhoMessage(currentChat: Chat, user: User, message: Message, part
         .data(user.title ? user.title : user.id)
         .build();
 
-    MessageApi.sendSingleMessage(iamMessage, participants.find(participant => participant.id === message.sender)?.pk! as Uint8Array)
+    MessageApi.sendSingleMessage(iamMessage, participants.find(participant => participant.id === message.sender)?.pk!)
 }
 
 function processIamMessage(message: Message, participants: Customer[], users: Map<String, User>) {
@@ -52,7 +52,7 @@ function processIamMessage(message: Message, participants: Customer[], users: Ma
     const chatUser = Builder(User)
         .id(message.sender)
         .title(message.data)
-        .publicKey((participants.find(participant => participant.id === message.sender)?.pk!) as Uint8Array)
+        .publicKey((participants.find(participant => participant.id === message.sender)?.pk!))
         .build();
 
     users.set(chatUser.id!, chatUser);

@@ -10,8 +10,8 @@ export class MessageApi {
         return axiosApi.put<MessageDto[]>('messages', dto);
     }
 
-    static sendSingleMessage(message: Message, publicKey: Uint8Array) {
-        const dto = MessageMapper.toDto(message, publicKey);
+    static async sendSingleMessage(message: Message, publicKey: Uint8Array) {
+        const dto = await MessageMapper.toDto(message, publicKey);
         return axiosApi.put<MessageDto[]>("messages", [dto]);
     }
 

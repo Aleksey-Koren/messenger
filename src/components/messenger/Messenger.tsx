@@ -24,6 +24,7 @@ import {SchedulerService} from "../../service/schedulerService";
 import {User} from "../../model/user";
 import {Builder} from 'builder-pattern';
 import {AuthorizationService} from '../../service/authorizationService';
+import {setUser} from "../../redux/messenger/messengerActions";
 
 
 interface LocalStorageUser {
@@ -50,6 +51,7 @@ const Messenger: React.FC<TProps> = (props) => {
                 .title(parsedLocalStorageData.user.title!)
                 .build();
 
+            props.setUser(parsedUser);
             SchedulerService.startScheduler(dispatch, parsedUser)
 
         } else if (!localStorageData) {
@@ -119,7 +121,8 @@ const mapStateToProps = (state: AppState) => ({
 
 const mapDispatchToProps = {
     setIsWelcomeModalOpen,
-    setErrorPopupState
+    setErrorPopupState,
+    setUser
 }
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
