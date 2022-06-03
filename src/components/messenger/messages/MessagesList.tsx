@@ -6,17 +6,19 @@ import ListItemText from "@mui/material/ListItemText/ListItemText";
 import {IconButton} from "@mui/material";
 import BorderColorIcon from "@mui/icons-material/BorderColor";
 import Divider from "@mui/material/Divider";
-import React, {Dispatch, SetStateAction} from "react";
+import {AppState} from "../../../index";
+import {Message} from "../../../model/message";
+import React from "react";
+import {connect, ConnectedProps} from "react-redux";
 
-interface MessagesListProps {
-    currentUserId: number;
-    setMessageText: Dispatch<SetStateAction<string>>;
-}
 
-function MessagesList(props: MessagesListProps) {
+const MessagesList: React.FC<Props> = (props) => {
 
-    const createEditIcon = (message: any) => (
-        props.currentUserId === 2 &&           //if current user is message sender => create Edit Icon
+    const userId = props.user?.id;
+
+    const createEditIcon = (message: Message) => (
+
+        userId === message.sender &&
         <IconButton className={style.message_edit_button} onClick={() => {
         }}>
             <BorderColorIcon fontSize={"small"}/>
@@ -27,45 +29,45 @@ function MessagesList(props: MessagesListProps) {
         <Grid item>
             <List className={style.message_list} id={'list'}>
                 {/* This place should start a loop for room messages and create ListItem for each message */}
-                <ListItem key={2}>
-                    <Grid container>
-                        <Grid item xs={12}>
-                            {3 + 2 === 5 &&     // if message is not a system
+                {props.messages?.map(message => (
+                    <ListItem key={message.id}>
+                        <Grid container>
+                            <Grid item xs={12}>
                                 <div className={style.message_container} style={{
-                                    float: (2 === 2 ? 'right' : 'left'), // my messages - right, others - left
-                                    background: (2 === 2 ? '#60ad60' : 'grey') // my messages #60ad60, others - grey
+                                    float: (message.sender === userId ? 'right' : 'left'), // my messages - right, others - left
+                                    background: (message.sender === userId ? '#60ad60' : 'grey') // my messages #60ad60, others - grey
                                 }}>
                                     <ListItemText>
                                     <span className={style.message_info}>
-                                        {createEditIcon({})}
-                                        Message create time and owner title
+                                        {createEditIcon(message)}
+                                        {`${message.created} | ${props.chatParticipants?.get(message.sender!)?.title || message.sender}`}
                                     </span>
                                     </ListItemText>
 
                                     <ListItemText>
-                                        <span className={style.message}>Message text</span>
+                                        <span className={style.message}>{message.data}</span>
                                     </ListItemText>
                                 </div>
-                            }
+                            </Grid>
                         </Grid>
-                    </Grid>
-                </ListItem>
-
-                <ListItem key={3}>
-                    <Grid container>
-                        <Grid item xs={12}>
-                            <div className={style.system_message}>
-                                <span>This is system message</span>
-                            </div>
-                        </Grid>
-                    </Grid>
-                </ListItem>
-
+                    </ListItem>
+                ))}
             </List>
             <Divider style={{background: '#ecca19'}}/>
         </Grid>
     );
 }
 
+const mapStateToProps = (state: AppState) => ({
+    messages: state.messenger.messages,
+    chatParticipants: state.messenger.users,
+    user: state.messenger.user
+})
 
-export default MessagesList;
+const mapDispatchToProps = {}
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
+
+type Props = ConnectedProps<typeof connector>;
+
+export default connector(MessagesList);

@@ -9,11 +9,13 @@ import promise from "redux-promise-middleware";
 import {authorizationReducer} from "./redux/authorization/authorizationReducer";
 import {errorPopupReducer} from "./redux/error-popup/errorPopupReducer";
 import {messengerReducer} from "./redux/messenger/messengerReducer";
+import {messengerMenuReducer} from "./redux/messenger-menu/messengerMenuReducer";
 
 const reducers = combineReducers({
     authorization: authorizationReducer,
     errorPopup: errorPopupReducer,
-    messenger: messengerReducer
+    messenger: messengerReducer,
+    messengerMenu: messengerMenuReducer
 });
 
 export const store = configureStore({reducer: reducers, devTools: true, middleware: [thunk, promise]})
