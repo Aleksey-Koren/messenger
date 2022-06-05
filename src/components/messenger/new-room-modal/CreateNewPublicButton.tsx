@@ -7,8 +7,8 @@ import GroupAddIcon from "@mui/icons-material/GroupAdd";
 const CreateNewPublicButton: React.FC<TProps> = (props) => {
 
     return (
-        <div className={style.new_room_button_container}>
-            <button className={style.new_room_button}
+        <div className={style.controls_button_container}>
+            <button className={style.controls_button}
                     onClick={() => {}}
             >
 

@@ -8,8 +8,8 @@ import {setIsNewPrivateModalOpened} from "../../../redux/messenger-controls/mess
 const CreateNewPrivateButton: React.FC<TProps> = (props) => {
 
     return (
-        <div className={style.new_room_button_container}>
-            <button className={style.new_room_button}
+        <div className={style.controls_button_container}>
+            <button className={style.controls_button}
                     onClick={() => props.setIsNewPrivateModalOpened(true)}
             >
 
