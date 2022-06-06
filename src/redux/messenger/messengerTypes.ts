@@ -11,7 +11,8 @@ export interface IMessengerState {
     currentChat: Chat | null;
 }
 
-export type TMessengerAction = IPlainDataAction<User> | IPlainDataAction<IMessengerState>
+export type TMessengerAction = IPlainDataAction<User> | IPlainDataAction<IMessengerState> | IPlainDataAction<Chat> 
 
 export const SET_USER = 'SET_USER';
 export const SET_MESSENGER_STATE = 'SET_MESSENGER_STATE';
+export const SET_CURRENT_CHAT = 'SET_CURRENT_CHAT';

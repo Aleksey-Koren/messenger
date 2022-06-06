@@ -1,4 +1,4 @@
-import {IMessengerState, SET_MESSENGER_STATE, SET_USER} from "./messengerTypes";
+import {IMessengerState, SET_CURRENT_CHAT, SET_MESSENGER_STATE, SET_USER} from "./messengerTypes";
 import {IPlainDataAction} from "../redux-types";
 import {User} from "../../model/user";
 import {AppState} from "../../index";
@@ -12,6 +12,7 @@ import {Action} from "redux";
 import {ThunkDispatch} from "redux-thunk";
 
 export function setUser(user: User): IPlainDataAction<User> {
+	
     return {
         type: SET_USER,
         payload: user
@@ -19,9 +20,18 @@ export function setUser(user: User): IPlainDataAction<User> {
 }
 
 export function setMessengerState(context: IMessengerState): IPlainDataAction<IMessengerState> {
+	
     return {
         type: SET_MESSENGER_STATE,
         payload: context
+    }
+}
+
+export function setCurrentChat(chat: Chat): IPlainDataAction<Chat> {
+	
+    return {
+        type: SET_CURRENT_CHAT,
+        payload: chat
     }
 }
 
