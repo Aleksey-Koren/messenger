@@ -2,10 +2,10 @@ import * as yup from "yup";
 import {Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField} from "@mui/material";
 import style from "../../../global-styles/ModalWindow.module.css";
 import {Form, Formik} from "formik";
-import TitleAlreadyExistsModal from "./TitleAlreadyExistsModal";
 import {AppState, useAppDispatch, useAppSelector } from "../../../index";
 import { setIsNewRoomModalOpened, createNewRoomTF } from "../../../redux/messenger-controls/messengerControlsActions";
 import { connect, ConnectedProps } from "react-redux";
+import React from "react";
 
 
 const validationSchema = yup.object().shape({
@@ -46,7 +46,6 @@ const CreateNewRoomModal: React.FC<TProps> = (props) => {
                                     <Button type={"submit"} disabled={!formik.isValid}>Create</Button>
                                 </DialogActions>
                             </Form>
-                            <TitleAlreadyExistsModal title={formik.values.title}/>
                         </div>
                     )}
                 </Formik>

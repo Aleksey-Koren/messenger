@@ -32,6 +32,25 @@ export class MessageService {
                 throw new Error('Unknown message type: ' + message.type);
         }
     }
+
+    static prepareHello(me: User, otherId: string, data: string) {
+        return Builder(Message)
+            .sender(me.id)
+            .receiver(otherId)
+            .type(MessageType.hello)
+            .data(data)
+            .build()
+    }
+
+    static prepareHelloToExisting(me: User, otherId: string, chat: Chat) {
+        return Builder(Message)
+            .sender(me.id)
+            .receiver(otherId)
+            .type(MessageType.hello)
+            .chat(chat.id)
+            .data(chat.title)
+            .build()
+    }
 }
 
 function processWhoMessage(currentChat: Chat, user: User, message: Message, participants: Customer[]) {

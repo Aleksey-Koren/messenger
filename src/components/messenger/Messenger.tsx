@@ -27,6 +27,7 @@ import CreateNewPrivateModal from "./new-private/CreateNewPrivateModal";
 import CreateNewPrivateButton from "./new-private/CreateNewPrivateButton";
 import CreateNewPublicButton from "./new-public/CreateNewPublicButton";
 import CreateNewRoomModal from "./new-public/CreateNewRoomModal";
+import AddUserModal from "./menu/add-users/AddUserModal";
 
 
 interface LocalStorageUser {
@@ -110,8 +111,8 @@ const Messenger: React.FC<TProps> = (props) => {
             <LoginModal/>
             <RegistrationModal/>
             <ParticipantsListModal/>
-            <CreateNewPrivateModal/>
             <CreateNewRoomModal/>
+            <AddUserModal/>
             <ErrorPopup autoHideDuration={5000} handlePopupClose={() => props.setErrorPopupState(false)}/>
         </div>
     );

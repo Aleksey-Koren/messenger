@@ -29,7 +29,7 @@ export class CryptService {
     static decrypt(dto: MessageDto, message: Message , publicKeyToVerify: Uint8Array) {
         const privateKey = store.getState().messenger.user?.privateKey;
         message.nonce = toByteArray(dto.nonce!);
-
+        console.log("Pub KEY ---- " + publicKeyToVerify)
         message.data = CryptService.uint8ToString(nacl.box.open(toByteArray(dto.data!),
                                                                     message.nonce,
                                                                     publicKeyToVerify,

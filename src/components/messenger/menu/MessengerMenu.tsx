@@ -9,7 +9,7 @@ import Divider from "@mui/material/Divider";
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import {IPlainDataAction} from "../../../redux/redux-types";
 import {useAppDispatch, useAppSelector} from "../../../index";
-import {setIsMembersModalOpen} from "../../../redux/messenger-menu/messengerMenuActions";
+import {setIsAddUserModalOpened, setIsMembersModalOpened} from "../../../redux/messenger-menu/messengerMenuActions";
 
 
 function MessengerMenu() {
@@ -40,12 +40,11 @@ function MessengerMenu() {
                             <EditIcon style={{marginRight: '10px'}} fontSize={"medium"}/>
                             Edit Title
                         </MenuItem>
-                        <MenuItem onClick={() => {
-                        }}>
+                        <MenuItem onClick={() => onMenuItemClick(setIsAddUserModalOpened)}>
                             <AddIcon fontSize={'medium'} style={{marginRight: '10px'}}/>
                             Add members
                         </MenuItem>
-                        <MenuItem onClick={() => onMenuItemClick(setIsMembersModalOpen)}>
+                        <MenuItem onClick={() => onMenuItemClick(setIsMembersModalOpened)}>
                             <ListIcon style={{marginRight: '10px'}} fontSize={"medium"}/>
                             Members
                         </MenuItem>

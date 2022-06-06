@@ -10,6 +10,7 @@ import {MessageType} from "../../model/messageType";
 import {MessageApi} from "../../api/messageApi";
 import {fetchMessengerStateTF, setCurrentChat} from "../messenger/messengerActions";
 import { Chat } from "../../model/chat";
+import {MessageService} from "../../service/messageService";
 
 export function setIsNewPrivateModalOpened(isOpened: boolean): IPlainDataAction<boolean> {
     return {
@@ -29,7 +30,7 @@ export function createNewRoomTF(title: string) {
 	
 	return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
 		const user = getState().messenger.user;
-		MessageApi.sendSingleMessage(prepareHello(user!, user?.id!, title), user?.publicKey!)
+		MessageApi.sendSingleMessage(MessageService.prepareHello(user!, user?.id!, title), user?.publicKey!)
 			.then((message) => {
 				const chat: Chat = {id: message.chat, title: message.data};
 				dispatch(setCurrentChat(chat));
@@ -38,15 +39,6 @@ export function createNewRoomTF(title: string) {
 			})
 	}	
 } 
-
-function prepareHello(me: User, otherId: string, data: string) {
-    return Builder(Message)
-        .sender(me.id)
-        .receiver(otherId)
-        .type(MessageType.hello)
-        .data(data)
-        .build()
-}
 
 //todo I must test this function
 /*export function createNewPrivateRoom(myId: string, otherId: string) {

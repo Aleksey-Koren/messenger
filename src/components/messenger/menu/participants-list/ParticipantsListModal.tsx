@@ -11,7 +11,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import {AppState, useAppDispatch} from "../../../../index";
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
-import {setIsMembersModalOpen} from "../../../../redux/messenger-menu/messengerMenuActions";
+import {setIsMembersModalOpened} from "../../../../redux/messenger-menu/messengerMenuActions";
 
 const ParticipantsListModal: React.FC<Props> = (props) => {
     const dispatch = useAppDispatch();
@@ -21,7 +21,7 @@ const ParticipantsListModal: React.FC<Props> = (props) => {
         <Dialog open={props.isOpen} maxWidth="sm" fullWidth>
             <AppBar classes={{root: style.dialog__app_bar}}>
                 <Toolbar>
-                    <IconButton onClick={() => dispatch(setIsMembersModalOpen(false))}>
+                    <IconButton onClick={() => dispatch(setIsMembersModalOpened(false))}>
                         <CloseIcon fontSize={'large'} classes={{root: style.dialog__close_icon}}/>
                     </IconButton>
                     <Typography variant="h4" component="div" flex={1} mx={3} align={"center"}>
