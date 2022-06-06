@@ -26,7 +26,7 @@ import {AuthorizationService} from '../../service/authorizationService';
 import {setUser} from "../../redux/messenger/messengerActions";
 import CreateNewPrivateModal from "./new-private/CreateNewPrivateModal";
 import CreateNewPrivateButton from "./new-private/CreateNewPrivateButton";
-import CreateNewPublicButton from "./new-room-modal/CreateNewPublicButton";
+import CreateNewPublicButton from "./new-public/CreateNewPublicButton";
 
 
 interface LocalStorageUser {

@@ -2,7 +2,7 @@ import {Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField} fr
 import style from "../../../../global-styles/ModalWindow.module.css";
 import {Form, Formik} from "formik";
 import * as yup from "yup";
-import TitleAlreadyExistsModal from "../../new-room-modal/TitleAlreadyExistsModal";
+import TitleAlreadyExistsModal from "../../new-public/TitleAlreadyExistsModal";
 
 const validationSchema = yup.object().shape({
     title: yup.string().required('Title cannot be empty').min(3,)
