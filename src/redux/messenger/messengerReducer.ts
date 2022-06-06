@@ -1,4 +1,11 @@
-import {IMessengerState, SET_MESSENGER_STATE, SET_USER, TMessengerAction} from "./messengerTypes";
+import {
+    IMessengerState,
+    SET_CURRENT_CHAT,
+    SET_MESSAGES,
+    SET_MESSENGER_STATE,
+    SET_USER,
+    TMessengerAction
+} from "./messengerTypes";
 import {IPlainDataAction} from "../redux-types";
 import {User} from "../../model/user";
 import { Chat } from "../../model/chat";

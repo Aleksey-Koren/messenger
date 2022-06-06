@@ -23,11 +23,11 @@ import {SchedulerService} from "../../service/schedulerService";
 import {User} from "../../model/user";
 import {Builder} from 'builder-pattern';
 import {setUser} from "../../redux/messenger/messengerActions";
-import CreateNewPrivateModal from "./new-private/CreateNewPrivateModal";
 import CreateNewPrivateButton from "./new-private/CreateNewPrivateButton";
 import CreateNewPublicButton from "./new-public/CreateNewPublicButton";
 import CreateNewRoomModal from "./new-public/CreateNewRoomModal";
 import AddUserModal from "./menu/add-users/AddUserModal";
+import EditTitleModal from "./menu/edit-title/EditTitleModal";
 
 
 interface LocalStorageUser {
@@ -36,8 +36,6 @@ interface LocalStorageUser {
     privateKey: number[],
     title: string
 }
-import {LocalStorageUser} from "../../model/localStorageUser";
-import EditTitleModal from "./menu/edit-title/EditTitleModal";
 
 const Messenger: React.FC<TProps> = (props) => {
     const [messageText, setMessageText] = useState<string>('');
@@ -115,6 +113,7 @@ const Messenger: React.FC<TProps> = (props) => {
             <ParticipantsListModal/>
             <CreateNewRoomModal/>
             <AddUserModal/>
+            <EditTitleModal/>
             <ErrorPopup autoHideDuration={5000} handlePopupClose={() => props.setErrorPopupState(false)}/>
         </div>
     );

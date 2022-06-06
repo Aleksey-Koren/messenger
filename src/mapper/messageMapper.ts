@@ -15,7 +15,10 @@ export class MessageMapper {
             .created(dto.created)
             .build();
 
-        return CryptService.decrypt(dto, message, await CryptService.findPublicKey(dto.sender!));
+            return CryptService.decrypt(dto, message, await CryptService.findPublicKey(dto.sender!));
+
+
+
     }
 
     static async toDto(message: Message, publicKey?: Uint8Array) {

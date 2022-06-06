@@ -9,7 +9,7 @@ import Divider from "@mui/material/Divider";
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import {IPlainDataAction} from "../../../redux/redux-types";
 import {useAppDispatch, useAppSelector} from "../../../index";
-import {setIsEditTitleModalOpen, setIsMembersModalOpen} from "../../../redux/messenger-menu/messengerMenuActions";
+import {setIsEditTitleModalOpen} from "../../../redux/messenger-menu/messengerMenuActions";
 import {setIsAddUserModalOpened, setIsMembersModalOpened} from "../../../redux/messenger-menu/messengerMenuActions";
 
 

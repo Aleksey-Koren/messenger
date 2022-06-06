@@ -9,7 +9,8 @@ export class SchedulerService {
         SchedulerService.timerId = setInterval(() => {
             console.log('scheduler')
             dispatch(fetchMessengerStateTF(user))
-        }, 5000);
+        }, 500000);
+        dispatch(fetchMessengerStateTF(user));
     }
 
     static stopScheduler() {

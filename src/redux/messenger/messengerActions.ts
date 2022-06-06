@@ -99,7 +99,8 @@ export function updateRoomTitle(roomTitle: string) {
         MessageApi.sendMessages(messagesToSend).then(() => {
             dispatch(setIsEditTitleModalOpen(false));
             //    todo: add setCurrentChat(chat with updated title)
-        }).catch(() => {
+        }).catch((err) => {
+            console.log(err)
             dispatch(setErrorPopupState(true, 'Something went wrong. Try again'))
         });
     }

@@ -8,7 +8,11 @@ import {MessageService} from "../../service/messageService";
 import {fetchMessengerStateTF} from "../messenger/messengerActions";
 import {User} from "../../model/user";
 import {CustomerApi} from "../../api/customerApi";
-import {SET_IS_EDIT_TITLE_MODAL_OPEN, SET_IS_MEMBERS_MODAL_OPEN} from "./messengerMenuTypes";
+import {
+    SET_IS_ADD_USER_MODAL_OPENED,
+    SET_IS_EDIT_TITLE_MODAL_OPEN,
+    SET_IS_MEMBERS_MODAL_OPEN
+} from "./messengerMenuTypes";
 
 export function setIsMembersModalOpened(isOpened: boolean): IPlainDataAction<boolean> {
 

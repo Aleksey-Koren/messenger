@@ -1,5 +1,5 @@
 import {
-    SET_IS_ADD_USER_MODAL_OPENED,
+    SET_IS_ADD_USER_MODAL_OPENED, SET_IS_EDIT_TITLE_MODAL_OPEN,
     SET_IS_MEMBERS_MODAL_OPEN,
     TMessengerMenuAction,
     TMessengerMenuState
@@ -25,6 +25,5 @@ export function messengerMenuReducer(state: TMessengerMenuState = initialState, 
 
         default:
             return state;
-
     }
 }
