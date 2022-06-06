@@ -25,6 +25,7 @@ import {User} from "../../model/user";
 import {Builder} from 'builder-pattern';
 import {setUser} from "../../redux/messenger/messengerActions";
 import {LocalStorageUser} from "../../model/localStorageUser";
+import EditTitleModal from "./menu/edit-title/EditTitleModal";
 
 const Messenger: React.FC<TProps> = (props) => {
     const [messageText, setMessageText] = useState<string>('');
@@ -97,6 +98,7 @@ const Messenger: React.FC<TProps> = (props) => {
             <LoginModal/>
             <RegistrationModal/>
             <ParticipantsListModal/>
+            <EditTitleModal/>
             <ErrorPopup autoHideDuration={5000} handlePopupClose={() => props.setErrorPopupState(false)}/>
         </div>
     );

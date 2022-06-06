@@ -12,6 +12,8 @@ import {Action} from "redux";
 import {ThunkDispatch} from "redux-thunk";
 import {Builder} from "builder-pattern";
 import {MessageType} from "../../model/messageType";
+import {setIsEditTitleModalOpen} from "../messenger-menu/messengerMenuActions";
+import {setErrorPopupState} from "../error-popup/errorPopupActions";
 
 export function setUser(user: User): IPlainDataAction<User> {
     return {
@@ -61,6 +63,35 @@ export function sendMessage(messageText: string) {
         })
 
         MessageApi.sendMessages(messagesToSend);
+    }
+}
+
+export function updateRoomTitle(roomTitle: string) {
+
+    return (dispatch: AppDispatch, getState: () => AppState) => {
+        const currentChat = getState().messenger.currentChat;
+        const user = getState().messenger.user;
+        const chatParticipants = getState().messenger.users;
+        const messagesToSend: Message[] = []
+
+        chatParticipants?.forEach(member => {
+            const message = Builder(Message)
+                .chat(currentChat?.id!)
+                .data(roomTitle)
+                .type(MessageType.hello)
+                .sender(user?.id!)
+                .receiver(member.id)
+                .build();
+
+            messagesToSend.push(message);
+        })
+
+        MessageApi.sendMessages(messagesToSend).then(() => {
+            dispatch(setIsEditTitleModalOpen(false));
+            //    todo: add setCurrentChat(chat with updated title)
+        }).catch(() => {
+            dispatch(setErrorPopupState(true, 'Something went wrong. Try again'))
+        });
     }
 }
 
