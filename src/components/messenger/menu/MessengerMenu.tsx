@@ -9,6 +9,7 @@ import Divider from "@mui/material/Divider";
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import {IPlainDataAction} from "../../../redux/redux-types";
 import {useAppDispatch, useAppSelector} from "../../../index";
+import {setIsEditTitleModalOpen, setIsMembersModalOpen} from "../../../redux/messenger-menu/messengerMenuActions";
 import {setIsAddUserModalOpened, setIsMembersModalOpened} from "../../../redux/messenger-menu/messengerMenuActions";
 
 
@@ -35,8 +36,7 @@ function MessengerMenu() {
             >
                 {2 === 2 &&      //if room is public
                     <div>
-                        <MenuItem onClick={() => {
-                        }}>
+                        <MenuItem onClick={() => onMenuItemClick(setIsEditTitleModalOpen)}>
                             <EditIcon style={{marginRight: '10px'}} fontSize={"medium"}/>
                             Edit Title
                         </MenuItem>

@@ -1,7 +1,8 @@
-import {IMessengerState, SET_CURRENT_CHAT, SET_MESSENGER_STATE, SET_USER, TMessengerAction} from "./messengerTypes";
+import {IMessengerState, SET_MESSENGER_STATE, SET_USER, TMessengerAction} from "./messengerTypes";
 import {IPlainDataAction} from "../redux-types";
 import {User} from "../../model/user";
 import { Chat } from "../../model/chat";
+import {Message} from "../../model/message";
 
 
 const initialState: IMessengerState = {
@@ -22,10 +23,14 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
             castedAction = action as IPlainDataAction<IMessengerState>;
             return castedAction.payload
 
+        case SET_MESSAGES:
+            castedAction = action as IPlainDataAction<Message[]>;
+            return {...state, messages: castedAction.payload};
+
         case SET_USER:
             castedAction = action as IPlainDataAction<User>;
             return {...state, user: castedAction.payload};
-            
+
         case SET_CURRENT_CHAT:
             castedAction = action as IPlainDataAction<Chat>;
             return {...state, currentChat: castedAction.payload}

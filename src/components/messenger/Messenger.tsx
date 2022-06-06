@@ -36,6 +36,8 @@ interface LocalStorageUser {
     privateKey: number[],
     title: string
 }
+import {LocalStorageUser} from "../../model/localStorageUser";
+import EditTitleModal from "./menu/edit-title/EditTitleModal";
 
 const Messenger: React.FC<TProps> = (props) => {
     const [messageText, setMessageText] = useState<string>('');
@@ -102,7 +104,7 @@ const Messenger: React.FC<TProps> = (props) => {
 
                     <MessagesList/>
 
-                    <MessengerFooter /*editedMessage={{}}*/ messageText={messageText} setMessageText={setMessageText}/>
+                    <MessengerFooter messageText={messageText} setMessageText={setMessageText}/>
 
                 </Grid>
             </Grid>

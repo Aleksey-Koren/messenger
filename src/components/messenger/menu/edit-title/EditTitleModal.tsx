@@ -3,21 +3,25 @@ import style from "../../../../global-styles/ModalWindow.module.css";
 import {Form, Formik} from "formik";
 import * as yup from "yup";
 import TitleAlreadyExistsModal from "../../new-public/TitleAlreadyExistsModal";
+import {connect, ConnectedProps} from "react-redux";
+import React from "react";
+import {AppState} from "../../../../index";
+import {setIsEditTitleModalOpen} from "../../../../redux/messenger-menu/messengerMenuActions";
+import {updateRoomTitle} from "../../../../redux/messenger/messengerActions";
 
 const validationSchema = yup.object().shape({
     title: yup.string().required('Title cannot be empty').min(3,)
 })
 
-function EditTitleModal() {
+const EditTitleModal: React.FC<Props> = (props) => {
 
     return (
-        <Dialog open={false} onClose={() => {
+        <Dialog open={props.isOpen} onClose={() => {
         }} maxWidth={"sm"} fullWidth>
             <DialogTitle className={style.dialog__title}>Enter room title</DialogTitle>
             <Formik
-                initialValues={{title: 'changed room title'}}
-                onSubmit={(values) => {
-                }}
+                initialValues={{title: props.currentChat?.title}}
+                onSubmit={(values) => props.updateRoomTitle(values.title!)}
                 validationSchema={validationSchema}
             >
                 {formik => (
@@ -34,12 +38,10 @@ function EditTitleModal() {
                                 />
                             </DialogContent>
                             <DialogActions className={style.dialog__actions}>
-                                <Button onClick={() => {
-                                }}>Cancel</Button>
+                                <Button onClick={() => props.setIsEditTitleModalOpen(false)}>Cancel</Button>
                                 <Button type={"submit"} disabled={!formik.isValid}>Save</Button>
                             </DialogActions>
                         </Form>
-                        <TitleAlreadyExistsModal title={formik.values.title}/>
                     </div>
                 )}
             </Formik>
@@ -47,4 +49,18 @@ function EditTitleModal() {
     );
 }
 
-export default EditTitleModal;
+const mapStateToProps = (state: AppState) => ({
+    isOpen: state.messengerMenu.isEditTitleModalOpen,
+    currentChat: state.messenger.currentChat,
+})
+
+const mapDispatchToProps = {
+    setIsEditTitleModalOpen,
+    updateRoomTitle
+}
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
+
+type Props = ConnectedProps<typeof connector>;
+
+export default connector(EditTitleModal);
