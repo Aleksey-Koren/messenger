@@ -11,6 +11,7 @@ import {MessageApi} from "../../api/messageApi";
 import {fetchMessengerStateTF, setCurrentChat} from "../messenger/messengerActions";
 import { Chat } from "../../model/chat";
 import {MessageService} from "../../service/messageService";
+import {setErrorPopupState} from "../error-popup/errorPopupActions";
 
 export function setIsNewPrivateModalOpened(isOpened: boolean): IPlainDataAction<boolean> {
     return {
@@ -30,13 +31,15 @@ export function createNewRoomTF(title: string) {
 	
 	return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
 		const user = getState().messenger.user;
-		MessageApi.sendSingleMessage(MessageService.prepareHello(user!, user?.id!, title), user?.publicKey!)
+		MessageApi.sendMessageToMyself(MessageService.prepareHello(user!, user?.id!, title), user?.publicKey!)
 			.then((message) => {
-				const chat: Chat = {id: message.chat, title: message.data};
-				dispatch(setCurrentChat(chat));
-				dispatch(setIsNewPrivateModalOpened(false));
+				dispatch(setCurrentChat({id: message.chat, title: message.data}));
 				dispatch(fetchMessengerStateTF(user!));
-			})
+				dispatch(setIsNewPrivateModalOpened(false));
+			}).catch(err => {
+			console.error(err)
+			dispatch(setErrorPopupState(true, 'Something went wrong. Try again'))
+		})
 	}	
 } 
 

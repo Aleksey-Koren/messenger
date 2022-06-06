@@ -7,14 +7,17 @@ export class MessageApi {
 
     static async sendMessages(messages: Message[]) {
         const dto = await Promise.all(messages.map(async message => await MessageMapper.toDto(message)));
-        const respDtos = (await axiosApi.put<MessageDto[]>('messages', dto)).data;
-        return await Promise.all(respDtos.map(async dto => await MessageMapper.toEntity(dto)));
+        await axiosApi.put<MessageDto[]>('messages', dto)
     }
 
     static async sendSingleMessage(message: Message, publicKey: Uint8Array) {
         const dto = await MessageMapper.toDto(message, publicKey);
-        const dtos: MessageDto[] = (await axiosApi.put<MessageDto[]>("messages", [dto])).data;
-        return (await Promise.all(dtos.map(async dto => await MessageMapper.toEntity(dto))))[0];
+        await axiosApi.put<MessageDto[]>("messages", [dto]);
+    }
+
+    static async sendMessageToMyself(message: Message, publicKey: Uint8Array) {
+        const dto = (await axiosApi.put<MessageDto[]>("messages", [await MessageMapper.toDto(message, publicKey)])).data[0];
+        return MessageMapper.toEntity(dto);
     }
 
     static async getMessages(receiverId: string, chatId?: string, created?: Date) {
@@ -25,6 +28,6 @@ export class MessageApi {
                 'chat': chatId
             }
         })).data
-        return await Promise.all(dto.map(async dto => await MessageMapper.toEntity(dto)))
+        return Promise.all(dto.map(async dto => await MessageMapper.toEntity(dto)))
     }
 }

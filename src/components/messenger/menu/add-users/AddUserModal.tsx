@@ -13,7 +13,7 @@ const validationSchema = yup.object().shape({
 
 const AddUserModal: React.FC<TProps> = (props) => {
 
-    const onClose = () => setIsAddUserModalOpened(false);
+    const onClose = () => props.setIsAddUserModalOpened(false);
 
     return (
         <Dialog open={props.isOpened} onClose={onClose} maxWidth={"sm"} fullWidth>
@@ -40,7 +40,7 @@ const AddUserModal: React.FC<TProps> = (props) => {
                             </DialogContent>
                             <DialogActions className={style.dialog__actions}>
                                 <Button onClick={onClose}>Cancel</Button>
-                                <Button type={"submit"} disabled={!formik.isValid}>Create</Button>
+                                <Button type={"submit"} disabled={!formik.isValid}>Add</Button>
                             </DialogActions>
                         </Form>
                     </div>
@@ -57,7 +57,8 @@ const mapStateToProps = (state: AppState) => ({
 })
 
 const mapDispatchToProps = {
-    addUserToRoomTF
+    addUserToRoomTF,
+    setIsAddUserModalOpened
 }
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

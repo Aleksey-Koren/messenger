@@ -78,9 +78,9 @@ export function sendMessage(messageText: string) {
 
 export function updateRoomTitle(roomTitle: string) {
 
-    return (dispatch: AppDispatch, getState: () => AppState) => {
+    return (dispatch: ThunkDispatch<AppState, any, Action>, getState: () => AppState) => {
         const currentChat = getState().messenger.currentChat;
-        const user = getState().messenger.user;
+        const user = getState().messenger.user!;
         const chatParticipants = getState().messenger.users;
         const messagesToSend: Message[] = []
 
@@ -89,7 +89,7 @@ export function updateRoomTitle(roomTitle: string) {
                 .chat(currentChat?.id!)
                 .data(roomTitle)
                 .type(MessageType.hello)
-                .sender(user?.id!)
+                .sender(user.id!)
                 .receiver(member.id)
                 .build();
 
@@ -97,11 +97,12 @@ export function updateRoomTitle(roomTitle: string) {
         })
 
         MessageApi.sendMessages(messagesToSend).then(() => {
+            dispatch(setCurrentChat({id: currentChat?.id!, title: roomTitle}));
+            dispatch(fetchMessengerStateTF(user));
             dispatch(setIsEditTitleModalOpen(false));
-            //    todo: add setCurrentChat(chat with updated title)
         }).catch((err) => {
-            console.log(err)
-            dispatch(setErrorPopupState(true, 'Something went wrong. Try again'))
+            console.error(err);
+            dispatch(setErrorPopupState(true, 'Something went wrong. Try again'));
         });
     }
 }

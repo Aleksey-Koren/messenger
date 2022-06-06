@@ -34,8 +34,6 @@ export class CryptService {
             publicKeyToVerify,
             privateKey!)
 
-        console.log("!!!!" + nacl1)
-
         message.data = CryptService.uint8ToString(nacl1!);
         return message;
     }
