@@ -14,6 +14,7 @@ import {Builder} from "builder-pattern";
 import {MessageType} from "../../model/messageType";
 import {setIsEditRoomTitleModalOpen} from "../messenger-menu/messengerMenuActions";
 import {setErrorPopupState} from "../error-popup/errorPopupActions";
+import {setIsEditUserTitleModalOpen} from "../messenger-controls/messengerControlsActions";
 
 export function setUser(user: User): IPlainDataAction<User> {
 
@@ -159,11 +160,12 @@ export function updateUserTitle(updatedTitle: string) {
                 : currentChatParticipants;
 
             participants.forEach(participant => {
-
                 messages.push(MessageService.prepareIamMessage(user, participant.id!, chat, updatedTitle));
             })
         })
 
-        //todo: send axios request to update iam messages and .then(() => dispatch(setIsEditUserTitleModalOpen(false))
+        MessageApi.updateUserTitle(messages)
+            .then(() => dispatch(setIsEditUserTitleModalOpen(false)))
+            .catch((err) => console.error(err))
     }
 }
