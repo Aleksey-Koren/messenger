@@ -12,7 +12,7 @@ import {Action} from "redux";
 import {ThunkDispatch} from "redux-thunk";
 import {Builder} from "builder-pattern";
 import {MessageType} from "../../model/messageType";
-import {setIsEditTitleModalOpen} from "../messenger-menu/messengerMenuActions";
+import {setIsEditRoomTitleModalOpen} from "../messenger-menu/messengerMenuActions";
 import {setErrorPopupState} from "../error-popup/errorPopupActions";
 
 export function setUser(user: User): IPlainDataAction<User> {
@@ -72,7 +72,8 @@ export function sendMessage(messageText: string) {
             messagesToSend.push(message);
         })
 
-        MessageApi.sendMessages(messagesToSend);
+        MessageApi.sendMessages(messagesToSend)
+            .catch(() => dispatch(setErrorPopupState(true, 'Message not sent. Try again.')));
     }
 }
 
@@ -99,7 +100,7 @@ export function updateRoomTitle(roomTitle: string) {
         MessageApi.sendMessages(messagesToSend).then(() => {
             dispatch(setCurrentChat({id: currentChat?.id!, title: roomTitle}));
             dispatch(fetchMessengerStateTF(user));
-            dispatch(setIsEditTitleModalOpen(false));
+            dispatch(setIsEditRoomTitleModalOpen(false));
         }).catch((err) => {
             console.error(err);
             dispatch(setErrorPopupState(true, 'Something went wrong. Try again'));
@@ -139,5 +140,30 @@ export function fetchMessengerStateTF(user: User) {
                     dispatch(setMessengerState({chats, users, user, currentChat, messages}));
                 })
         })
+    }
+}
+
+export function updateUserTitle(updatedTitle: string) {
+
+    return (dispatch: AppDispatch, getState: () => AppState) => {
+        const user = getState().messenger.user!;
+        const chats = getState().messenger.chats!;
+        const currentChatId = getState().messenger.currentChat?.id;
+        const currentChatParticipants = getState().messenger.users!;
+        const messages: Message[] = []
+
+        chats.forEach(async chat => {
+
+            const participants = currentChatId !== chat.id
+                ? await ChatApi.getParticipants(chat.id!)
+                : currentChatParticipants;
+
+            participants.forEach(participant => {
+
+                messages.push(MessageService.prepareIamMessage(user, participant.id!, chat, updatedTitle));
+            })
+        })
+
+        //todo: send axios request to update iam messages and .then(() => dispatch(setIsEditUserTitleModalOpen(false))
     }
 }

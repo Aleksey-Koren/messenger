@@ -13,6 +13,8 @@ export class MessageService {
                           currentChat: Chat, participants: Customer[], user: User) {
 
         switch (message.type) {
+
+            case MessageType.hello:
             case MessageType.whisper:
                 chatMessages.push(message);
                 break;
@@ -22,13 +24,10 @@ export class MessageService {
                 break;
 
             case MessageType.iam:
-                processIamMessage(message, participants, users)
+                processIamMessage(message, participants, users, user)
                 break;
 
-            case MessageType.hello:
-                break;
-
-                default:
+            default:
                 throw new Error('Unknown message type: ' + message.type);
         }
     }
@@ -51,6 +50,16 @@ export class MessageService {
             .data(chat.title)
             .build()
     }
+
+    static prepareIamMessage(sender: User, receiverId: string, chat: Chat, data: string) {
+        return Builder(Message)
+            .type(MessageType.iam)
+            .sender(sender.id)
+            .receiver(receiverId)
+            .chat(chat.id)
+            .data(data)
+            .build();
+    }
 }
 
 function processWhoMessage(currentChat: Chat, user: User, message: Message, participants: Customer[]) {
@@ -66,7 +75,7 @@ function processWhoMessage(currentChat: Chat, user: User, message: Message, part
     MessageApi.sendSingleMessage(iamMessage, participants.find(participant => participant.id === message.sender)?.pk!)
 }
 
-function processIamMessage(message: Message, participants: Customer[], users: Map<String, User>) {
+function processIamMessage(message: Message, participants: Customer[], users: Map<String, User>, currentUser: User) {
 
     const chatUser = Builder(User)
         .id(message.sender)
@@ -75,4 +84,8 @@ function processIamMessage(message: Message, participants: Customer[], users: Ma
         .build();
 
     users.set(chatUser.id!, chatUser);
+
+    if (message.sender === currentUser.id) {
+        currentUser.title = message.data;
+    }
 }

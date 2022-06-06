@@ -11,23 +11,18 @@ import MessagesList from "./messages/MessagesList";
 import ListItemButton from '@mui/material/ListItemButton';
 import MessengerMenu from "./menu/MessengerMenu";
 import MessengerSelect from "./select/MessengerSelect";
-import WelcomeModal from "../authorization/welcome-modal/WelcomeModal";
-import LoginModal from "../authorization/login-modal/LoginModal";
-import RegistrationModal from "../authorization/registration/RegistrationModal";
 import {AppState} from "../../index";
 import {setIsWelcomeModalOpen} from "../../redux/authorization/authorizationActions";
 import ErrorPopup from "../error-popup/ErrorPopup";
 import {setErrorPopupState} from "../../redux/error-popup/errorPopupActions";
-import ParticipantsListModal from "./menu/participants-list/ParticipantsListModal";
 import {SchedulerService} from "../../service/schedulerService";
 import {User} from "../../model/user";
 import {Builder} from 'builder-pattern';
 import {setUser} from "../../redux/messenger/messengerActions";
-import CreateNewPrivateButton from "./new-private/CreateNewPrivateButton";
 import CreateNewPublicButton from "./new-public/CreateNewPublicButton";
-import CreateNewRoomModal from "./new-public/CreateNewRoomModal";
-import AddUserModal from "./menu/add-users/AddUserModal";
-import EditTitleModal from "./menu/edit-title/EditTitleModal";
+import EditUserTitleButton from "./edit-user-title/EditUserTitleButton";
+import MessengerModalWindows from "./modal-windows/MessengerModalWindows";
+import {LocalStorageService} from "../../service/localStorageService";
 
 
 interface LocalStorageUser {
@@ -45,18 +40,9 @@ const Messenger: React.FC<TProps> = (props) => {
         const localStorageData = localStorage.getItem('whisper');
 
         if (!!localStorageData && !SchedulerService.isSchedulerStarted()) {
-            const parsedLocalStorageData = JSON.parse(localStorageData!) as { user: LocalStorageUser }
-
-            const parsedUser = Builder(User)
-                .id(parsedLocalStorageData.user?.id!)
-                .publicKey(new Uint8Array(parsedLocalStorageData.user?.publicKey!))
-                .privateKey(new Uint8Array(parsedLocalStorageData.user?.privateKey!))
-                .title(parsedLocalStorageData.user.title!)
-                .build();
-
-            props.setUser(parsedUser);
-            SchedulerService.startScheduler(dispatch, parsedUser)
-
+            const user = LocalStorageService.retrieveUserFromLocalStorage();
+            props.setUser(user);
+            SchedulerService.startScheduler(dispatch, user);
         } else if (!localStorageData) {
             props.setIsWelcomeModalOpen(true)
         }
@@ -89,7 +75,7 @@ const Messenger: React.FC<TProps> = (props) => {
                             <CreateNewPublicButton/>
                         </Grid>
                         <Grid item xs={1.5}>
-                            <CreateNewPrivateButton/>
+                            <EditUserTitleButton/>
                         </Grid>
                         <Grid item xs={8} className={style.room_title}>
                             <strong>{props.currentChat?.title}</strong>
@@ -107,13 +93,7 @@ const Messenger: React.FC<TProps> = (props) => {
                 </Grid>
             </Grid>
 
-            <WelcomeModal/>
-            <LoginModal/>
-            <RegistrationModal/>
-            <ParticipantsListModal/>
-            <CreateNewRoomModal/>
-            <AddUserModal/>
-            <EditTitleModal/>
+            <MessengerModalWindows/>
             <ErrorPopup autoHideDuration={5000} handlePopupClose={() => props.setErrorPopupState(false)}/>
         </div>
     );
