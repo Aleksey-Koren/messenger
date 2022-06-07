@@ -1,8 +1,9 @@
 import {IconButton, Menu, MenuItem} from "@mui/material";
-import {useState} from "react";
+import React, {useState} from "react";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import EditIcon from '@mui/icons-material/Edit';
-import AddIcon from '@mui/icons-material/Add';
+import Groups from '@mui/icons-material/Groups';
+import PersonAdd from '@mui/icons-material/PersonAdd';
 import ListIcon from '@mui/icons-material/List';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import Divider from "@mui/material/Divider";
@@ -11,6 +12,9 @@ import {IPlainDataAction} from "../../../redux/redux-types";
 import {useAppDispatch, useAppSelector} from "../../../index";
 import {setIsEditRoomTitleModalOpen} from "../../../redux/messenger-menu/messengerMenuActions";
 import {setIsAddUserModalOpened, setIsMembersModalOpened} from "../../../redux/messenger-menu/messengerMenuActions";
+import CreateNewPublicButton from "../new-public/CreateNewPublicButton";
+import EditUserTitleButton from "../edit-user-title/EditUserTitleButton";
+import IconedButton from "../../button/IconedButton";
 
 
 function MessengerMenu() {
@@ -23,8 +27,8 @@ function MessengerMenu() {
     }
 
     return (
-        <div>
-            <IconButton onClick={(event: any) => setAnchorEl(event.currentTarget)}>
+        <div style={{marginLeft: "auto"}}>
+            <IconButton color={"secondary"} onClick={(event: any) => setAnchorEl(event.currentTarget)}>
                 <MoreVertIcon/>
             </IconButton>
             <Menu
@@ -36,17 +40,31 @@ function MessengerMenu() {
             >
 
                     <div>
-                        <MenuItem onClick={() => onMenuItemClick(setIsEditRoomTitleModalOpen)}>
-                            <EditIcon style={{marginRight: '10px'}} fontSize={"medium"}/>
-                            Edit Room Title
+                        <MenuItem>
+                            <EditUserTitleButton/>
                         </MenuItem>
-                        <MenuItem onClick={() => onMenuItemClick(setIsAddUserModalOpened)}>
-                            <AddIcon fontSize={'medium'} style={{marginRight: '10px'}}/>
-                            Add members
+                        <MenuItem>
+                            <IconedButton onClick={() => onMenuItemClick(setIsEditRoomTitleModalOpen)}
+                                          icon={<EditIcon style={{marginRight: '10px'}} fontSize={"medium"}/>}
+                                          text={"Rename Room"}/>
                         </MenuItem>
-                        <MenuItem onClick={() => onMenuItemClick(setIsMembersModalOpened)}>
-                            <ListIcon style={{marginRight: '10px'}} fontSize={"medium"}/>
-                            Members
+                        <MenuItem>
+                            <IconedButton onClick={() => onMenuItemClick(setIsAddUserModalOpened)}
+                                          icon={<PersonAdd fontSize={'medium'} style={{marginRight: '10px'}}/>}
+                                          text={"Add members"}/>
+                        </MenuItem>
+                        <MenuItem>
+                            <IconedButton onClick={() => onMenuItemClick(setIsMembersModalOpened)}
+                                          icon={<Groups style={{marginRight: '10px'}} fontSize={"medium"}/>}
+                                          text={"Members"}/>
+                        </MenuItem>
+                        <MenuItem>
+                            <CreateNewPublicButton/>
+                        </MenuItem>
+                        <MenuItem>
+                            <IconedButton onClick={() => onMenuItemClick(setIsMembersModalOpened)}
+                                          icon={<ExitToAppIcon style={{marginRight: '10px'}} fontSize={"medium"}/>}
+                                          text={"Logout"}/>
                         </MenuItem>
                         {/*<Divider/>*/}
                         {/*<MenuItem onClick={() => {*/}

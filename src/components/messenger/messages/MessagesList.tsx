@@ -11,6 +11,7 @@ import {Message} from "../../../model/message";
 import React from "react";
 import {connect, ConnectedProps} from "react-redux";
 import {MessageType} from "../../../model/messageType";
+import PerfectScrollbar from "react-perfect-scrollbar";
 
 
 const MessagesList: React.FC<Props> = (props) => {
@@ -27,27 +28,25 @@ const MessagesList: React.FC<Props> = (props) => {
     );
 
     return (
-        <Grid item>
-            <List className={style.message_list} id={'list'}>
+        <PerfectScrollbar>
+            <List id={'list'}>
                 {/* This place should start a loop for room messages and create ListItem for each message */}
                 {props.messages?.map(message => (
-                    <ListItem key={message.id}>
-                        <Grid container>
-                            <Grid item xs={12}>
-
+                    <ListItem key={message.id} style={{display: 'flex', flexDirection: (message.sender === userId ? 'row-reverse' : 'row'), /* my messages - right, others - left*/}}>
                                 {message.type === MessageType.whisper &&
                                     <div className={style.message_container} style={{
-                                        float: (message.sender === userId ? 'right' : 'left'), // my messages - right, others - left
                                         background: (message.sender === userId ? '#60ad60' : 'grey') // my messages #60ad60, others - grey
                                     }}>
-                                        <ListItemText>
-                                    <span className={style.message_info}>
-                                        {createEditIcon(message)}
-                                        {`${message.created || 'sending...'} | ${props.chatParticipants?.get(message.sender!)?.title || message.sender}`}
-                                    </span>
+                                        <ListItemText color={'#000'}>
+                                            <span className={style.message_info}>
+                                                {createEditIcon(message)}
+                                                {message.sender !== userId && (props.chatParticipants?.get(message.sender!)?.title || message.sender)}
+                                                {message.sender !== userId && <span>&nbsp;|&nbsp;</span>}
+                                                {(message.created ? timeSince(new Date(message.created)) + " ago" : 'sending...')}
+                                            </span>
                                         </ListItemText>
 
-                                        <ListItemText>
+                                        <ListItemText style={{color: 'black'}} color={'#000'}>
                                             <span className={style.message}>{message.data}</span>
                                         </ListItemText>
                                     </div>
@@ -58,15 +57,40 @@ const MessagesList: React.FC<Props> = (props) => {
                                         <span>Room title has been set to '{message.data}'</span>
                                     </div>
                                 }
-
-                            </Grid>
-                        </Grid>
                     </ListItem>
                 ))}
             </List>
-            <Divider style={{background: '#ecca19'}}/>
-        </Grid>
+        </PerfectScrollbar>
     );
+}
+
+
+function timeSince(date:Date) {
+
+    var seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
+
+    var interval = seconds / 31536000;
+
+    if (interval > 1) {
+        return Math.floor(interval) + " years";
+    }
+    interval = seconds / 2592000;
+    if (interval > 1) {
+        return Math.floor(interval) + " months";
+    }
+    interval = seconds / 86400;
+    if (interval > 1) {
+        return Math.floor(interval) + " days";
+    }
+    interval = seconds / 3600;
+    if (interval > 1) {
+        return Math.floor(interval) + " hours";
+    }
+    interval = seconds / 60;
+    if (interval > 1) {
+        return Math.floor(interval) + " minutes";
+    }
+    return Math.floor(seconds) + " seconds";
 }
 
 const mapStateToProps = (state: AppState) => ({

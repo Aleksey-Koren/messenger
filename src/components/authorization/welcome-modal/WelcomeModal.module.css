@@ -1,8 +1,5 @@
 .dialog__title {
     text-align: center;
-    background: #262424;
-    color: #ecca19;
-    border: 2px #60ad60 solid;
     padding: 10px;
 }
 
@@ -10,20 +7,11 @@
     display: flex !important;
     justify-content: space-around !important;
     padding: 5px 30px;
-    background: #262424;
-    border: 2px #60ad60 solid;
-    border-top: none;
 }
 
 .dialog__actions button {
     width: fit-content;
     padding: 5px 30px;
-    color: white;
     font-size: 15px;
-    border-radius: 20px;
-    border: 1px solid transparent;
-}
-
-.dialog__actions button:hover {
-    border: 1px #ecca19 solid;
+    border: 1px #fec720 solid;
 }

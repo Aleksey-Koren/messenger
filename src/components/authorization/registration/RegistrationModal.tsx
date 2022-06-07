@@ -1,6 +1,6 @@
 import React from "react";
 import {connect, ConnectedProps} from "react-redux";
-import {Button, Dialog, DialogActions, DialogContent, DialogTitle} from "@mui/material";
+import {Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography} from "@mui/material";
 import style from "./RegistrationModal.module.css";
 import globalStyles from '../../../global-styles/ModalWindow.module.css'
 import {AppState} from "../../../index";
@@ -12,26 +12,28 @@ const RegistrationModal: React.FC<Props> = (props) => {
     return (
         <Dialog open={props.isOpen}>
             <DialogTitle className={globalStyles.dialog__title}>
-                Please save your id and private key.<br/>
-                They are used as login credentials
+                Done!
             </DialogTitle>
 
             <DialogContent className={globalStyles.dialog__content}>
+                <Typography>
+                    Please save your id and private key, it is your credentials. Public key is associated with your ID and saved in our database.
+                </Typography>
                 <div className={style.dialog__info_container}>
                     <div className={style.dialog__content_row}>
-                        <strong className={style.dialog__content_row_label}>ID: </strong>
+                        <span className={style.dialog__content_row_label}>ID: </span>
                         <textarea rows={1} readOnly className={style.dialog__content_row_input}
                                   defaultValue={props.userId!}/>
                     </div>
 
                     <div className={style.dialog__content_row}>
-                        <strong className={style.dialog__content_row_label}>Private Key:</strong>
+                        <span className={style.dialog__content_row_label}>Private Key:</span>
                         <textarea rows={3} readOnly className={style.dialog__content_row_input}
                                   defaultValue={props.privateKey?.join(',')}/>
                     </div>
 
                     <div className={style.dialog__content_row}>
-                        <strong className={style.dialog__content_row_label}>Public Key:</strong>
+                        <span className={style.dialog__content_row_label}>Public Key:</span>
                         <textarea rows={3} readOnly className={style.dialog__content_row_input}
                                   defaultValue={props.publicKey?.join(',')}/>
                     </div>
@@ -39,7 +41,7 @@ const RegistrationModal: React.FC<Props> = (props) => {
             </DialogContent>
 
             <DialogActions className={style.dialog__actions}>
-                <Button onClick={() => props.setIsRegistrationModalOpen(false)}>Close window, i saved it.</Button>
+                <Button  onClick={() => props.setIsRegistrationModalOpen(false)}>I save it, go to the chats</Button>
             </DialogActions>
         </Dialog>
     );

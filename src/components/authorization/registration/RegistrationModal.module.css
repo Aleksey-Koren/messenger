@@ -15,14 +15,14 @@
 }
 
 .dialog__content_row_label{
-    color: white;
+    color: #60ad60;
     margin-right: 10px;
 }
 
 .dialog__content_row_input{
     width: 400px;
     overflow-y: hidden;
-    border-radius: 20px;
+    border-radius: 2px;
     padding: 10px 10px;
     font-size: 15px;
     resize: none;
@@ -32,16 +32,13 @@
     display: flex !important;
     justify-content: space-around !important;
     background: #262424;
-    border: 2px #60ad60 solid;
 }
 
 .dialog__actions button {
-    color: white;
-    font-size: 15px;
-    width: 300px;
-    border-radius: 20px;
+    border-radius: 2px;
+    border: 1px dotted #fec720;
 }
 
 .dialog__actions button:hover {
-    color: #ecca19;
+    border-style: solid;
 }

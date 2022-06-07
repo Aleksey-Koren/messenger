@@ -1,26 +1,15 @@
-import style from "../Messenger.module.css";
 import React from "react";
-import EditIcon from '@mui/icons-material/Edit';
 import {useAppDispatch} from "../../../index";
 import {setIsEditUserTitleModalOpen} from "../../../redux/messenger-controls/messengerControlsActions";
+import IconedButton from "../../button/IconedButton";
+import Person from "@mui/icons-material/Person";
 
 function EditUserTitleButton() {
     const dispatch = useAppDispatch();
 
-    return (
-        <div className={style.controls_button_container}>
-            <button className={style.controls_button}
-                    onClick={() => dispatch(setIsEditUserTitleModalOpen(true))}
-            >
-
-                <div className={style.button_content}>
-                    <EditIcon/>
-                    <div className={style.button_content_spacer}></div>
-                    <span>Edit title</span>
-                </div>
-            </button>
-        </div>
-    );
+    return <IconedButton onClick={() => dispatch(setIsEditUserTitleModalOpen(true))}
+                         icon={<Person  style={{marginRight: '10px'}} />}
+                         text={"Change my name"} />;
 }
 
 export default EditUserTitleButton;

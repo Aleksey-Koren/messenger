@@ -30,7 +30,6 @@ const AddUserModal: React.FC<TProps> = (props) => {
                         <Form >
                             <DialogContent className={style.dialog__content}>
                                 <TextField
-                                    className={style.dialog__text_field}
                                     autoFocus margin="dense" type="text"
                                     defaultValue={formik.values.id}
                                     onChange={(event) => formik.setFieldValue('id', event.target.value)}

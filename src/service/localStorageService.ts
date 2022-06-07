@@ -20,14 +20,22 @@ export class LocalStorageService {
 
     static retrieveUserFromLocalStorage() {
         const localStorageData = localStorage.getItem('whisper');
-        const parsedLocalStorageData = JSON.parse(localStorageData!) as { user: LocalStorageUser }
+        if(!localStorageData) {
+            return null;
+        }
+        try {
+            const parsedLocalStorageData = JSON.parse(localStorageData!) as { user: LocalStorageUser }
 
-        return Builder(User)
-            .id(parsedLocalStorageData.user?.id!)
-            .publicKey(new Uint8Array(parsedLocalStorageData.user?.publicKey!))
-            .privateKey(new Uint8Array(parsedLocalStorageData.user?.privateKey!))
-            .title(parsedLocalStorageData.user.title!)
-            .build();
+            return Builder(User)
+                .id(parsedLocalStorageData.user?.id!)
+                .publicKey(new Uint8Array(parsedLocalStorageData.user?.publicKey!))
+                .privateKey(new Uint8Array(parsedLocalStorageData.user?.privateKey!))
+                .title(parsedLocalStorageData.user.title!)
+                .build();
+        } catch (e) {
+            console.error(e);
+            return null;
+        }
 
     }
 }

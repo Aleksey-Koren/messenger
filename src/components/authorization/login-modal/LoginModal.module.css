@@ -26,12 +26,11 @@
 .dialog__input_field {
     width: 400px;
     overflow-y: hidden;
-    border-radius: 20px;
     padding: 10px 10px;
     font-size: 15px;
     resize: none;
 }
 
 .dialog__input_field:focus {
-    box-shadow: #ecca19 2px 2px 10px;
+    box-shadow: #fec720 2px 2px 10px;
 }

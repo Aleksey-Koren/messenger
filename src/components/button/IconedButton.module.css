@@ -1,0 +1,16 @@
+
+.controls_button_container {
+    display: flex;
+    align-items: center;
+}
+
+
+.button_content {
+    display: flex;
+    align-items: center;
+    margin: 0 5px;
+}
+
+.button_content_spacer {
+    width: 10px;
+}

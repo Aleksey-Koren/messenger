@@ -31,7 +31,6 @@ function CreateNewPrivateModal() {
                         <Form >
                             <DialogContent className={style.dialog__content}>
                                 <TextField
-                                    className={style.dialog__text_field}
                                     autoFocus margin="dense" type="text"
                                     defaultValue={formik.values.userId}
                                     onChange={(event) => formik.setFieldValue('title', event.target.value)}
