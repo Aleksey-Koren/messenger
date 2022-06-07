@@ -24,7 +24,7 @@ export class CustomerService {
                 .type(MessageType.who)
                 .sender(senderId)
                 .receiver(unknownParticipant!.id)
-                .data(" rgfhsrgfh")
+                .data("rgfhsrgfh")
                 .build();
 
             MessageApi.sendSingleMessage(whoMessage, unknownParticipant!.pk! as Uint8Array);

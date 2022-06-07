@@ -30,4 +30,10 @@ export class MessageApi {
         })).data
         return Promise.all(dto.map(async dto => await MessageMapper.toEntity(dto)))
     }
+
+    static async updateUserTitle(messages: Message[]) {
+        const dto = await Promise.all(messages.map(async message => await MessageMapper.toDto(message)));
+
+        await axiosApi.put('messages/title', dto)
+    }
 }

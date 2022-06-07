@@ -50,6 +50,7 @@ export function authenticateTF(id: string, privateKeyStr: string) {
                     user.id = customer.id;
                     user.publicKey = publicKey;
                     user.privateKey = privateKey;
+
                     dispatch(setUser(user));
                     dispatch(fetchMessengerStateTF(user));
                     dispatch(setIsLoginModalOpen(false));

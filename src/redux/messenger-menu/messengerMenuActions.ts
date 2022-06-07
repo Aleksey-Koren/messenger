@@ -10,7 +10,7 @@ import {User} from "../../model/user";
 import {CustomerApi} from "../../api/customerApi";
 import {
     SET_IS_ADD_USER_MODAL_OPENED,
-    SET_IS_EDIT_TITLE_MODAL_OPEN,
+    SET_IS_EDIT_ROOM_TITLE_MODAL_OPEN,
     SET_IS_MEMBERS_MODAL_OPEN
 } from "./messengerMenuTypes";
 
@@ -44,10 +44,10 @@ export function addUserToRoomTF(me: User, chat: Chat, otherId: string) {
     }
 }
 
-export function setIsEditTitleModalOpen(isOpen: boolean): IPlainDataAction<boolean> {
+export function setIsEditRoomTitleModalOpen(isOpen: boolean): IPlainDataAction<boolean> {
 
     return {
-        type: SET_IS_EDIT_TITLE_MODAL_OPEN,
+        type: SET_IS_EDIT_ROOM_TITLE_MODAL_OPEN,
         payload: isOpen
     }
 }

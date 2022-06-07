@@ -10,6 +10,7 @@ import {AppState} from "../../../index";
 import {Message} from "../../../model/message";
 import React from "react";
 import {connect, ConnectedProps} from "react-redux";
+import {MessageType} from "../../../model/messageType";
 
 
 const MessagesList: React.FC<Props> = (props) => {
@@ -33,21 +34,31 @@ const MessagesList: React.FC<Props> = (props) => {
                     <ListItem key={message.id}>
                         <Grid container>
                             <Grid item xs={12}>
-                                <div className={style.message_container} style={{
-                                    float: (message.sender === userId ? 'right' : 'left'), // my messages - right, others - left
-                                    background: (message.sender === userId ? '#60ad60' : 'grey') // my messages #60ad60, others - grey
-                                }}>
-                                    <ListItemText>
+
+                                {message.type === MessageType.whisper &&
+                                    <div className={style.message_container} style={{
+                                        float: (message.sender === userId ? 'right' : 'left'), // my messages - right, others - left
+                                        background: (message.sender === userId ? '#60ad60' : 'grey') // my messages #60ad60, others - grey
+                                    }}>
+                                        <ListItemText>
                                     <span className={style.message_info}>
                                         {createEditIcon(message)}
                                         {`${message.created || 'sending...'} | ${props.chatParticipants?.get(message.sender!)?.title || message.sender}`}
                                     </span>
-                                    </ListItemText>
+                                        </ListItemText>
 
-                                    <ListItemText>
-                                        <span className={style.message}>{message.data}</span>
-                                    </ListItemText>
-                                </div>
+                                        <ListItemText>
+                                            <span className={style.message}>{message.data}</span>
+                                        </ListItemText>
+                                    </div>
+                                }
+
+                                {message.type === MessageType.hello &&
+                                    <div className={style.system_message}>
+                                        <span>Room title has been set to '{message.data}'</span>
+                                    </div>
+                                }
+
                             </Grid>
                         </Grid>
                     </ListItem>
