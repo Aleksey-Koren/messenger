@@ -48,22 +48,3 @@ export function createNewRoomTF(title: string) {
         })
     }
 }
-
-//todo I must test this function
-/*export function createNewPrivateRoom(myId: string, otherId: string) {
-    return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
-        const me = getState().messenger.user;
-        const messages = [prepareHello(me!, otherId), prepareHelloForMe(me!, otherId)];
-       MessageApi.sendMessages(messages)
-            .then(() => {dispatch(fetchMessengerStateTF(me!))})
-    }
-}
-
-function prepareHelloForMe(me: User, otherId: string) {
-    return Builder(Message)
-        .sender(me.id)
-        .receiver(me.id)
-        .type(MessageType.hello)
-        .data(otherId)
-        .build()
-}*/

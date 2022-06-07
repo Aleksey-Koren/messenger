@@ -146,7 +146,7 @@ export function fetchMessengerStateTF(user: User) {
 
 export function updateUserTitle(updatedTitle: string) {
 
-    return (dispatch: AppDispatch, getState: () => AppState) => {
+    return (dispatch: ThunkDispatch<AppState, any, Action>, getState: () => AppState) => {
         const user = getState().messenger.user!;
         const chats = getState().messenger.chats!;
         const currentChatId = getState().messenger.currentChat?.id;
@@ -166,6 +166,7 @@ export function updateUserTitle(updatedTitle: string) {
 
         MessageApi.updateUserTitle(messages)
             .then(() => {
+                dispatch(fetchMessengerStateTF(user));
                 dispatch(setIsEditUserTitleModalOpen(false));
             })
             .catch(() => dispatch(setErrorPopupState(true, 'Something went wrong. Try again')));
