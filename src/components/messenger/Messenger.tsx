@@ -5,21 +5,49 @@ import ListItemText from '@mui/material/ListItemText/ListItemText';
 import Paper from '@mui/material/Paper/Paper';
 import React, {useEffect, useState} from 'react';
 import style from './Messenger.module.css'
-import {connect, ConnectedProps} from "react-redux";
+import {connect, ConnectedProps, useDispatch} from "react-redux";
 import MessengerFooter from "./footer/MessengerFooter";
 import MessagesList from "./messages/MessagesList";
 import ListItemButton from '@mui/material/ListItemButton';
 import MessengerMenu from "./menu/MessengerMenu";
-import EditTitleModal from "./menu/edit-title/EditTitleModal";
-import AddUsersModal from "./menu/add-users/AddUsersModal";
 import MessengerSelect from "./select/MessengerSelect";
-import ParticipantsListModal from "./menu/participants-list/ParticipantsListModal";
-import CreateNewRoomModal from "./new-room-modal/CreateNewRoomModal";
-import CreateRoomButton from "./new-room-modal/CreateRoomButton";
+import {AppState} from "../../index";
+import {setIsWelcomeModalOpen} from "../../redux/authorization/authorizationActions";
+import ErrorPopup from "../error-popup/ErrorPopup";
+import {setErrorPopupState} from "../../redux/error-popup/errorPopupActions";
+import {SchedulerService} from "../../service/schedulerService";
+import {User} from "../../model/user";
+import {Builder} from 'builder-pattern';
+import {openChatTF, setCurrentChat, setUser} from "../../redux/messenger/messengerActions";
+import CreateNewPublicButton from "./new-public/CreateNewPublicButton";
+import EditUserTitleButton from "./edit-user-title/EditUserTitleButton";
+import MessengerModalWindows from "./modal-windows/MessengerModalWindows";
+import {LocalStorageService} from "../../service/localStorageService";
+import {Chat} from "../../model/chat";
 
+
+interface LocalStorageUser {
+    id: string,
+    publicKey: number[],
+    privateKey: number[],
+    title: string
+}
 
 const Messenger: React.FC<TProps> = (props) => {
     const [messageText, setMessageText] = useState<string>('');
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        const localStorageData = localStorage.getItem('whisper');
+
+        if (!!localStorageData && !SchedulerService.isSchedulerStarted()) {
+            const user = LocalStorageService.retrieveUserFromLocalStorage();
+            props.setUser(user);
+            SchedulerService.startScheduler(dispatch, user);
+        } else if (!localStorageData) {
+            props.setIsWelcomeModalOpen(true)
+        }
+    }, [props]);
 
     return (
         <div className={style.wrapper}>
@@ -28,49 +56,32 @@ const Messenger: React.FC<TProps> = (props) => {
                     <MessengerSelect/>
                     <Divider/>
                     <List className={style.room_list}>
-
-                        {/* This place should start a loop for rooms and create ListItemButton for each room */}
-                        <ListItemButton key={1} className={style.room_button}
-                                        style={{color: '#60ad60'}} //color for selected room
-                                        onClick={() => {
-                                        }}>
-                            <ListItemText className={style.unread_message_text}
-                                          style={{visibility: (2 - 2 === 1 ? "hidden" : "visible")}}> {/* If amount of unread messages = 0  => hidden */}
-                                0
-                            </ListItemText>
-                            <ListItemText>Room title</ListItemText>
-                        </ListItemButton>
-
-                        <ListItemButton key={2} className={style.room_button}
-                                        style={{color: '#60ad60'}} //color for selected room
-                                        onClick={() => {
-                                        }}>
-                            <ListItemText className={style.unread_message_text}
-                                          style={{visibility: (2 - 2 === 1 ? "hidden" : "visible")}}> {/* If amount of unread messages = 0  => hidden */}
-                                0
-                            </ListItemText>
-                            <ListItemText>Room title</ListItemText>
-                        </ListItemButton>
-
-                        <ListItemButton key={3} className={style.room_button}
-                                        style={{color: '#60ad60'}} //color for selected room
-                                        onClick={() => {
-                                        }}>
-                            <ListItemText className={style.unread_message_text}
-                                          style={{visibility: (2 - 2 === 1 ? "hidden" : "visible")}}> {/* If amount of unread messages = 0  => hidden */}
-                                0
-                            </ListItemText>
-                            <ListItemText>Room title</ListItemText>
-                        </ListItemButton>
+                        {props.chats?.map(chat => (
+                            <ListItemButton key={chat.id} className={style.room_button}
+                                            style={{
+                                                color: (chat.id === props.currentChat?.id ? 'black' : 'white'),
+                                                backgroundColor: (chat.id === props.currentChat?.id ? 'rgb(96 173 96)' : 'rgb(49 45 45)')
+                                            }}
+                                            onClick={() => props.openChatTF(chat)}>
+                                <ListItemText className={style.unread_message_text}
+                                              style={{visibility: "visible"}}>
+                                    0
+                                </ListItemText>
+                                <ListItemText>{chat.title}</ListItemText>
+                            </ListItemButton>
+                        ))}
                     </List>
                 </Grid>
                 <Grid container direction={'column'} item xs={9}>
                     <Grid container item className={style.room_title_container}>
-                        <Grid item xs={2.1}>
-                            <CreateRoomButton/>
+                        <Grid item xs={1.5}>
+                            <CreateNewPublicButton/>
                         </Grid>
-                        <Grid item xs={8.9} className={style.room_title}>
-                            <strong>This place for room title</strong>
+                        <Grid item xs={1.5}>
+                            <EditUserTitleButton/>
+                        </Grid>
+                        <Grid item xs={8} className={style.room_title}>
+                            <strong>{props.currentChat?.title}</strong>
                         </Grid>
 
                         <Grid item xs={1} className={style.room_title}>
@@ -78,25 +89,35 @@ const Messenger: React.FC<TProps> = (props) => {
                         </Grid>
                     </Grid>
 
-                    <MessagesList currentUserId={2} setMessageText={setMessageText}/>
+                    <MessagesList/>
 
-                    <MessengerFooter /*editedMessage={{}}*/ messageText={messageText} setMessageText={setMessageText}/>
+                    <MessengerFooter messageText={messageText} setMessageText={setMessageText}/>
 
                 </Grid>
             </Grid>
 
-            <EditTitleModal/>
-            <AddUsersModal/>
-            <ParticipantsListModal/>
-            <CreateNewRoomModal/>
+            <MessengerModalWindows/>
+            <ErrorPopup autoHideDuration={5000} handlePopupClose={() => props.setErrorPopupState(false)}/>
         </div>
     );
 }
 
 
-const mapStateToProps = (state: any) => ({})
+const mapStateToProps = (state: AppState) => ({
+    chats: state.messenger.chats,
+    messages: state.messenger.messages,
+    currentChat: state.messenger.currentChat,
+    chatParticipants: state.messenger.users,
+    user: state.messenger.user
+})
 
-const mapDispatchToProps = {}
+const mapDispatchToProps = {
+    setIsWelcomeModalOpen,
+    setCurrentChat,
+    setErrorPopupState,
+    setUser,
+    openChatTF
+}
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 

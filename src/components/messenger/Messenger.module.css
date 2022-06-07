@@ -41,14 +41,14 @@
     max-height: 50px;
 }
 
-.new_room_button_container {
+.controls_button_container {
     height: 50px;
     display: flex;
     align-items: center;
 }
 
-.new_room_button {
-    margin: 4px 4px;
+.controls_button {
+    /*margin: 4px 4px;*/
     background-color: black;
     border-radius: 20px;
     border: 1px #ecca19 solid;

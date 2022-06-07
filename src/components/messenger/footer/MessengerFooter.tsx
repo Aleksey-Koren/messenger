@@ -1,45 +1,28 @@
 import Grid from "@mui/material/Grid/Grid";
 import style from "../Messenger.module.css";
 import TextField from "@mui/material/TextField/TextField";
-import {IconButton, InputAdornment} from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
 import Fab from "@mui/material/Fab/Fab";
 import SendIcon from "@mui/icons-material/Send";
 import React, {Dispatch, SetStateAction} from "react";
-// import {useAppSelector} from "../../../index";
+import {useDispatch} from "react-redux";
+import {sendMessage} from "../../../redux/messenger/messengerActions";
+
 
 interface MessengerFooterProps {
-    // editedMessage: MessageEntity;
     messageText: string;
     setMessageText: Dispatch<SetStateAction<string>>;
-    // setEditedMessage: Dispatch<SetStateAction<MessageEntity>>;
 }
 
 
 function MessengerFooter(props: MessengerFooterProps) {
-
-    // const selectedRoom = useAppSelector(state => state.messenger.selectedRoom);
-
-    // const textFieldInputProps = {
-    //     startAdornment:
-    //         props.editedMessage && (
-    //             <InputAdornment position="start">
-    //                 <IconButton onClick={() => {
-    //                     props.setMessageText('');
-    //                     // props.setEditedMessage(null);
-    //                 }}>
-    //                     <CloseIcon style={{color: 'white'}}/>
-    //                 </IconButton>
-    //             </InputAdornment>
-    //         ),
-    // };
+    const dispatch = useDispatch();
 
     return (
         <Grid item>
             <Grid container className={style.message_input_container}>
                 <Grid item xs={11}>
                     <TextField className={style.message_input_field}
-                               // InputProps={textFieldInputProps}
+                        // InputProps={textFieldInputProps}
                                placeholder="Type your message"
                                fullWidth
                                value={props.messageText}
@@ -50,7 +33,7 @@ function MessengerFooter(props: MessengerFooterProps) {
                 <Grid item xs={1}>
                     <Fab className={style.send_icon} size={"large"}
                          onClick={() => {
-                             // sendMessage(selectedRoom.id, retrieveUserId(), props.messageText, props.editedMessage);
+                             dispatch(sendMessage(props.messageText));
                              props.setMessageText('');
                              // props.setEditedMessage(null);
                          }}

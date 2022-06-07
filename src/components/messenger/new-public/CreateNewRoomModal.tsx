@@ -1,33 +1,30 @@
 import * as yup from "yup";
-// import {useAppDispatch, useAppSelector} from "../../../index";
-// import {
-//     createNewPublicRoomTF,
-//     setEditTitleOpen, setIsAddUsersModalOpened,
-//     setIsNewRoomModalOpened,
-//     updateRoomTitle
-// } from "../../../redux/messenger/messengerActions";
 import {Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField} from "@mui/material";
 import style from "../../../global-styles/ModalWindow.module.css";
 import {Form, Formik} from "formik";
-import TitleAlreadyExistsModal from "./TitleAlreadyExistsModal";
+import {AppState, useAppDispatch, useAppSelector } from "../../../index";
+import { setIsNewRoomModalOpened, createNewRoomTF } from "../../../redux/messenger-controls/messengerControlsActions";
+import { connect, ConnectedProps } from "react-redux";
+import React from "react";
+
 
 const validationSchema = yup.object().shape({
     title: yup.string().required('Room title cannot be empty').min(3)
 })
 
-function CreateNewRoomModal() {
-    // const isOpen = useAppSelector(state => state.messenger.isNewRoomModalOpened);
-    // const dispatch = useAppDispatch();
-    //
-    // const onClose = () => dispatch(setIsNewRoomModalOpened(false));
+const CreateNewRoomModal: React.FC<TProps> = (props) => {
+     const isOpened = useAppSelector(state => state.messengerControls.isCreateNewRoomModalOpened);
+     const dispatch = useAppDispatch();
+
+     const onClose = () => dispatch(setIsNewRoomModalOpened(false));
 
     return (
-            <Dialog open={false} onClose={() => {}} maxWidth={"sm"} fullWidth>
+            <Dialog open={isOpened} onClose={onClose} maxWidth={"sm"} fullWidth>
                 <DialogTitle className={style.dialog__title}>Enter room title</DialogTitle>
                 <Formik
                     initialValues={{title: ''}}
                     onSubmit={(values) => {
-                        // dispatch(createNewPublicRoomTF(values.title))
+						props.createNewRoomTF(values.title)
                     }}
                     validationSchema={validationSchema}
                 >
@@ -45,11 +42,10 @@ function CreateNewRoomModal() {
                                     />
                                 </DialogContent>
                                 <DialogActions className={style.dialog__actions}>
-                                    <Button onClick={() => {}}>Cancel</Button>
+                                    <Button onClick={onClose}>Cancel</Button>
                                     <Button type={"submit"} disabled={!formik.isValid}>Create</Button>
                                 </DialogActions>
                             </Form>
-                            <TitleAlreadyExistsModal title={formik.values.title}/>
                         </div>
                     )}
                 </Formik>
@@ -57,4 +53,16 @@ function CreateNewRoomModal() {
     );
 }
 
-export default CreateNewRoomModal;
+const mapStateToProps = (state: AppState) => ({
+	user: state.messenger.user
+})
+
+const mapDispatchToProps = {
+	createNewRoomTF
+}
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
+
+type TProps = ConnectedProps<typeof connector>;
+
+export default connector(CreateNewRoomModal);

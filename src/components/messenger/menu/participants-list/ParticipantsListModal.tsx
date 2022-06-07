@@ -9,52 +9,62 @@ import ListItemText from "@mui/material/ListItemText/ListItemText";
 import StarIcon from '@mui/icons-material/Star';
 import PersonIcon from '@mui/icons-material/Person';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import {AppState, useAppDispatch} from "../../../../index";
+import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
+import {setIsMembersModalOpened} from "../../../../redux/messenger-menu/messengerMenuActions";
 
 const ParticipantsListModal: React.FC<Props> = (props) => {
+    const dispatch = useAppDispatch();
+    const chatParticipants = props.chatParticipants && Array.from(props.chatParticipants?.values());
 
     return (
-        <Dialog open={false} maxWidth="sm" fullWidth>
+        <Dialog open={props.isOpen} maxWidth="sm" fullWidth>
             <AppBar classes={{root: style.dialog__app_bar}}>
                 <Toolbar>
-                    <IconButton onClick={() => {
-                    }}>
+                    <IconButton onClick={() => dispatch(setIsMembersModalOpened(false))}>
                         <CloseIcon fontSize={'large'} classes={{root: style.dialog__close_icon}}/>
                     </IconButton>
                     <Typography variant="h4" component="div" flex={1} mx={3} align={"center"}>
-                        Number of participants
+                        {props.chatParticipants?.size} members
                     </Typography>
                 </Toolbar>
             </AppBar>
             <List dense sx={{width: '100%'}} className={style.dialog__participants_list}>
-
-                {/* This place should start a loop for room members and create ListItem for each member */}
-                <ListItem
-                    key={1}
-                    secondaryAction={ // add icon for delete member
-                        <IconButton
-                            onClick={() => {
-                            }}>
-                            <RemoveCircleIcon className={style.dialog__remove_icon}/>
-                        </IconButton>
-                    }
-                >
-                    <ListItemIcon>
-                        {2 * 2 === 4
-                            ? <StarIcon fontSize={"medium"} className={style.dialog__star_icon}/> //This icon for room admin
-                            : <PersonIcon fontSize={"medium"} className={style.dialog__person_icon}/> //This icon for common members
+                {chatParticipants?.map(member => (
+                    <ListItem
+                        key={member.id}
+                        secondaryAction={
+                            <IconButton
+                                onClick={() => {
+                                }}>
+                                <RemoveCircleIcon className={style.dialog__remove_icon}/>
+                            </IconButton>
                         }
-                    </ListItemIcon>
-                    <ListItemText>
-                        <p className={style.dialog__person_title}>Member title</p>
-                    </ListItemText>
-                </ListItem>
+                    >
+                        <ListItemIcon>
 
+                            {member.id === props.user?.id
+                                ? <StarIcon fontSize={"medium"} className={style.dialog__star_icon}/>
+                                : (!member.title
+                                    ? <QuestionMarkIcon fontSize={"medium"} className={style.dialog__person_icon}/>
+                                    : <PersonIcon fontSize={"medium"} className={style.dialog__person_icon}/>)
+                            }
+                        </ListItemIcon>
+                        <ListItemText>
+                            <p className={style.dialog__person_title}>{member.title || member.id}</p>
+                        </ListItemText>
+                    </ListItem>
+                ))}
             </List>
         </Dialog>
     );
 }
 
-const mapStateToProps = (state: any) => ({})
+const mapStateToProps = (state: AppState) => ({
+    isOpen: state.messengerMenu.isMembersModalOpen,
+    chatParticipants: state.messenger.users,
+    user: state.messenger.user
+})
 
 const mapDispatchToProps = {}
 
