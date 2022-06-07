@@ -15,7 +15,7 @@ const CreateNewPublicButton: React.FC<TProps> = (props) => {
                 <div className={style.button_content}>
                     <GroupAddIcon/>
                     <div className={style.button_content_spacer}/>
-                    <span>New public room</span>
+                    <span>New room</span>
                 </div>
             </button>
         </div>

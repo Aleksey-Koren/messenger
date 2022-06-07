@@ -1,32 +1,26 @@
-import AsyncSelect from "react-select/async";
-// import {MessageService} from "../../../service/messenger/MessageService";
 import React, {useState} from "react";
-// import {ChatSearchOption, ChatSearchOptionType} from "../../../model/messenger/chatSearchOptiom/ChatSearchOption";
-// import {Room} from "../../../model/messenger/room/Room";
-// import {AppState, useAppDispatch} from "../../../index";
 import {connect, ConnectedProps} from "react-redux";
-// import {openRoomTF, setRoomsToState} from "../../../redux/messenger/messengerActions";
+import {SingleValue} from "react-select";
+import {AppState} from "../../../index";
+import {Chat} from "../../../model/chat";
+import {setCurrentChat} from "../../../redux/messenger/messengerActions";
+import AsyncSelect from "react-select/async";
 
 
 const MessengerSelect: React.FC<TProps> = (props) => {
 
-    // const [selectValue, setSelectValue] = useState<ChatSearchOption>(null);
-    // const dispatch = useAppDispatch();
+    const [value, setValue] = useState<Chat | null>(null);
 
-    // const onChange = (option: ChatSearchOption) => {
-    //     if (option.type === ChatSearchOptionType.ROOM) {
-    //         dispatch(openRoomTF(option.payload as Room));
-    //         setSelectValue(null);
-    //     } else {
-    //
-    //         MessageService.createPrivateRoomWith(option.payload.id)
-    //             .then(createdRoom => {
-    //                 dispatch(setRoomsToState([...props.rooms, createdRoom.data]));
-    //                 dispatch(openRoomTF(createdRoom.data))
-    //             });
-    //         setSelectValue(null);
-    //     }
-    // }
+    async function generateOptions(input: string) {
+        const filtered = props.chats?.filter(s => s.title!.includes(`${input}`));
+        return filtered ? filtered : new Array<Chat>();
+    }
+
+    function onChange (value: SingleValue<Chat>) {
+
+        props.setCurrentChat({id: value?.id!, title: value?.title!});
+        setValue(null);
+    }
 
     return (
         <AsyncSelect styles={{
@@ -36,26 +30,29 @@ const MessengerSelect: React.FC<TProps> = (props) => {
             option: (base, state) => ({...base, color: state.isFocused ? "black" : "white", borderRadius: '20px'}),
             placeholder: (base, state) => ({...base, color: "white"})
         }}
-                     // loadOptions={MessageService.promiseOptions}
-                     getOptionLabel={s => "label"}
-                     getOptionValue={s => JSON.stringify(s)}
+                     loadOptions={generateOptions}
+                     getOptionLabel={s => s.title!}
+                     getOptionValue={s => s.toString()}
                      maxMenuHeight={500}
-                     onChange={() => {}}
-                     // value={selectValue}
-                     placeholder={'Search...'}
+                     onChange={onChange}
+                     value={value}
+                     placeholder={'Search existing chat'}
                      noOptionsMessage={({inputValue}) => inputValue ? "No results found" : ""}
         />
     );
 }
 
 
-const mapStateToProps = () => ({
-    // rooms: state.messenger.rooms,
-    // roomMembers: state.messenger.roomMembers,
-    // selectedRoom: state.messenger.selectedRoom
+const mapStateToProps = (state: AppState) => ({
+    chats: state.messenger.chats
+
 })
 
-const connector = connect(mapStateToProps);
+const mapDispatchToProps = {
+    setCurrentChat
+}
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
 
 type TProps = ConnectedProps<typeof connector>;
 

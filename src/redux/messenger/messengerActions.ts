@@ -141,3 +141,10 @@ export function fetchMessengerStateTF(user: User) {
         })
     }
 }
+
+export function openChatTF(chat: Chat) {
+    return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
+        dispatch(setCurrentChat(chat));
+        dispatch(fetchMessengerStateTF(getState().messenger.user!));
+    }
+}

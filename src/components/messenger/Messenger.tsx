@@ -22,12 +22,13 @@ import ParticipantsListModal from "./menu/participants-list/ParticipantsListModa
 import {SchedulerService} from "../../service/schedulerService";
 import {User} from "../../model/user";
 import {Builder} from 'builder-pattern';
-import {setUser} from "../../redux/messenger/messengerActions";
+import {openChatTF, setCurrentChat, setUser} from "../../redux/messenger/messengerActions";
 import CreateNewPrivateButton from "./new-private/CreateNewPrivateButton";
 import CreateNewPublicButton from "./new-public/CreateNewPublicButton";
 import CreateNewRoomModal from "./new-public/CreateNewRoomModal";
 import AddUserModal from "./menu/add-users/AddUserModal";
 import EditTitleModal from "./menu/edit-title/EditTitleModal";
+import {Chat} from "../../model/chat";
 
 
 interface LocalStorageUser {
@@ -71,9 +72,11 @@ const Messenger: React.FC<TProps> = (props) => {
                     <List className={style.room_list}>
                         {props.chats?.map(chat => (
                             <ListItemButton key={chat.id} className={style.room_button}
-                                            style={{color: (chat.id === props.currentChat?.id ? '#60ad60' : 'white')}}
-                                            onClick={() => {
-                                            }}>
+                                            style={{
+                                                color: (chat.id === props.currentChat?.id ? 'black' : 'white'),
+                                                backgroundColor: (chat.id === props.currentChat?.id ? 'rgb(96 173 96)' : 'rgb(49 45 45)')
+                                            }}
+                                            onClick={() => props.openChatTF(chat)}>
                                 <ListItemText className={style.unread_message_text}
                                               style={{visibility: "visible"}}>
                                     0
@@ -85,13 +88,11 @@ const Messenger: React.FC<TProps> = (props) => {
                 </Grid>
                 <Grid container direction={'column'} item xs={9}>
                     <Grid container item className={style.room_title_container}>
-                        <Grid item xs={1.5}>
+                        <Grid item xs={2}>
                             <CreateNewPublicButton/>
                         </Grid>
-                        <Grid item xs={1.5}>
-                            <CreateNewPrivateButton/>
-                        </Grid>
-                        <Grid item xs={8} className={style.room_title}>
+
+                        <Grid item xs={9} className={style.room_title}>
                             <strong>{props.currentChat?.title}</strong>
                         </Grid>
 
@@ -130,8 +131,10 @@ const mapStateToProps = (state: AppState) => ({
 
 const mapDispatchToProps = {
     setIsWelcomeModalOpen,
+    setCurrentChat,
     setErrorPopupState,
-    setUser
+    setUser,
+    openChatTF
 }
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
