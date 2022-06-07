@@ -165,7 +165,15 @@ export function updateUserTitle(updatedTitle: string) {
         })
 
         MessageApi.updateUserTitle(messages)
-            .then(() => dispatch(setIsEditUserTitleModalOpen(false)))
-            .catch((err) => console.error(err))
+            .then(() => {
+                dispatch(setUser({
+                    id: user.id,
+                    title: updatedTitle,
+                    publicKey: user.publicKey,
+                    privateKey: user.privateKey
+                }));
+                dispatch(setIsEditUserTitleModalOpen(false));
+            })
+            .catch(() => dispatch(setErrorPopupState(true, 'Something went wrong. Try again')));
     }
 }

@@ -34,11 +34,11 @@ function MessengerMenu() {
                 open={!!anchorEl}
                 onClose={() => setAnchorEl(null)}
             >
-                {2 === 2 &&      //if room is public
+
                     <div>
                         <MenuItem onClick={() => onMenuItemClick(setIsEditRoomTitleModalOpen)}>
                             <EditIcon style={{marginRight: '10px'}} fontSize={"medium"}/>
-                            Edit Title
+                            Edit Room Title
                         </MenuItem>
                         <MenuItem onClick={() => onMenuItemClick(setIsAddUserModalOpened)}>
                             <AddIcon fontSize={'medium'} style={{marginRight: '10px'}}/>
@@ -48,22 +48,21 @@ function MessengerMenu() {
                             <ListIcon style={{marginRight: '10px'}} fontSize={"medium"}/>
                             Members
                         </MenuItem>
-                        <Divider/>
-                        <MenuItem onClick={() => {
-                        }}>
-                            <ExitToAppIcon style={{marginRight: '10px'}} fontSize={'medium'}/>
-                            Leave room
-                        </MenuItem>
+                        {/*<Divider/>*/}
+                        {/*<MenuItem onClick={() => {*/}
+                        {/*}}>*/}
+                        {/*    <ExitToAppIcon style={{marginRight: '10px'}} fontSize={'medium'}/>*/}
+                        {/*    Leave room*/}
+                        {/*</MenuItem>*/}
                     </div>
-                }
 
-                {3 === 3 &&     // if room type is private or current user is room admin
-                    <MenuItem onClick={() => {
-                    }}>
-                        <DeleteOutlineOutlinedIcon style={{marginRight: '10px', color: 'red'}} fontSize={'medium'}/>
-                        <span style={{color: 'red'}}>Delete room</span>
-                    </MenuItem>
-                }
+                {/*{3 === 3 &&     // if room type is private or current user is room admin*/}
+                {/*    <MenuItem onClick={() => {*/}
+                {/*    }}>*/}
+                {/*        <DeleteOutlineOutlinedIcon style={{marginRight: '10px', color: 'red'}} fontSize={'medium'}/>*/}
+                {/*        <span style={{color: 'red'}}>Delete room</span>*/}
+                {/*    </MenuItem>*/}
+                {/*}*/}
             </Menu>
 
         </div>
