@@ -2,38 +2,30 @@ import {Message} from "../model/message";
 import {axiosApi} from "../http/axios";
 import {MessageDto} from "../dto/messageDto";
 import {MessageMapper} from "../mapper/messageMapper";
+import {MessageType} from "../model/messageType";
+import {User} from "../model/user";
 
 export class MessageApi {
 
-    static async sendMessages(messages: Message[]) {
-        const dto = await Promise.all(messages.map(async message => await MessageMapper.toDto(message)));
-        await axiosApi.put<MessageDto[]>('messages', dto)
+    static async sendMessages(messages: Message[], users:{[key:string]:User}) {
+        return Promise.all(messages.map(message => MessageMapper.toDto(message, users[message.receiver]))).then(dto => {
+            return axiosApi.post<MessageDto[]>('messages?iam=' + messages[0].sender, dto);
+        }).then(response => {
+            return response.data.map(dto => MessageMapper.toEntity(dto, users[dto.sender]));
+        })
     }
 
-    static async sendSingleMessage(message: Message, publicKey: Uint8Array) {
-        const dto = await MessageMapper.toDto(message, publicKey);
-        await axiosApi.put<MessageDto[]>("messages", [dto]);
-    }
-
-    static async sendMessageToMyself(message: Message, publicKey: Uint8Array) {
-        const dto = (await axiosApi.put<MessageDto[]>("messages", [await MessageMapper.toDto(message, publicKey)])).data[0];
-        return MessageMapper.toEntity(dto);
-    }
-
-    static async getMessages(receiverId: string, chatId?: string, created?: Date) {
-        let dto = (await axiosApi.get<MessageDto[]>('messages', {
-            params: {
-                'receiver': receiverId,
-                'created': created,
-                'chat': chatId
-            }
+    static async getMessages(request:{receiver: string, chat: string, created?: Date, type?:MessageType}, users:{[key:string]:User}) {
+        let dto = (await axiosApi.get<{content: MessageDto[]}>('messages', {
+            params: request
         })).data
-        return Promise.all(dto.map(async dto => await MessageMapper.toEntity(dto)))
+        return dto.content.map(dto => MessageMapper.toEntity(dto, users[dto.sender]))
     }
 
-    static async updateUserTitle(messages: Message[]) {
-        const dto = await Promise.all(messages.map(async message => await MessageMapper.toDto(message)));
-
-        await axiosApi.put('messages/title', dto)
+    static async updateUserTitle(messages: Message[], users:{[key:string]:User}):Promise<Message[]> {
+        const dto = messages.map(message => MessageMapper.toDto(message, users[message.receiver]));
+        return await axiosApi.put<MessageDto[]>('messages/title?iam=' + messages[0].sender, dto).then(response => {
+            return response.data.map(dto => MessageMapper.toEntity(dto, users[dto.sender]));
+        })
     }
 }

@@ -1,37 +1,43 @@
-import {Builder} from "builder-pattern";
 import {Message} from "../model/message";
 import {MessageDto} from "../dto/messageDto";
 import {CryptService} from "../service/cryptService";
+import {User} from "../model/user";
+import {toByteArray} from "base64-js";
 
 export class MessageMapper {
 
-    static async toEntity(dto: MessageDto) {
-        const message = Builder(Message)
-            .id(dto.id)
-            .sender(dto.sender)
-            .receiver(dto.receiver)
-            .chat(dto.chat)
-            .type(dto.type)
-            .created(dto.created)
-            .build();
+    static toEntity(dto: MessageDto, sender:User):Message {
+        const message = {
+            id: dto.id,
+            sender: dto.sender,
+            receiver: dto.receiver,
+            chat: dto.chat,
+            type: dto.type,
+            created: dto.created,
+            nonce: dto.nonce ? toByteArray(dto.nonce!) : null
+        } as Message;
 
-            return CryptService.decrypt(dto, message, await CryptService.findPublicKey(dto.sender!));
-
-
-
+        if(dto.data) {
+            message.data = CryptService.decrypt(dto, sender.publicKey);
+        }
+        return message;
     }
 
-    static async toDto(message: Message, publicKey?: Uint8Array) {
-        const dto = Builder(MessageDto)
-            .id(message.id)
-            .sender(message.sender)
-            .receiver(message.receiver)
-            .chat(message.chat)
-            .type(message.type)
-            .created(message.created)
-            .build();
+    static toDto(message: Message, receiver:User) {
+        const dto = {
+            id: message.id,
+            sender: message.sender,
+            receiver: message.receiver,
+            chat: message.chat,
+            type: message.type,
+            created: message.created
+        } as MessageDto;
 
-        return CryptService.encrypt(message, dto,
-            publicKey ? publicKey : await CryptService.findPublicKey(message.receiver!));
+        if(message.data) {
+            const data = CryptService.encrypt(message, receiver.publicKey);
+            dto.data = data.data;
+            dto.nonce = data.nonce;
+        }
+        return dto;
     }
 }

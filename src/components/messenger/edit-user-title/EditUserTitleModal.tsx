@@ -31,7 +31,7 @@ const EditUserTitleModal: React.FC<Props> = (props) => {
                                     autoFocus margin="dense" type="text"
                                     defaultValue={formik.values.title}
                                     onChange={(event) => formik.setFieldValue('title', event.target.value)}
-                                    error={!!formik.errors.title} helperText={formik.errors.title}
+                                    error={!!formik.errors.title}
                                     fullWidth variant="standard" placeholder={"User title"}
                                 />
                             </DialogContent>
@@ -49,10 +49,13 @@ const EditUserTitleModal: React.FC<Props> = (props) => {
     )
 }
 
-const mapStateToProps = (state: AppState) => ({
-    isOpen: state.messengerControls.isEditUserTitleModalOpen,
-    user: state.messenger.user,
-})
+const mapStateToProps = (state: AppState) => {
+    const user = state.messenger.user;
+    return {
+        isOpen: state.messengerControls.isEditUserTitleModalOpen,
+        user: user,
+    }
+}
 
 const mapDispatchToProps = {
     setIsEditUserTitleModalOpen,

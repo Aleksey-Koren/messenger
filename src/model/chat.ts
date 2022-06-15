@@ -1,5 +1,5 @@
 
-export class Chat {
-    id: string | null = null;
-    title: string | null = null;
+export interface Chat {
+    id: string;
+    title: string;
 }

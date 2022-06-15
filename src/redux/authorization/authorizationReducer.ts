@@ -1,4 +1,5 @@
 import {
+    LOGOUT,
     SET_IS_LOGIN_MODAL_OPEN, SET_IS_REGISTRATION_MODAL_OPEN,
     SET_IS_WELCOME_MODAL_OPEN,
     TAuthorizationAction,
@@ -8,7 +9,7 @@ import {
 const initialState: TAuthorizationState = {
     isLoginModalOpen: false,
     isRegistrationModalOpen: false,
-    isWelcomeModalOpen: false
+    isWelcomeModalOpen: true
 }
 
 export function authorizationReducer(state: TAuthorizationState = initialState, action: TAuthorizationAction) {
@@ -16,15 +17,16 @@ export function authorizationReducer(state: TAuthorizationState = initialState, 
 
         case SET_IS_WELCOME_MODAL_OPEN:
             const isWelcomeModalOpen = action.payload as boolean;
-            return {...initialState, isWelcomeModalOpen: isWelcomeModalOpen}
+            return {...state, isWelcomeModalOpen: isWelcomeModalOpen}
 
         case SET_IS_LOGIN_MODAL_OPEN:
             const isLoginModalOpen = action.payload as boolean;
-            return {...initialState, isLoginModalOpen: isLoginModalOpen}
-
+            return {...state, isLoginModalOpen: isLoginModalOpen}
         case SET_IS_REGISTRATION_MODAL_OPEN:
             const isRegistrationModalOpen = action.payload as boolean;
-            return {...initialState, isRegistrationModalOpen: isRegistrationModalOpen}
+            return {...state, isRegistrationModalOpen: isRegistrationModalOpen}
+        case LOGOUT:
+            return {isWelcomeModalOpen: true, isLoginModalOpen: false, isRegistrationModalOpen: false}
 
         default:
             return state;

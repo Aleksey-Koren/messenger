@@ -3,52 +3,26 @@ import './App.css';
 import Messenger from "./components/messenger/Messenger";
 import {createTheme, ThemeProvider} from "@mui/material";
 import 'react-perfect-scrollbar/dist/css/styles.css';
+import * as yup from "yup";
+import {validate} from 'uuid';
+
+yup.addMethod(yup.string, "uuid", function (errorMessage) {
+  return this.test(`test-card-type`, errorMessage, function (value) {
+    const { path, createError } = this;
+
+    return (
+        validate(value as string) ||
+        createError({ path, message: errorMessage })
+    );
+  });
+});
+
 
 
 function App() {
   const theme = createTheme({
     palette: {
-      primary: {
-        main: '#60ad60',
-      },
-      secondary: {
-        main: '#fec720'
-      },
-      background: {
-        default: "#262424",
-        paper: "#262424"
-      }
-    },
-    typography: {
-      button: {
-        textTransform: "none",
-        color: '#60ad60',
-
-      }
-    },
-    components: {
-      MuiButton: {
-        defaultProps: {
-          color: "secondary"
-        }
-      },
-      MuiPaper: {
-        defaultProps: {
-          style: {
-            border: "1px solid #60ad60",
-          }
-        }
-      },
-      MuiDialogTitle: {
-        defaultProps: {
-          color: "primary"
-        }
-      },
-      MuiTypography: {
-        defaultProps: {
-          color: "primary"
-        }
-      },
+      mode: 'dark',
     }
   });
 

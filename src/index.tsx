@@ -13,7 +13,7 @@ import {messengerMenuReducer} from "./redux/messenger-menu/messengerMenuReducer"
 import {messengerControlsReducer} from "./redux/messenger-controls/messengerControlsReducer";
 
 const reducers = combineReducers({
-    authorization: authorizationReducer,
+    authorizationReducer: authorizationReducer,
     errorPopup: errorPopupReducer,
     messenger: messengerReducer,
     messengerMenu: messengerMenuReducer,

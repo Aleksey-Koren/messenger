@@ -5,6 +5,7 @@ import style from "./RegistrationModal.module.css";
 import globalStyles from '../../../global-styles/ModalWindow.module.css'
 import {AppState} from "../../../index";
 import {setIsRegistrationModalOpen} from "../../../redux/authorization/authorizationActions";
+import {authorizationReducer} from "../../../redux/authorization/authorizationReducer";
 
 
 const RegistrationModal: React.FC<Props> = (props) => {
@@ -41,18 +42,23 @@ const RegistrationModal: React.FC<Props> = (props) => {
             </DialogContent>
 
             <DialogActions className={style.dialog__actions}>
-                <Button  onClick={() => props.setIsRegistrationModalOpen(false)}>I save it, go to the chats</Button>
+                <Button  onClick={() => {
+                    props.setIsRegistrationModalOpen(false)
+                }}>I save it, go to the chats</Button>
             </DialogActions>
         </Dialog>
     );
 }
 
-const mapStateToProps = (state: AppState) => ({
-    isOpen: state.authorization.isRegistrationModalOpen,
-    userId: state.messenger.user?.id,
-    publicKey: state.messenger.user?.publicKey,
-    privateKey: state.messenger.user?.privateKey
-})
+const mapStateToProps = (state: AppState) => {
+    const user = state.messenger.user;
+    return {
+        isOpen: state.authorizationReducer.isRegistrationModalOpen,
+        userId: user?.id,
+        publicKey: user?.publicKey,
+        privateKey: user?.privateKey
+    }
+}
 
 const mapDispatchToProps = {
     setIsRegistrationModalOpen

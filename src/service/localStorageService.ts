@@ -1,5 +1,4 @@
 import {User} from "../model/user";
-import {Builder} from "builder-pattern";
 import {LocalStorageUser} from "../model/localStorageUser";
 
 export class LocalStorageService {
@@ -25,13 +24,12 @@ export class LocalStorageService {
         }
         try {
             const parsedLocalStorageData = JSON.parse(localStorageData!) as { user: LocalStorageUser }
-
-            return Builder(User)
-                .id(parsedLocalStorageData.user?.id!)
-                .publicKey(new Uint8Array(parsedLocalStorageData.user?.publicKey!))
-                .privateKey(new Uint8Array(parsedLocalStorageData.user?.privateKey!))
-                .title(parsedLocalStorageData.user.title!)
-                .build();
+            return {
+                id: parsedLocalStorageData.user?.id!,
+                publicKey: new Uint8Array(parsedLocalStorageData.user?.publicKey!),
+                privateKey: new Uint8Array(parsedLocalStorageData.user?.privateKey!),
+                title: parsedLocalStorageData.user.title!
+            }
         } catch (e) {
             console.error(e);
             return null;

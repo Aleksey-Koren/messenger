@@ -1,15 +1,3 @@
-.MuiInput-input {
-    color: #60ad60 !important;
-}
-.MuiInput-input:focus {
-    color: #fec720 !important;;
-}
-.MuiInput-underline::before {
-    border-bottom: 2px solid #60ad60 !important;
-}
-.MuiInput-underline:hover::after {
-    border-bottom: 2px solid #fec720 !important;
-}
 html, body, #root {
     height: 100%
 }

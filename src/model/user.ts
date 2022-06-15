@@ -1,6 +1,6 @@
-export class User {
-    id: string | null = null;
-    publicKey: Uint8Array | null = null;
-    privateKey: Uint8Array | null = null;
-    title: string | null = null;
+export interface User {
+    id: string;
+    publicKey: Uint8Array;
+    privateKey?: Uint8Array;
+    title?: string;
 }

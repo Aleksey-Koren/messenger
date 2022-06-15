@@ -8,9 +8,11 @@ import {AppState} from "../../index";
 import {ThunkDispatch} from "redux-thunk";
 import {Action} from "redux";
 import {MessageApi} from "../../api/messageApi";
-import {fetchMessengerStateTF, setCurrentChat} from "../messenger/messengerActions";
-import {MessageService} from "../../service/messageService";
+import { setCurrentChat} from "../messenger/messengerActions";
 import {setErrorPopupState} from "../error-popup/errorPopupActions";
+import {MessageType} from "../../model/messageType";
+import {Message} from "../../model/message";
+import {setIsMembersModalOpened} from "../messenger-menu/messengerMenuActions";
 
 export function setIsNewPrivateModalOpened(isOpened: boolean): IPlainDataAction<boolean> {
     return {
@@ -37,11 +39,21 @@ export function createNewRoomTF(title: string) {
 
     return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
         const user = getState().messenger.user;
-        MessageApi.sendMessageToMyself(MessageService.prepareHello(user!, user?.id!, title), user?.publicKey!)
-            .then((message) => {
-                dispatch(setCurrentChat({id: message.chat, title: message.data}));
-                dispatch(fetchMessengerStateTF(user!));
+        if(!user) {
+            throw new Error("User not logged in");
+        }
+        const users = getState().messenger.users;
+        MessageApi.sendMessages([{
+            type: MessageType.hello,
+            sender: user.id!,
+            receiver: user.id!,
+            data: title
+        } as Message], users)
+            .then((messages) => {
+                const message = messages[0];
+                dispatch(setCurrentChat(message.chat));
                 dispatch(setIsNewPrivateModalOpened(false));
+                dispatch(setIsMembersModalOpened(true));
             }).catch(err => {
             console.error(err)
             dispatch(setErrorPopupState(true, 'Something went wrong. Try again'))

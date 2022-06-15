@@ -1,9 +1,6 @@
-import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid/Grid';
 import List from '@mui/material/List';
-import ListItemText from '@mui/material/ListItemText/ListItemText';
-import Paper from '@mui/material/Paper/Paper';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import style from './Messenger.module.css'
 import {connect, ConnectedProps, useDispatch} from "react-redux";
 import MessengerFooter from "./footer/MessengerFooter";
@@ -15,39 +12,42 @@ import {AppState} from "../../index";
 import {setIsWelcomeModalOpen} from "../../redux/authorization/authorizationActions";
 import ErrorPopup from "../error-popup/ErrorPopup";
 import {setErrorPopupState} from "../../redux/error-popup/errorPopupActions";
-import {SchedulerService} from "../../service/schedulerService";
-import {User} from "../../model/user";
-import {Builder} from 'builder-pattern';
-import {openChatTF, setCurrentChat, setUser} from "../../redux/messenger/messengerActions";
-import CreateNewPublicButton from "./new-public/CreateNewPublicButton";
-import EditUserTitleButton from "./edit-user-title/EditUserTitleButton";
+import {fetchMessengerStateTF, openChatTF, setCurrentChat, setUser} from "../../redux/messenger/messengerActions";
 import MessengerModalWindows from "./modal-windows/MessengerModalWindows";
-import {LocalStorageService} from "../../service/localStorageService";
-import {Chat} from "../../model/chat";
-import {Box, ListSubheader, Typography} from "@mui/material";
+import {Box, Typography} from "@mui/material";
 import PerfectScrollbar from 'react-perfect-scrollbar'
+import {LocalStorageService} from "../../service/localStorageService";
+import {SchedulerService} from "../../service/schedulerService";
+import {Chat} from "../../model/chat";
 
 
-interface LocalStorageUser {
-    id: string,
-    publicKey: number[],
-    privateKey: number[],
-    title: string
+const scrollContext: { container: HTMLElement | null, scrolled: boolean, charged: boolean } = {
+    container: null,
+    scrolled: false,
+    charged: false
 }
 
 const Messenger: React.FC<TProps> = (props) => {
-    const [messageText, setMessageText] = useState<string>('');
     const dispatch = useDispatch();
 
     useEffect(() => {
         const user = LocalStorageService.retrieveUserFromLocalStorage();
         if (user && !SchedulerService.isSchedulerStarted()) {
             props.setUser(user);
-            SchedulerService.startScheduler(dispatch, user);
-        } else if(!user) {
-            props.setIsWelcomeModalOpen(true)
+
+            SchedulerService.startScheduler(dispatch);
+            dispatch(fetchMessengerStateTF(user.id));
+            props.setIsWelcomeModalOpen(false)
+        }
+        if (scrollContext.charged) {
+            scrollContext.charged = false;
+            setTimeout(function () {
+                scrollContext.container?.scroll({top: scrollContext.container?.scrollHeight})
+            }, 50);
         }
     });
+
+    const currentChat = props.chats[props.currentChat] || {};
 
     return (
         <div className={style.wrapper}>
@@ -58,13 +58,7 @@ const Messenger: React.FC<TProps> = (props) => {
                     </div>
                     <List className={style.room_list}>
                         <PerfectScrollbar>
-                            {props.chats?.map(chat => (
-                                <ListItemButton key={chat.id} className={style.room_button}
-                                                onClick={() => props.openChatTF(chat)}>
-                                    <div className={chat.id === props.currentChat?.id ? style.chat_selected : style.chat_unselected}>&nbsp;</div>
-                                    <ListItemText>{chat.title}<span className={style.unread_count}>0</span></ListItemText>
-                                </ListItemButton>
-                            ))}
+                            {renderChats(props.chats, props.openChatTF, props.currentChat)}
                         </PerfectScrollbar>
                     </List>
                 </Grid>
@@ -72,16 +66,22 @@ const Messenger: React.FC<TProps> = (props) => {
                     <div style={{display: 'flex', flexDirection: "column", height: '100%'}}>
                         <div className={style.room_title_container}>
                             <Box style={{flex: 1}}>
-                                <Typography variant={"h5"} fontWeight={"bold"} align={"center"} style={{padding: '10 0', color: '#fec720'}}>{props.currentChat?.title}</Typography>
+                                <Typography color={'primary'} variant={"h5"} fontWeight={"bold"} align={"center"} style={{
+                                    padding: '10 0',
+                                }}>{currentChat.title}</Typography>
                             </Box>
                             <MessengerMenu/>
                         </div>
 
                         <div style={{flex: 1, overflow: 'hidden', padding: '15px 0'}}>
-                            <MessagesList/>
+                            <MessagesList updateScroll={(container) => {
+                                scrollContext.scrolled = container.scrollTop + container.offsetHeight + 20 < container.scrollHeight;
+                            }}
+                                          setScroll={(container) => scrollContext.container = container}
+                                          scroll={scrollTo}/>
                         </div>
-                        <div style={{margin: 'auto 15px 0' , height: 120}}>
-                            <MessengerFooter messageText={messageText} setMessageText={setMessageText}/>
+                        <div style={{margin: 'auto 15px 0', height: 120}}>
+                            <MessengerFooter currentChat={props.currentChat} scroll={scrollTo}/>
                         </div>
                     </div>
                 </Grid>
@@ -93,11 +93,34 @@ const Messenger: React.FC<TProps> = (props) => {
     );
 }
 
+function renderChats(chats:{[key:string]:Chat}, openChat:(chat:Chat) => void, currentChat:string|null) {
+    const out = [];
+    for(let key in chats) {
+        let chat = chats[key];
+            out.push(<ListItemButton key={chat.id} className={style.room_button}
+                            onClick={() => openChat(chat)}>
+                <div
+                    className={chat.id === currentChat ? style.chat_selected : style.chat_unselected}>&nbsp;</div>
+                <Typography color={'primary'}>
+                    {chat.title}
+                    {/*<span className={style.unread_count}>0</span>*/}
+                </Typography>
+            </ListItemButton>);
+    }
+    return out;
+}
+
+function scrollTo(force: boolean) {
+    if (force || !scrollContext.scrolled) {
+        scrollContext.charged = true;
+    }
+}
+
 
 const mapStateToProps = (state: AppState) => ({
     chats: state.messenger.chats,
     messages: state.messenger.messages,
-    currentChat: state.messenger.currentChat,
+    currentChat: state.messenger.currentChat || '',
     chatParticipants: state.messenger.users,
     user: state.messenger.user
 })

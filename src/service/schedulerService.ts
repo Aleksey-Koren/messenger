@@ -1,20 +1,17 @@
 import {Dispatch} from "redux";
 
-import {fetchMessengerStateTF} from "../redux/messenger/messengerActions";
-import {User} from "../model/user";
+import {fetchMessagesTF} from "../redux/messenger/messengerActions";
 
 export class SchedulerService {
     private static timerId: NodeJS.Timer | null = null;
 
-    static startScheduler(dispatch: Dispatch<any>, user: User) {
+    static startScheduler(dispatch: Dispatch<any>) {
         if(SchedulerService.timerId !== null) {
             clearInterval(SchedulerService.timerId);
         }
         SchedulerService.timerId = setInterval(() => {
-            console.log('scheduler')
-            dispatch(fetchMessengerStateTF(user))
+            dispatch(fetchMessagesTF())
         }, 5000);
-        dispatch(fetchMessengerStateTF(user));
     }
 
     static stopScheduler() {

@@ -2,12 +2,12 @@ import {Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField} fr
 import style from "../../../../global-styles/ModalWindow.module.css";
 import {Form, Formik} from "formik";
 import * as yup from "yup";
-import TitleAlreadyExistsModal from "../../new-public/TitleAlreadyExistsModal";
 import {connect, ConnectedProps} from "react-redux";
 import React from "react";
 import {AppState} from "../../../../index";
 import {setIsEditRoomTitleModalOpen} from "../../../../redux/messenger-menu/messengerMenuActions";
-import {updateRoomTitle} from "../../../../redux/messenger/messengerActions";
+import {sendMessage} from "../../../../redux/messenger/messengerActions";
+import {MessageType} from "../../../../model/messageType";
 
 const validationSchema = yup.object().shape({
     title: yup.string().required('Title cannot be empty').min(3,)
@@ -15,13 +15,19 @@ const validationSchema = yup.object().shape({
 
 const EditRoomTitleModal: React.FC<Props> = (props) => {
 
+    const chat = props.chats[props.currentChat!] || {};
+
     return (
         <Dialog open={props.isOpen} onClose={() => {
         }} maxWidth={"sm"} fullWidth>
             <DialogTitle className={style.dialog__title}>Enter room title</DialogTitle>
             <Formik
-                initialValues={{title: props.currentChat?.title}}
-                onSubmit={(values) => props.updateRoomTitle(values.title!)}
+                initialValues={{title: chat?.title}}
+                onSubmit={(values) => {
+                    props.sendMessage(values.title!, MessageType.hello, () => {
+                        props.setIsEditRoomTitleModalOpen(false);
+                    })
+                }}
                 validationSchema={validationSchema}
             >
                 {formik => (
@@ -32,8 +38,9 @@ const EditRoomTitleModal: React.FC<Props> = (props) => {
                                     autoFocus margin="none" type="text"
                                     defaultValue={formik.values.title}
                                     onChange={(event) => formik.setFieldValue('title', event.target.value)}
-                                    error={!!formik.errors.title} helperText={formik.errors.title}
-                                    fullWidth variant="standard" placeholder={"Room title"}
+                                    error={!!formik.errors.title}
+                                    helperText={formik.errors.title}
+                                    fullWidth variant="standard"
                                 />
                             </DialogContent>
                             <DialogActions className={style.dialog__actions}>
@@ -51,11 +58,12 @@ const EditRoomTitleModal: React.FC<Props> = (props) => {
 const mapStateToProps = (state: AppState) => ({
     isOpen: state.messengerMenu.isEditRoomTitleModalOpen,
     currentChat: state.messenger.currentChat,
+    chats: state.messenger.chats
 })
 
 const mapDispatchToProps = {
     setIsEditRoomTitleModalOpen,
-    updateRoomTitle
+    sendMessage
 }
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

@@ -1,14 +1,9 @@
-.dialog__title {
-    background: #262424;
-    color: #60ad60;
-}
 
 .dialog__content {
     background: #262424;
 }
 
 .dialog__content_text {
-    color: white !important;
     margin-top: 15px !important;
 }
 
@@ -19,12 +14,3 @@
     background: #262424;
 }
 
-.dialog__actions button {
-    color: #fec720;
-    width: 100px;
-    border: 1px dashed #fec720;
-}
-
-.dialog__actions button:hover {
-    border-style: solid;
-}

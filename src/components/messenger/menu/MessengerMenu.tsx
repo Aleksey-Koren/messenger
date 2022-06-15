@@ -1,23 +1,21 @@
 import {IconButton, Menu, MenuItem} from "@mui/material";
 import React, {useState} from "react";
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import EditIcon from '@mui/icons-material/Edit';
 import Groups from '@mui/icons-material/Groups';
-import PersonAdd from '@mui/icons-material/PersonAdd';
-import ListIcon from '@mui/icons-material/List';
+import MenuIcon from '@mui/icons-material/Menu';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
-import Divider from "@mui/material/Divider";
-import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import {IPlainDataAction} from "../../../redux/redux-types";
-import {useAppDispatch, useAppSelector} from "../../../index";
+import {AppState, useAppDispatch} from "../../../index";
 import {setIsEditRoomTitleModalOpen} from "../../../redux/messenger-menu/messengerMenuActions";
-import {setIsAddUserModalOpened, setIsMembersModalOpened} from "../../../redux/messenger-menu/messengerMenuActions";
+import { setIsMembersModalOpened} from "../../../redux/messenger-menu/messengerMenuActions";
 import CreateNewPublicButton from "../new-public/CreateNewPublicButton";
 import EditUserTitleButton from "../edit-user-title/EditUserTitleButton";
 import IconedButton from "../../button/IconedButton";
+import {connect} from "react-redux";
+import {logout} from "../../../redux/authorization/authorizationActions";
 
 
-function MessengerMenu() {
+function MessengerMenu(props:{chatSelected?:boolean}) {
     const [anchorEl, setAnchorEl] = useState(null);
     const dispatch = useAppDispatch();
 
@@ -29,7 +27,7 @@ function MessengerMenu() {
     return (
         <div style={{marginLeft: "auto"}}>
             <IconButton color={"secondary"} onClick={(event: any) => setAnchorEl(event.currentTarget)}>
-                <MoreVertIcon/>
+                <MenuIcon color="primary" />
             </IconButton>
             <Menu
                 anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}
@@ -40,29 +38,24 @@ function MessengerMenu() {
             >
 
                     <div>
-                        <MenuItem>
+                        {props.chatSelected && <MenuItem>
                             <EditUserTitleButton/>
-                        </MenuItem>
-                        <MenuItem>
+                        </MenuItem>}
+                        {props.chatSelected && <MenuItem>
                             <IconedButton onClick={() => onMenuItemClick(setIsEditRoomTitleModalOpen)}
                                           icon={<EditIcon style={{marginRight: '10px'}} fontSize={"medium"}/>}
                                           text={"Rename Room"}/>
-                        </MenuItem>
-                        <MenuItem>
-                            <IconedButton onClick={() => onMenuItemClick(setIsAddUserModalOpened)}
-                                          icon={<PersonAdd fontSize={'medium'} style={{marginRight: '10px'}}/>}
-                                          text={"Add members"}/>
-                        </MenuItem>
-                        <MenuItem>
+                        </MenuItem>}
+                        {props.chatSelected && <MenuItem>
                             <IconedButton onClick={() => onMenuItemClick(setIsMembersModalOpened)}
                                           icon={<Groups style={{marginRight: '10px'}} fontSize={"medium"}/>}
                                           text={"Members"}/>
-                        </MenuItem>
+                        </MenuItem>}
                         <MenuItem>
                             <CreateNewPublicButton/>
                         </MenuItem>
                         <MenuItem>
-                            <IconedButton onClick={() => onMenuItemClick(setIsMembersModalOpened)}
+                            <IconedButton onClick={() => onMenuItemClick(logout)}
                                           icon={<ExitToAppIcon style={{marginRight: '10px'}} fontSize={"medium"}/>}
                                           text={"Logout"}/>
                         </MenuItem>
@@ -87,4 +80,12 @@ function MessengerMenu() {
     );
 }
 
-export default MessengerMenu;
+
+const mapStateToProps = (state: AppState) => ({
+    chatSelected: !!state.messenger.currentChat,
+})
+
+const connector = connect(mapStateToProps, null);
+
+
+export default connector(MessengerMenu);

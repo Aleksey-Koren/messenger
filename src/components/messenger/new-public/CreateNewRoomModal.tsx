@@ -37,7 +37,7 @@ const CreateNewRoomModal: React.FC<TProps> = (props) => {
                                         defaultValue={formik.values.title}
                                         onChange={(event) => formik.setFieldValue('title', event.target.value)}
                                         error={!!formik.errors.title} helperText={formik.errors.title}
-                                        fullWidth variant="standard" placeholder={"Room title"}
+                                        fullWidth variant="standard"
                                     />
                                 </DialogContent>
                                 <DialogActions className={style.dialog__actions}>

@@ -7,6 +7,7 @@ import {AppState} from "../../../index";
 import {authenticateTF, setIsWelcomeModalOpen} from "../../../redux/authorization/authorizationActions";
 import {Field, Form, Formik} from "formik";
 import * as Yup from 'yup';
+import {authorizationReducer} from "../../../redux/authorization/authorizationReducer";
 
 const LoginModal: React.FC<Props> = (props) => {
 
@@ -24,14 +25,13 @@ const LoginModal: React.FC<Props> = (props) => {
             <Formik
                 initialValues={{id: '', pKey: ''}}
                 validationSchema={loginSchema}
-                onSubmit={() => {}}
+                onSubmit={(values) => props.authenticateTF(values.id, values.pKey)}
                 validateOnChange
             >
                 {formik => (
                     <Form>
                         <DialogContent className={globalStyles.dialog__content}>
                             <div className={style.dialog__content_container}>
-                                <h2>d2577569-b349-40ef-a860-533d377551ea</h2>
                                 <Tooltip
                                     title={formik.errors.id ? `${formik.errors.id}` : ''}
                                     open={!!formik.errors.id && !!formik.touched.id}
@@ -44,7 +44,6 @@ const LoginModal: React.FC<Props> = (props) => {
                                                className={style.dialog__input_field} placeholder={"Your id"}/>
                                     </div>
                                 </Tooltip>
-                                <h2>120,84,12,124,175,130,237,207,107,9,186,44,132,37,154,250,61,240,84,18,171,97,251,4,176,244,140,176,182,204,255,58</h2>
                                 <Tooltip
                                     title={formik.errors.pKey ? `${formik.errors.pKey}` : ''}
                                     open={!!formik.errors.pKey && !!formik.touched.pKey}
@@ -64,7 +63,6 @@ const LoginModal: React.FC<Props> = (props) => {
                             <Button onClick={() => props.setIsWelcomeModalOpen(true)}>Back</Button>
                             <Button type={"submit"}
                                     disabled={!formik.isValid}
-                                    onClick={() => props.authenticateTF(formik.values.id, formik.values.pKey)}
                             >
                                 Login
                             </Button>
@@ -78,7 +76,7 @@ const LoginModal: React.FC<Props> = (props) => {
 }
 
 const mapStateToProps = (state: AppState) => ({
-    isOpen: state.authorization.isLoginModalOpen
+    isOpen: state.authorizationReducer.isLoginModalOpen
 })
 
 const mapDispatchToProps = {
