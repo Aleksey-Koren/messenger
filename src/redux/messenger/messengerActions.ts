@@ -1,4 +1,12 @@
-import {IMessengerStateOpt, SET_CHATS, SET_CURRENT_CHAT, SET_MESSAGES, SET_USER, SET_USERS} from "./messengerTypes";
+import {
+    IMessengerStateOpt,
+    SET_CHATS,
+    SET_CURRENT_CHAT,
+    SET_MESSAGES,
+    SET_USER,
+    SET_USER_TITLE,
+    SET_USERS
+} from "./messengerTypes";
 import {IPlainDataAction} from "../redux-types";
 import {User} from "../../model/user";
 import {AppDispatch, AppState} from "../../index";
@@ -10,10 +18,11 @@ import {CustomerService} from "../../service/customerService";
 import {Action} from "redux";
 import {ThunkDispatch} from "redux-thunk";
 import {MessageType} from "../../model/messageType";
-import {setErrorPopupState} from "../error-popup/errorPopupActions";
 import {setIsEditUserTitleModalOpen} from "../messenger-controls/messengerControlsActions";
 import {CustomerApi} from "../../api/customerApi";
 import {CryptService} from "../../service/cryptService";
+import Notification from "../../Notification";
+import {MessageMapper} from "../../mapper/messageMapper";
 
 export function setUser(user: User): IPlainDataAction<IMessengerStateOpt> {
 
@@ -44,7 +53,7 @@ export function setUsers(users: {[key:string]:User}, currentChat:string): IPlain
     }
 }
 
-export function setCurrentChat(chatId: string): IPlainDataAction<IMessengerStateOpt> {
+export function setCurrentChat(chatId: string|null): IPlainDataAction<IMessengerStateOpt> {
     return {
         type: SET_CURRENT_CHAT,
         payload: {
@@ -59,6 +68,14 @@ export function setMessages(messages: Message[]): IPlainDataAction<IMessengerSta
         type: SET_MESSAGES,
         payload: {
             messages: messages
+        }
+    }
+}
+export function setUserTitle(title: string): IPlainDataAction<IMessengerStateOpt> {
+    return {
+        type: SET_USER_TITLE,
+        payload: {
+            user:  {title: title, id: '', publicKey: new Uint8Array()}
         }
     }
 }
@@ -97,7 +114,7 @@ export function sendMessage(messageText: string, messageType:MessageType, callba
                 callback();
                 return response;
             })
-            .catch(() => dispatch(setErrorPopupState(true, 'Message not sent. Try again.')));
+            .catch((e) => Notification.add({severity: 'error', message: 'Message not sent', error: e}));
     }
 }
 
@@ -116,62 +133,7 @@ export function fetchMessagesTF() {
             receiver: currentUser.id!,
             chat: currentChat!
         }, users).then(messagesResp => {
-            const chatMessages:Message[] = [];
-            let usersUpdated = false;
-            if(currentUser === null) {
-                console.error("current user is null")
-                return;
-            }
-            const chats = getState().messenger.chats;
-            let chatsUpdated = false;
-            messagesResp.forEach(message => {
-                switch (message.type) {
-                    case MessageType.hello:
-                        if(chats[message.chat] && message.data) {
-                            chatsUpdated = true;
-                            chats[message.chat].title = message.data;
-                        }
-                        break;
-                    case MessageType.whisper:
-                        chatMessages.push(message);
-                        break;
-                    case MessageType.iam:
-                        usersUpdated = true;
-                        const mappedUser = {
-                            id: message.sender,
-                            title: message.data,
-                            publicKey: users[message.sender].publicKey
-                        }
-                        users[mappedUser.id!] = mappedUser;
-                        if(mappedUser.id === currentUser?.id!) {
-                            currentUser = {...currentUser, title: mappedUser.title} as User;
-                            setUser(currentUser)
-                        }
-                        users = {...users};
-                        chatMessages.push(message)
-                        break;
-                    case MessageType.who:
-                        if(message.sender === currentUser?.id) {
-                            break;
-                        }
-                        if(message.receiver !== currentUser?.id) {
-                            break;
-                        }
-                        sendMessage(currentUser?.title || currentUser.id, MessageType.iam, () => {});
-                        break;
-                    default:
-                        throw new Error('Unknown message type: ' + message.type);
-                }
-            })
-            if(chatMessages.length > 0) {
-                dispatch(setMessages(appendMessages(state.messenger.messages, chatMessages)));
-            }
-            if(usersUpdated) {
-                dispatch(setUsers(users, currentChat!));
-            }
-            if(chatsUpdated) {
-                dispatch(setChats({...chats}));
-            }
+            processMessages(dispatch, getState, messagesResp, users, currentUser);
         });
     }
 }
@@ -190,8 +152,6 @@ export function appendMessages(existing:Message[], incoming:Message[]) {
 export function fetchMessengerStateTF(loggedUserId:string) {
 
     return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
-        let chats: Chat[] = [];
-
         const currentUser = getState().messenger.user;
         if(!currentUser) {
             throw new Error("user not logged in");
@@ -202,16 +162,14 @@ export function fetchMessengerStateTF(loggedUserId:string) {
         for(let id in globals) {
             users[id] = {
                 id: globals[id].user,
-                publicKey: CryptService.stringToUint8(globals[id].certificates[0])
+                publicKey: CryptService.base64ToUint8(globals[id].certificates[0])
             }
             if(globals[id].certificates.length > 0) {
                 console.error("too much certs for " + id);
             }
         }
         ChatApi.getChats(loggedUserId).then(chatResp => {
-            chats = chatResp.map<Chat>(chat => ({id: chat.chat!, title: chat.data!}));
-
-            if(chats.length === 0) {
+            if(chatResp.length === 0) {
                 return;
             }
 
@@ -231,12 +189,20 @@ export function fetchMessengerStateTF(loggedUserId:string) {
                 });
                 return null;
             }).then(() => {
-                return chatResp.map<Chat>(chat => {
-                    if(users[chat.sender]) {
-                        return {id: chat.chat!, title: CryptService.decrypt(chat, users[chat.sender].publicKey)}
-                    } else {
-                        return {id: chat.chat!, title: chat.chat!}
+                return chatResp.map<Chat>(chatDto => {
+                    if(users[chatDto.sender]) {
+                        try {
+                            const chat = MessageMapper.toEntity(chatDto, users[chatDto.sender]);
+                            return {
+                                id: chat.chat!,
+                                title: chat.data!,
+                                confirmed: false,
+                            }
+                        } catch (e) {
+                            Notification.add({message: 'Fail to decrypt chat title', severity: 'error', error: e})
+                        }
                     }
+                    return {id: chatDto.chat!, title: chatDto.chat!, confirmed: false}
                 });
             }).then(chats => {
                 const currentChat = chats[0];
@@ -250,13 +216,12 @@ export function fetchMessengerStateTF(loggedUserId:string) {
                     }, {} as {[key:string]:User});
 
                     return MessageApi.getMessages({
-                        type: MessageType.hello,
-                        receiver: currentUser.id!,
+                        type: MessageType.iam,
+                        receiver: currentUser.id,
                         chat: currentChat.id
                     }, users).then(knownParticipants => {
 
                         CustomerService.processParticipants(allParticipants, knownParticipants, currentChat, loggedUserId);
-
                         dispatch(setChats(chats.reduce((prev, next) => {
                             prev[next.id] = next;
                             return prev;
@@ -271,6 +236,74 @@ export function fetchMessengerStateTF(loggedUserId:string) {
             })
 
         })
+    }
+}
+
+function processMessages(dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState, messages: Message[], users: { [p: string]: User }, currentUser: User | null) {
+    const chatMessages:Message[] = [];
+    let usersUpdated = false;
+    if(currentUser === null) {
+        console.error("current user is null")
+        return;
+    }
+    const state = getState();
+    const currentChat = state.messenger.currentChat;
+    const chats = state.messenger.chats;
+    let chatsUpdated = false;
+    messages.forEach(message => {
+        switch (message.type) {
+            case MessageType.HELLO:
+                if(!chats[message.chat]) {
+                    chats[message.chat] = {
+                        id: message.chat,
+                        title: message.data as string,
+                        confirmed: false
+                    }
+                    chatsUpdated = true;
+                } else if(chats[message.chat] && message.data) {
+                    chatsUpdated = true;
+                    chats[message.chat].title = message.data;
+                }
+                break;
+            case MessageType.whisper:
+                chatMessages.push(message);
+                break;
+            case MessageType.iam:
+                usersUpdated = true;
+                const mappedUser = {
+                    id: message.sender,
+                    title: message.data,
+                    publicKey: users[message.sender].publicKey
+                }
+                users[mappedUser.id!] = mappedUser;
+                if(mappedUser.id === currentUser?.id!) {
+                    currentUser = {...currentUser, title: mappedUser.title} as User;
+                    dispatch(setUser(currentUser))
+                }
+                users = {...users};
+                chatMessages.push(message)
+                break;
+            case MessageType.who:
+                if(message.sender === currentUser?.id) {
+                    break;
+                }
+                if(message.receiver !== currentUser?.id) {
+                    break;
+                }
+                dispatch(sendMessage(currentUser?.title || currentUser.id, MessageType.iam, () => {}));
+                break;
+            default:
+                throw new Error('Unknown message type: ' + message.type);
+        }
+    })
+    if(usersUpdated) {
+        dispatch(setUsers(users, currentChat!));
+    }
+    if(chatsUpdated) {
+        dispatch(setChats({...chats}));
+    }
+    if(chatMessages.length > 0) {
+        dispatch(setMessages(appendMessages(state.messenger.messages, chatMessages)));
     }
 }
 
@@ -303,7 +336,7 @@ export function updateUserTitle(title: string) {
                 dispatch(setIsEditUserTitleModalOpen(false));
                 dispatch(setMessages(appendMessages(getState().messenger.messages, response.filter(message => message.receiver === user.id))));
             })
-            .catch(() => dispatch(setErrorPopupState(true, 'Fail to update user title')));
+            .catch((e) => Notification.add({message: 'Fail to update user title', error: e, severity: "error"}));
     }
 }
 

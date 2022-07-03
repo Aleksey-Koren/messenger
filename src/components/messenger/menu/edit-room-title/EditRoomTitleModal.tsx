@@ -18,13 +18,13 @@ const EditRoomTitleModal: React.FC<Props> = (props) => {
     const chat = props.chats[props.currentChat!] || {};
 
     return (
-        <Dialog open={props.isOpen} onClose={() => {
+        <Dialog open={true} onClose={() => {
         }} maxWidth={"sm"} fullWidth>
             <DialogTitle className={style.dialog__title}>Enter room title</DialogTitle>
             <Formik
                 initialValues={{title: chat?.title}}
                 onSubmit={(values) => {
-                    props.sendMessage(values.title!, MessageType.hello, () => {
+                    props.sendMessage(values.title!, MessageType.HELLO, () => {
                         props.setIsEditRoomTitleModalOpen(false);
                     })
                 }}
@@ -56,7 +56,6 @@ const EditRoomTitleModal: React.FC<Props> = (props) => {
 }
 
 const mapStateToProps = (state: AppState) => ({
-    isOpen: state.messengerMenu.isEditRoomTitleModalOpen,
     currentChat: state.messenger.currentChat,
     chats: state.messenger.chats
 })

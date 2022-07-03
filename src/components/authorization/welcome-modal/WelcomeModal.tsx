@@ -1,14 +1,13 @@
 import {Button, Dialog, DialogActions, DialogTitle} from "@mui/material";
 import style from "./WelcomeModal.module.css";
 import React from "react";
-import {AppState, useAppSelector} from "../../../index";
+import {AppState} from "../../../index";
 import {
     registerTF,
-    setIsLoginModalOpen, setIsRegistrationModalOpen,
+    setIsLoginModalOpen,
     setIsWelcomeModalOpen
 } from "../../../redux/authorization/authorizationActions";
-import {connect, ConnectedProps, useDispatch} from "react-redux";
-import {authorizationReducer} from "../../../redux/authorization/authorizationReducer";
+import {connect, useDispatch} from "react-redux";
 
 interface WelcomeModalProps {
     isOpen?: boolean,
@@ -53,6 +52,5 @@ const mapStateToProps = (state: AppState) => {
 
 const connector = connect(mapStateToProps);
 
-type Props = ConnectedProps<typeof connector>;
 
 export default connector(WelcomeModal);

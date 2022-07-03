@@ -2,23 +2,30 @@ import {Message} from "../model/message";
 import {MessageDto} from "../dto/messageDto";
 import {CryptService} from "../service/cryptService";
 import {User} from "../model/user";
-import {toByteArray} from "base64-js";
+import {store} from "../index";
 
 export class MessageMapper {
 
     static toEntity(dto: MessageDto, sender:User):Message {
-        const message = {
+        const message:Message = {
             id: dto.id,
             sender: dto.sender,
             receiver: dto.receiver,
-            chat: dto.chat,
+            chat: dto.chat!,
             type: dto.type,
-            created: dto.created,
-            nonce: dto.nonce ? toByteArray(dto.nonce!) : null
-        } as Message;
+            created: new Date(dto.created!),
+            nonce: dto.nonce ? CryptService.base64ToUint8(dto.nonce!) : undefined,
+            decrypted: false
+        };
 
         if(dto.data) {
-            message.data = CryptService.decrypt(dto, sender.publicKey);
+            message.data = dto.data;
+            try {
+                MessageMapper.decryptMessage(message, sender.publicKey);
+                message.decrypted = true;
+            } catch (e) {
+                message.decrypted = false;
+            }
         }
         return message;
     }
@@ -34,10 +41,28 @@ export class MessageMapper {
         } as MessageDto;
 
         if(message.data) {
-            const data = CryptService.encrypt(message, receiver.publicKey);
-            dto.data = data.data;
-            dto.nonce = data.nonce;
+            const data = CryptService.encrypt(CryptService.plainStringToUint8(message.data), receiver.publicKey);
+            dto.data = CryptService.uint8ToBase64(data.data);
+            dto.nonce = CryptService.uint8ToBase64(data.nonce);
         }
         return dto;
+    }
+
+
+    static decryptMessage(message:Message, publicKeyToVerify: Uint8Array, privateKeyToDecrypt?: Uint8Array) {
+        if(!message.data) {
+            return message;
+        }
+        privateKeyToDecrypt = privateKeyToDecrypt || store.getState().messenger.user?.privateKey!;
+        if(!privateKeyToDecrypt) {
+            throw new Error("user not logged in")
+        }
+        message.data = CryptService.decryptToString(
+            CryptService.base64ToUint8(message.data),
+            publicKeyToVerify,
+            message.nonce!,
+            privateKeyToDecrypt
+        ) || undefined;
+        return message;
     }
 }

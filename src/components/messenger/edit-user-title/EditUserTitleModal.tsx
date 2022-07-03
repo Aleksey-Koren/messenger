@@ -13,10 +13,10 @@ const validationSchema = yup.object().shape({
 })
 
 const EditUserTitleModal: React.FC<Props> = (props) => {
-
+    console.log(props);
     return (
-        <Dialog open={props.isOpen} maxWidth={"sm"} fullWidth>
-            <DialogTitle className={style.dialog__title}>Enter user title</DialogTitle>
+        <Dialog open={true} maxWidth={"sm"} fullWidth>
+            <DialogTitle className={style.dialog__title}>Update your name</DialogTitle>
             <Formik
                 initialValues={{title: props.user?.title}}
                 onSubmit={(values) => props.updateUserTitle(values.title!)}
@@ -52,7 +52,6 @@ const EditUserTitleModal: React.FC<Props> = (props) => {
 const mapStateToProps = (state: AppState) => {
     const user = state.messenger.user;
     return {
-        isOpen: state.messengerControls.isEditUserTitleModalOpen,
         user: user,
     }
 }

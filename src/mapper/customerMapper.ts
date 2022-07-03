@@ -9,14 +9,14 @@ export class CustomerMapper {
     static toDto(customer: Customer) {
         return Builder(CustomerDto)
             .id(customer.id)
-            .pk(customer.pk!.join(","))
+            .pk(CryptService.uint8ToBase64(customer.pk!))
             .build()
     }
 
     static toEntity(customer:CustomerDto):User {
         return {
             id: customer.id!,
-            publicKey: CryptService.JSONByteStringToUint8(customer.pk!)
+            publicKey: CryptService.base64ToUint8(customer.pk!)
         }
     }
 }

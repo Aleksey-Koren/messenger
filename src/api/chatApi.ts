@@ -19,4 +19,11 @@ export class ChatApi {
         });
     }
 
+    static quitFromChat(chatId: string, myId:string, data:{data:string, nonce: string}) {
+        return axiosApi.delete(`chats/${chatId}`, {params: {
+            sender: myId,
+            data: data.data,
+            nonce: data.nonce
+        }});
+    }
 }

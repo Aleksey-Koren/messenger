@@ -9,10 +9,10 @@ import {ThunkDispatch} from "redux-thunk";
 import {Action} from "redux";
 import {MessageApi} from "../../api/messageApi";
 import { setCurrentChat} from "../messenger/messengerActions";
-import {setErrorPopupState} from "../error-popup/errorPopupActions";
 import {MessageType} from "../../model/messageType";
 import {Message} from "../../model/message";
 import {setIsMembersModalOpened} from "../messenger-menu/messengerMenuActions";
+import Notification from '../../Notification';
 
 export function setIsNewPrivateModalOpened(isOpened: boolean): IPlainDataAction<boolean> {
     return {
@@ -35,7 +35,7 @@ export function setIsEditUserTitleModalOpen(isOpen: boolean): IPlainDataAction<b
     }
 }
 
-export function createNewRoomTF(title: string) {
+export function createNewRoomTF(title: string, userTitle:string) {
 
     return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
         const user = getState().messenger.user;
@@ -44,10 +44,15 @@ export function createNewRoomTF(title: string) {
         }
         const users = getState().messenger.users;
         MessageApi.sendMessages([{
-            type: MessageType.hello,
+            type: MessageType.HELLO,
             sender: user.id!,
             receiver: user.id!,
             data: title
+        } as Message, {
+            type: MessageType.iam,
+            sender: user.id!,
+            receiver: user.id!,
+            data: userTitle
         } as Message], users)
             .then((messages) => {
                 const message = messages[0];
@@ -56,7 +61,7 @@ export function createNewRoomTF(title: string) {
                 dispatch(setIsMembersModalOpened(true));
             }).catch(err => {
             console.error(err)
-            dispatch(setErrorPopupState(true, 'Something went wrong. Try again'))
+            Notification.add({message: 'Something went wrong.', error: err, severity: 'error'});
         })
     }
 }

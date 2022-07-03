@@ -1,9 +1,9 @@
-import React, {useMemo} from "react";
+import React, {useMemo, useState} from "react";
 import {connect, ConnectedProps, useDispatch} from "react-redux";
 import {
     Button,
     Dialog, DialogActions,
-    DialogContent,
+    DialogContent, DialogContentText, DialogTitle,
     IconButton,
     ListItem,
     ListItemIcon, TextField,
@@ -21,18 +21,22 @@ import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import {AppState, useAppDispatch} from "../../../../index";
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import {
-    addUserToRoomTF,
+    addUserToRoomTF, leaveChatTF,
     setIsMembersModalOpened
 } from "../../../../redux/messenger-menu/messengerMenuActions";
 import {Form, Formik} from "formik";
 import * as yup from "yup";
 import {User} from "../../../../model/user";
+import {CustomerApi} from "../../../../api/customerApi";
+import Notification from '../../../../Notification'
 
 const validationSchema = yup.object().shape({
     id: yup.string().required('User ID cannot be empty').uuid("Not a valid UUID")
 });
 const ParticipantsListModal: React.FC<Props> = (props) => {
+    //const dispatch = useAppDispatch();
     const dispatch = useDispatch();
+    const [deleteConfirm, setDeleteConfirm] = useState<boolean>(false);
     const chatParticipants = useMemo(() => {
         const out:User[] = [];
         for(let key in props.chatParticipants) {
@@ -41,12 +45,12 @@ const ParticipantsListModal: React.FC<Props> = (props) => {
         return out;
     }, [props.chatParticipants])
 
-    return (
-        <Dialog open={props.isOpen} maxWidth="sm" fullWidth>
+    return (<>
+        <Dialog open={true} maxWidth="sm" fullWidth>
             <AppBar classes={{root: style.dialog__app_bar}}>
                 <Toolbar>
                     <Typography variant="h4" component="div" flex={1} mx={3} align={"center"}>
-                        {"Add people to the chat"}
+                        Add people to the chat
                     </Typography>
                     <IconButton onClick={() => dispatch(setIsMembersModalOpened(false))}>
                     <CloseIcon fontSize={'large'} classes={{root: style.dialog__close_icon}}/>
@@ -56,8 +60,14 @@ const ParticipantsListModal: React.FC<Props> = (props) => {
 
             <Formik
                 initialValues={{id: ''}}
-                onSubmit={(values) => {
-                    dispatch(props.addUserToRoomTF(props.user!, props.currentChat!, values.id));
+                onSubmit={(values, formik) => {
+                    return CustomerApi.getCustomer(values.id).then(customer => {
+                        props.addUserToRoomTF(props.user!, customer, values.id);
+                        formik.setFieldValue('id', '', false);
+                    }).catch((e) => {
+                        Notification.add({message: "User not found", severity: 'warning', error: e});
+                        formik.setFieldValue('id', '', false);
+                    });
                 }}
                 validationSchema={validationSchema}
             >
@@ -68,7 +78,7 @@ const ParticipantsListModal: React.FC<Props> = (props) => {
                                 <TextField
                                     autoComplete={"off"}
                                     autoFocus margin="dense" type="text"
-                                    defaultValue={formik.values.id}
+                                    value={formik.values.id}
                                     onChange={(event) => formik.setFieldValue('id', event.target.value)}
                                     error={!!formik.errors.id} helperText={formik.errors.id}
                                     fullWidth variant="standard" placeholder={"User ID"}
@@ -87,8 +97,9 @@ const ParticipantsListModal: React.FC<Props> = (props) => {
                     <ListItem
                         key={member.id}
                         secondaryAction={
-                            <IconButton
+                            member.id === props.user?.id && <IconButton
                                 onClick={() => {
+                                    setDeleteConfirm(true);
                                 }}>
                                 <RemoveCircleIcon color={"error"} />
                             </IconButton>
@@ -110,18 +121,36 @@ const ParticipantsListModal: React.FC<Props> = (props) => {
                 ))}
             </List>
         </Dialog>
+        <Dialog open={deleteConfirm}>
+            <DialogTitle>Confirm your action</DialogTitle>
+            <DialogContent>
+            <DialogContentText>
+                You are about to leave current chat.
+                All your messages will be deleted, and there is no way how to restore them.
+                Are you sure to proceed?
+            </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={() => setDeleteConfirm(false)}>
+                    No
+                </Button>
+                <Button onClick={() => props.leaveChatTF(props.user!, props.currentChat!)}>
+                    Yes
+                </Button>
+            </DialogActions>
+        </Dialog>
+    </>
     );
 }
 
 const mapStateToProps = (state: AppState) => ({
-    isOpen: state.messengerMenu.isMembersModalOpen,
     chatParticipants: state.messenger.users,
     user: state.messenger.user,
     currentChat: state.messenger.currentChat
 })
 
 const mapDispatchToProps = {
-    addUserToRoomTF
+    addUserToRoomTF, leaveChatTF
 }
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

@@ -15,7 +15,7 @@ export class MessageApi {
         })
     }
 
-    static async getMessages(request:{receiver: string, chat: string, created?: Date, type?:MessageType}, users:{[key:string]:User}) {
+    static async getMessages(request:{receiver?: string, chat: string, created?: Date, type?:MessageType}, users:{[key:string]:User}) {
         let dto = (await axiosApi.get<{content: MessageDto[]}>('messages', {
             params: request
         })).data

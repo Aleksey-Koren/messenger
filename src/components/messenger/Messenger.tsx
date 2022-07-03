@@ -10,11 +10,9 @@ import MessengerMenu from "./menu/MessengerMenu";
 import MessengerSelect from "./select/MessengerSelect";
 import {AppState} from "../../index";
 import {setIsWelcomeModalOpen} from "../../redux/authorization/authorizationActions";
-import ErrorPopup from "../error-popup/ErrorPopup";
-import {setErrorPopupState} from "../../redux/error-popup/errorPopupActions";
 import {fetchMessengerStateTF, openChatTF, setCurrentChat, setUser} from "../../redux/messenger/messengerActions";
 import MessengerModalWindows from "./modal-windows/MessengerModalWindows";
-import {Box, Typography} from "@mui/material";
+import {Box, Button, Typography} from "@mui/material";
 import PerfectScrollbar from 'react-perfect-scrollbar'
 import {LocalStorageService} from "../../service/localStorageService";
 import {SchedulerService} from "../../service/schedulerService";
@@ -88,7 +86,6 @@ const Messenger: React.FC<TProps> = (props) => {
             </Grid>
 
             <MessengerModalWindows/>
-            <ErrorPopup autoHideDuration={5000} handlePopupClose={() => props.setErrorPopupState(false)}/>
         </div>
     );
 }
@@ -128,7 +125,6 @@ const mapStateToProps = (state: AppState) => ({
 const mapDispatchToProps = {
     setIsWelcomeModalOpen,
     setCurrentChat,
-    setErrorPopupState,
     setUser,
     openChatTF
 }

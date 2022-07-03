@@ -3,12 +3,13 @@ import {
     SET_CURRENT_CHAT, SET_CHATS, SET_USERS,
     SET_MESSAGES,
     SET_USER,
-    TMessengerAction, SET_PRIVATE_KEY, GlobalUsers
+    TMessengerAction, GlobalUsers, SET_USER_TITLE
 } from "./messengerTypes";
 import {User} from "../../model/user";
 import {CryptService} from "../../service/cryptService";
 import {LOGOUT} from "../authorization/authorizationTypes";
 import {SchedulerService} from "../../service/schedulerService";
+import {LocalStorageService} from "../../service/localStorageService";
 
 
 const initialState: IMessengerState = {
@@ -24,6 +25,10 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
 
     switch (action.type) {
 
+        case SET_USER_TITLE:
+            const user:User = {...state.user!, title: action.payload.user!.title}
+            LocalStorageService.userToStorage(user);
+            return {...state, user: user};
         case SET_MESSAGES:
             return {...state, messages: action.payload.messages};
         case SET_USER: {
@@ -31,6 +36,7 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
             if (!user) {
                 return state;
             }
+            LocalStorageService.userToStorage(user);
             return {...state,
                 user: user,
                 users: {...state.users, [user.id!]: user},
@@ -76,7 +82,7 @@ function touchGlobalUsers(globalUsers:GlobalUsers, usersCache:{[key:string]:User
         const user = usersCache[key];
         let cert;
         try{
-            cert = CryptService.uint8ToString(user.publicKey);
+            cert = CryptService.uint8ToBase64(user.publicKey);
         } catch (e) {
             console.error("fail to convert public key into string")
             cert = '';

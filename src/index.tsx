@@ -7,14 +7,13 @@ import {combineReducers, configureStore} from "@reduxjs/toolkit";
 import thunk from "redux-thunk";
 import promise from "redux-promise-middleware";
 import {authorizationReducer} from "./redux/authorization/authorizationReducer";
-import {errorPopupReducer} from "./redux/error-popup/errorPopupReducer";
 import {messengerReducer} from "./redux/messenger/messengerReducer";
 import {messengerMenuReducer} from "./redux/messenger-menu/messengerMenuReducer";
 import {messengerControlsReducer} from "./redux/messenger-controls/messengerControlsReducer";
+import axios from "axios";
 
 const reducers = combineReducers({
     authorizationReducer: authorizationReducer,
-    errorPopup: errorPopupReducer,
     messenger: messengerReducer,
     messengerMenu: messengerMenuReducer,
     messengerControls: messengerControlsReducer

@@ -17,7 +17,7 @@ const LoginModal: React.FC<Props> = (props) => {
     });
 
     return (
-        <Dialog open={props.isOpen}>
+        <Dialog open={true}>
             <DialogTitle className={globalStyles.dialog__title}>
                 Paste your id and private key
             </DialogTitle>
@@ -76,7 +76,6 @@ const LoginModal: React.FC<Props> = (props) => {
 }
 
 const mapStateToProps = (state: AppState) => ({
-    isOpen: state.authorizationReducer.isLoginModalOpen
 })
 
 const mapDispatchToProps = {

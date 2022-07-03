@@ -6,7 +6,8 @@ export interface Message {
     receiver: string;
     chat: string;
     type: MessageType;
-    data?: string ;
+    data?: string;
     nonce?: Uint8Array;
     created?: Date;
+    decrypted: boolean
 }

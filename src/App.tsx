@@ -5,6 +5,7 @@ import {createTheme, ThemeProvider} from "@mui/material";
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import * as yup from "yup";
 import {validate} from 'uuid';
+import Notification from './Notification';
 
 yup.addMethod(yup.string, "uuid", function (errorMessage) {
   return this.test(`test-card-type`, errorMessage, function (value) {
@@ -28,6 +29,7 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
+      <Notification/>
       <Messenger/>
     </ThemeProvider>
   );

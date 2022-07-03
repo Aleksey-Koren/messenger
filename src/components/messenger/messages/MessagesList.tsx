@@ -8,7 +8,10 @@ import {connect, ConnectedProps} from "react-redux";
 import {MessageType} from "../../../model/messageType";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import {Alert, Button, Paper, Typography} from "@mui/material";
-import {setIsNewRoomModalOpened} from "../../../redux/messenger-controls/messengerControlsActions";
+import {
+    setIsEditUserTitleModalOpen,
+    setIsNewRoomModalOpened
+} from "../../../redux/messenger-controls/messengerControlsActions";
 /*
 const createEditIcon = (message: Message, userId:string) => (
 
@@ -57,14 +60,18 @@ const MessagesList: React.FC<Props> = (props) => {
                                     </Paper>
                                 }
 
-                                {message.type === MessageType.hello &&
+                                {message.type === MessageType.HELLO &&
                                     <div className={style.system_message}>
                                         <span>Room title has been set to '{message.data}'</span>
                                     </div>
                                 }
                                 {message.type === MessageType.iam &&
                                     <div className={style.system_message}>
-                                        <span>User <Uuid data={message.sender}/> now known as {message.data}</span>
+                                        {userId === message.sender
+                                            ? <span>Your name is {message.data}. <Button onClick={() => {
+                                                props.setIsEditUserTitleModalOpen(true);
+                                            }}>Change name</Button></span>
+                                            : <span>User&nbsp;<Uuid data={message.sender}/>&nbsp;now known as {message.data}</span>}
                                     </div>
                                 }
                     </ListItem>
@@ -95,7 +102,7 @@ function TimeSince(props:{time?:Date}) {
         return () => {
             clearInterval(interval);
         }
-    });
+    }, [setTime, props.time]);
     if(time) {
         return <span>{time} ago</span>
     } else {
@@ -144,7 +151,7 @@ const mapStateToProps = (state: AppState, ownState:{setScroll:(div:HTMLElement|n
 })
 
 const mapDispatchToProps = {
-    setIsNewRoomModalOpened
+    setIsNewRoomModalOpened, setIsEditUserTitleModalOpen
 }
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

@@ -21,7 +21,7 @@ interface MessengerFooterProps {
 function MessengerFooter(props: MessengerFooterProps) {
     const dispatch = useDispatch();
     function send(text:string) {
-        dispatch(sendMessage(text, MessageType.whisper, () => props.scroll(false)));
+        return dispatch(sendMessage(text, MessageType.whisper, () => props.scroll(false)));
     }
 
     const validationSchema = Yup.object().shape({
@@ -36,7 +36,10 @@ function MessengerFooter(props: MessengerFooterProps) {
         },
         validationSchema: validationSchema,
         onSubmit: (values) => {
-            send(values.message);
+            //@ts-ignore
+            send(values.message).then(e => {
+                formik.setFieldValue('message', '', false);
+            });
         },
     });
 

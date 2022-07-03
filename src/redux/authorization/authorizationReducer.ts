@@ -26,7 +26,7 @@ export function authorizationReducer(state: TAuthorizationState = initialState, 
             const isRegistrationModalOpen = action.payload as boolean;
             return {...state, isRegistrationModalOpen: isRegistrationModalOpen}
         case LOGOUT:
-            return {isWelcomeModalOpen: true, isLoginModalOpen: false, isRegistrationModalOpen: false}
+            return initialState
 
         default:
             return state;

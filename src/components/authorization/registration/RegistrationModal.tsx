@@ -5,13 +5,12 @@ import style from "./RegistrationModal.module.css";
 import globalStyles from '../../../global-styles/ModalWindow.module.css'
 import {AppState} from "../../../index";
 import {setIsRegistrationModalOpen} from "../../../redux/authorization/authorizationActions";
-import {authorizationReducer} from "../../../redux/authorization/authorizationReducer";
 
 
 const RegistrationModal: React.FC<Props> = (props) => {
 
     return (
-        <Dialog open={props.isOpen}>
+        <Dialog open={true}>
             <DialogTitle className={globalStyles.dialog__title}>
                 Done!
             </DialogTitle>
@@ -53,7 +52,6 @@ const RegistrationModal: React.FC<Props> = (props) => {
 const mapStateToProps = (state: AppState) => {
     const user = state.messenger.user;
     return {
-        isOpen: state.authorizationReducer.isRegistrationModalOpen,
         userId: user?.id,
         publicKey: user?.publicKey,
         privateKey: user?.privateKey
