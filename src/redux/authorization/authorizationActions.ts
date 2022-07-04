@@ -49,7 +49,7 @@ export function authenticateTF(id: string, privateKeyStr: string) {
         CustomerApi.getCustomer(id)
             .then(user => {
                 const publicKey = user.publicKey!;
-                const privateKey = CryptService.base64ToUint8(privateKeyStr);
+                const privateKey = CryptService.JSONByteStringToUint8(privateKeyStr);
                 if (AuthorizationService.areKeysValid(publicKey, privateKey)) {
                     user.privateKey = privateKey;
                     dispatch(setUser(user));

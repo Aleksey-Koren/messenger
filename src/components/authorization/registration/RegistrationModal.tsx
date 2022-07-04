@@ -21,19 +21,19 @@ const RegistrationModal: React.FC<Props> = (props) => {
                 </Typography>
                 <div className={style.dialog__info_container}>
                     <div className={style.dialog__content_row}>
-                        <span className={style.dialog__content_row_label}>ID: </span>
+                        <strong className={style.dialog__content_row_label}>ID: </strong>
                         <textarea rows={1} readOnly className={style.dialog__content_row_input}
                                   defaultValue={props.userId!}/>
                     </div>
 
                     <div className={style.dialog__content_row}>
-                        <span className={style.dialog__content_row_label}>Private Key:</span>
+                        <strong className={style.dialog__content_row_label}>Private Key:</strong>
                         <textarea rows={3} readOnly className={style.dialog__content_row_input}
                                   defaultValue={props.privateKey?.join(',')}/>
                     </div>
 
                     <div className={style.dialog__content_row}>
-                        <span className={style.dialog__content_row_label}>Public Key:</span>
+                        <strong className={style.dialog__content_row_label}>Public Key:</strong>
                         <textarea rows={3} readOnly className={style.dialog__content_row_input}
                                   defaultValue={props.publicKey?.join(',')}/>
                     </div>

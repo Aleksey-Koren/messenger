@@ -4,7 +4,11 @@ import {Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip} from
 import style from "./LoginModal.module.css";
 import globalStyles from '../../../global-styles/ModalWindow.module.css'
 import {AppState} from "../../../index";
-import {authenticateTF, setIsWelcomeModalOpen} from "../../../redux/authorization/authorizationActions";
+import {
+    authenticateTF,
+    setIsLoginModalOpen,
+    setIsWelcomeModalOpen
+} from "../../../redux/authorization/authorizationActions";
 import {Field, Form, Formik} from "formik";
 import * as Yup from 'yup';
 import {authorizationReducer} from "../../../redux/authorization/authorizationReducer";
@@ -60,7 +64,11 @@ const LoginModal: React.FC<Props> = (props) => {
                         </DialogContent>
 
                         <DialogActions className={globalStyles.dialog__actions}>
-                            <Button onClick={() => props.setIsWelcomeModalOpen(true)}>Back</Button>
+                            <Button onClick={() => {
+                                props.setIsWelcomeModalOpen(true);
+                                props.setIsLoginModalOpen(false);
+                            }}>
+                                Back</Button>
                             <Button type={"submit"}
                                     disabled={!formik.isValid}
                             >
@@ -80,7 +88,8 @@ const mapStateToProps = (state: AppState) => ({
 
 const mapDispatchToProps = {
     authenticateTF,
-    setIsWelcomeModalOpen
+    setIsWelcomeModalOpen,
+    setIsLoginModalOpen
 }
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

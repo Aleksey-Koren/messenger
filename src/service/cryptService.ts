@@ -61,4 +61,10 @@ export class CryptService {
     static uint8ToPlainString(data:Uint8Array) {
         return naclUtil.encodeUTF8(data);
     }
+
+    static JSONByteStringToUint8(userInput: string) {
+        return Uint8Array.from(userInput.split(",")
+            .map(str => parseInt(str))
+        );
+    }
 }
