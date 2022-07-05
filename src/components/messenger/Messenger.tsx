@@ -16,7 +16,8 @@ import {Box, Button, Typography} from "@mui/material";
 import PerfectScrollbar from 'react-perfect-scrollbar'
 import {LocalStorageService} from "../../service/localStorageService";
 import {SchedulerService} from "../../service/schedulerService";
-import {Chat} from "../../model/chat";
+import {Chat} from "../../model/messenger/chat";
+import {StringIndexArray} from "../../model/stringIndexArray";
 
 
 const scrollContext: { container: HTMLElement | null, scrolled: boolean, charged: boolean } = {
@@ -31,11 +32,11 @@ const Messenger: React.FC<TProps> = (props) => {
     useEffect(() => {
         const user = LocalStorageService.retrieveUserFromLocalStorage();
         if (user && !SchedulerService.isSchedulerStarted()) {
-            console.log("use effect")
+            console.log('use effect')
             props.setUser(user);
+            dispatch(fetchMessengerStateTF(user.id));
 
             SchedulerService.startScheduler(dispatch);
-            dispatch(fetchMessengerStateTF(user.id));
             props.setIsWelcomeModalOpen(false)
         }
         if (scrollContext.charged) {
@@ -65,9 +66,10 @@ const Messenger: React.FC<TProps> = (props) => {
                     <div style={{display: 'flex', flexDirection: "column", height: '100%'}}>
                         <div className={style.room_title_container}>
                             <Box style={{flex: 1}}>
-                                <Typography color={'primary'} variant={"h5"} fontWeight={"bold"} align={"center"} style={{
-                                    padding: '10 0',
-                                }}>{currentChat.title}</Typography>
+                                <Typography color={'primary'} variant={"h5"} fontWeight={"bold"} align={"center"}
+                                            style={{
+                                                padding: '10 0',
+                                            }}>{currentChat.title}</Typography>
                             </Box>
                             <MessengerMenu/>
                         </div>
@@ -91,19 +93,19 @@ const Messenger: React.FC<TProps> = (props) => {
     );
 }
 
-function renderChats(chats:{[key:string]:Chat}, openChat:(chat:Chat) => void, currentChat:string|null) {
+function renderChats(chats: StringIndexArray<Chat>, openChat: (chat: Chat) => void, currentChat: string | null) {
     const out = [];
-    for(let key in chats) {
+    for (let key in chats) {
         let chat = chats[key];
-            out.push(<ListItemButton key={chat.id} className={style.room_button}
-                            onClick={() => openChat(chat)}>
-                <div
-                    className={chat.id === currentChat ? style.chat_selected : style.chat_unselected}>&nbsp;</div>
-                <Typography color={'primary'}>
-                    {chat.title}
-                    {/*<span className={style.unread_count}>0</span>*/}
-                </Typography>
-            </ListItemButton>);
+        out.push(<ListItemButton key={chat.id} className={style.room_button}
+                                 onClick={() => openChat(chat)}>
+            <div
+                className={chat.id === currentChat ? style.chat_selected : style.chat_unselected}>&nbsp;</div>
+            <Typography color={'primary'}>
+                {chat.title}
+                {/*<span className={style.unread_count}>0</span>*/}
+            </Typography>
+        </ListItemButton>);
     }
     return out;
 }

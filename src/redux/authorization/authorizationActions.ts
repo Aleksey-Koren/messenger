@@ -12,7 +12,7 @@ import {fetchMessengerStateTF, setUser} from "../messenger/messengerActions";
 import {LocalStorageService} from "../../service/localStorageService";
 import Notification from '../../Notification';
 import {Builder} from "builder-pattern";
-import {Customer} from "../../model/customer";
+import {Customer} from "../../model/messenger/customer";
 import nacl from "tweetnacl";
 import {Action} from "redux";
 import {ThunkDispatch} from "redux-thunk";

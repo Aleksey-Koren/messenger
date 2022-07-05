@@ -4,11 +4,11 @@ import naclUtil from "tweetnacl-util";
 
 export class CryptService {
 
-    static encrypt(input:Uint8Array, publicKeyToEncrypt: Uint8Array, nonce?:Uint8Array, privateKeyToSign?: Uint8Array) {
+    static encrypt(input: Uint8Array, publicKeyToEncrypt: Uint8Array, nonce?: Uint8Array, privateKeyToSign?: Uint8Array) {
         const messenger = store.getState().messenger;
         const privateKey = privateKeyToSign || messenger.user?.privateKey;
         nonce = nonce || crypto.getRandomValues(new Uint8Array(24));
-        if(!privateKey) {
+        if (!privateKey) {
             throw new Error("User not logged in");
         }
 
@@ -25,23 +25,25 @@ export class CryptService {
         }
     }
 
-    static decrypt(input:Uint8Array, publicKeyToVerify: Uint8Array, nonce:Uint8Array, privateKeyToDecrypt: Uint8Array) {
+    static decrypt(input: Uint8Array, publicKeyToVerify: Uint8Array, nonce: Uint8Array, privateKeyToDecrypt: Uint8Array) {
         return nacl.box.open(
             input,
             nonce,
             publicKeyToVerify,
             privateKeyToDecrypt!)
     }
-    static decryptToBase64(input:Uint8Array, publicKeyToVerify: Uint8Array, nonce:Uint8Array, privateKeyToDecrypt: Uint8Array) {
+
+    static decryptToBase64(input: Uint8Array, publicKeyToVerify: Uint8Array, nonce: Uint8Array, privateKeyToDecrypt: Uint8Array) {
         const decrypt = CryptService.decrypt(input, publicKeyToVerify, nonce, privateKeyToDecrypt);
-        if(!decrypt) {
+        if (!decrypt) {
             return null;
         }
         return CryptService.uint8ToBase64(decrypt);
     }
-    static decryptToString(input:Uint8Array, publicKeyToVerify: Uint8Array, nonce:Uint8Array, privateKeyToDecrypt: Uint8Array) {
+
+    static decryptToString(input: Uint8Array, publicKeyToVerify: Uint8Array, nonce: Uint8Array, privateKeyToDecrypt: Uint8Array) {
         const decrypt = CryptService.decrypt(input, publicKeyToVerify, nonce, privateKeyToDecrypt);
-        if(!decrypt) {
+        if (!decrypt) {
             return null;
         }
         return naclUtil.encodeUTF8(decrypt);
@@ -55,10 +57,11 @@ export class CryptService {
         return naclUtil.decodeBase64(string);
     }
 
-    static plainStringToUint8(string:string) {
+    static plainStringToUint8(string: string) {
         return naclUtil.decodeUTF8(string);
     }
-    static uint8ToPlainString(data:Uint8Array) {
+
+    static uint8ToPlainString(data: Uint8Array) {
         return naclUtil.encodeUTF8(data);
     }
 
