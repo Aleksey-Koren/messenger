@@ -31,6 +31,7 @@ const Messenger: React.FC<TProps> = (props) => {
     useEffect(() => {
         const user = LocalStorageService.retrieveUserFromLocalStorage();
         if (user && !SchedulerService.isSchedulerStarted()) {
+            console.log("use effect")
             props.setUser(user);
 
             SchedulerService.startScheduler(dispatch);

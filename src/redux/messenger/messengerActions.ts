@@ -264,6 +264,11 @@ function processMessages(dispatch: ThunkDispatch<AppState, void, Action>, getSta
                     chatsUpdated = true;
                     chats[message.chat].title = message.data;
                 }
+                if(currentChat == null) {
+                    //case when user just create account (current chat null)
+                    //and was invited in chat
+                    dispatch(setCurrentChat(message.chat));
+                }
                 break;
             case MessageType.whisper:
                 chatMessages.push(message);

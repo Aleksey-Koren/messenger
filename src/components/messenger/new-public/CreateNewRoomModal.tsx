@@ -10,8 +10,7 @@ import {setUserTitle} from "../../../redux/messenger/messengerActions";
 
 
 const validationSchema = yup.object().shape({
-    title: yup.string().required('Room title cannot be empty').min(1),
-    userTitle: yup.string().required('Your name cannot be empty').min(1)
+    title: yup.string().required('Room name cannot be empty').min(1)
 })
 
 const CreateNewRoomModal: React.FC<TProps> = (props) => {
@@ -25,7 +24,7 @@ const CreateNewRoomModal: React.FC<TProps> = (props) => {
                 <Formik
                     initialValues={{title: '', userTitle: props.userTitle}}
                     onSubmit={(values) => {
-						props.createNewRoomTF(values.title, values.userTitle);
+						props.createNewRoomTF(values.title, values.userTitle || props.user!.id);
                         props.setUserTitle(values.userTitle)
                     }}
                     validationSchema={validationSchema}
@@ -34,7 +33,7 @@ const CreateNewRoomModal: React.FC<TProps> = (props) => {
                         <div>
                             <Form >
                                 <DialogContent className={style.dialog__content}>
-                                    <Typography>Room name</Typography>
+                                    <Typography>Room name:</Typography>
                                     <TextField
                                         autoFocus margin="dense" type="text"
                                         defaultValue={formik.values.title}
@@ -42,10 +41,10 @@ const CreateNewRoomModal: React.FC<TProps> = (props) => {
                                         error={!!formik.errors.title} helperText={formik.errors.title}
                                         fullWidth variant="standard"
                                     />
-                                    <Typography>Your name</Typography>
+                                    <Typography>You will be known as:</Typography>
                                     <TextField
                                         margin="dense" type="text"
-                                        defaultValue={formik.values.userTitle}
+                                        placeholder={formik.values.userTitle}
                                         onChange={(event) => formik.setFieldValue('userTitle', event.target.value)}
                                         error={!!formik.errors.userTitle} helperText={formik.errors.userTitle}
                                         fullWidth variant="standard"
