@@ -64,7 +64,7 @@ export function authenticateTF(id: string, privateKeyStr: string) {
     }
 }
 
-export function registerTF(isRegistrationGhost: boolean) {
+export function registerTF(isRegistrationGhost?: boolean) {
     return (dispatch: AppDispatch) => {
         const keyPair = nacl.box.keyPair();
 
@@ -72,32 +72,17 @@ export function registerTF(isRegistrationGhost: boolean) {
             .pk(keyPair.publicKey)
             .build();
 
-        if (isRegistrationGhost) {
-            CustomerApi.registerGhost(customer)
-                .then(user => {
-                    user.privateKey = keyPair.secretKey
-                    dispatch(setIsRegistrationModalOpen(true));
-                    dispatch(setIsWelcomeModalOpen(false));
-                    dispatch(setUser(user));
-                    LocalStorageService.userToStorage(user);
-                }).catch((e) => {
-                dispatch(setIsWelcomeModalOpen(true));
-                Notification.add({message: 'Something went wrong.', severity: 'error', error: e})
-            })
-        } else {
-            CustomerApi.register(customer)
-                .then(user => {
-                    user.privateKey = keyPair.secretKey
-                    dispatch(setIsRegistrationModalOpen(true));
-                    dispatch(setIsWelcomeModalOpen(false));
-                    dispatch(setUser(user));
-                    LocalStorageService.userToStorage(user);
-                }).catch((e) => {
-                dispatch(setIsWelcomeModalOpen(true));
-                Notification.add({message: 'Something went wrong.', severity: 'error', error: e})
-            })
-        }
-
+        CustomerApi.register(customer, isRegistrationGhost && true)
+            .then(user => {
+                user.privateKey = keyPair.secretKey
+                dispatch(setIsRegistrationModalOpen(true));
+                dispatch(setIsWelcomeModalOpen(false));
+                dispatch(setUser(user));
+                LocalStorageService.userToStorage(user);
+            }).catch((e) => {
+            dispatch(setIsWelcomeModalOpen(true));
+            Notification.add({message: 'Something went wrong.', severity: 'error', error: e})
+        })
     }
 }
 

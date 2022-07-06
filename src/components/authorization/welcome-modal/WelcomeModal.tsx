@@ -9,15 +9,7 @@ import {
 } from "../../../redux/authorization/authorizationActions";
 import {connect, ConnectedProps, useDispatch} from "react-redux";
 
-// interface WelcomeModalProps {
-//     isOpen?: boolean,
-//     setIsWelcomeModalOpen?: (b:boolean) => void,
-//     registerTF?: () => void,
-//     setIsLoginModalOpen?: (b:boolean) => void,
-// }
-
 function WelcomeModal(props: Props) {
-    // const dispatch = useDispatch();
 
     return (
         <Dialog open={true}>
@@ -27,7 +19,7 @@ function WelcomeModal(props: Props) {
 
             <DialogActions className={style.dialog__actions}>
                 <Button onClick={() => {
-                    props.registerTF(false);
+                    props.registerTF();
                 }}
                 >
                     I'm new user

@@ -130,6 +130,8 @@ export function fetchMessagesTF() {
         let currentUser = state.messenger.user;
         if (!currentUser) {
             throw new Error("User is not logged in");
+        }
+
         const currentChat = getState().messenger.currentChat;
 
         let users: StringIndexArray<User> = getState().messenger.users;
