@@ -1,4 +1,4 @@
-import {MessageType} from "../model/messageType";
+import {MessageType} from "../model/messenger/messageType";
 
 export interface MessageDto {
     id?: string;

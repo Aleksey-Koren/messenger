@@ -1,7 +1,7 @@
-import {Message} from "../model/message";
+import {Message} from "../model/messenger/message";
 import {MessageDto} from "../dto/messageDto";
 import {CryptService} from "../service/cryptService";
-import {User} from "../model/user";
+import {User} from "../model/messenger/user";
 import {store} from "../index";
 
 export class MessageMapper {

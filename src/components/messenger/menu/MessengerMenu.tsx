@@ -7,7 +7,7 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import {IPlainDataAction} from "../../../redux/redux-types";
 import {AppState, useAppDispatch} from "../../../index";
 import {setIsEditRoomTitleModalOpen} from "../../../redux/messenger-menu/messengerMenuActions";
-import { setIsMembersModalOpened} from "../../../redux/messenger-menu/messengerMenuActions";
+import {setIsMembersModalOpened} from "../../../redux/messenger-menu/messengerMenuActions";
 import CreateNewPublicButton from "../new-public/CreateNewPublicButton";
 import EditUserTitleButton from "../edit-user-title/EditUserTitleButton";
 import IconedButton from "../../button/IconedButton";
@@ -15,7 +15,7 @@ import {connect} from "react-redux";
 import {logout} from "../../../redux/authorization/authorizationActions";
 
 
-function MessengerMenu(props:{chatSelected?:boolean}) {
+function MessengerMenu(props: { chatSelected?: boolean }) {
     const [anchorEl, setAnchorEl] = useState(null);
     const dispatch = useAppDispatch();
 
@@ -27,7 +27,7 @@ function MessengerMenu(props:{chatSelected?:boolean}) {
     return (
         <div style={{marginLeft: "auto"}}>
             <IconButton color={"secondary"} onClick={(event: any) => setAnchorEl(event.currentTarget)}>
-                <MenuIcon color="primary" />
+                <MenuIcon color="primary"/>
             </IconButton>
             <Menu
                 anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}
@@ -37,35 +37,35 @@ function MessengerMenu(props:{chatSelected?:boolean}) {
                 onClose={() => setAnchorEl(null)}
             >
 
-                    <div>
-                        {props.chatSelected && <MenuItem>
-                            <EditUserTitleButton/>
-                        </MenuItem>}
-                        {props.chatSelected && <MenuItem>
-                            <IconedButton onClick={() => onMenuItemClick(setIsEditRoomTitleModalOpen)}
-                                          icon={<EditIcon style={{marginRight: '10px'}} fontSize={"medium"}/>}
-                                          text={"Rename Room"}/>
-                        </MenuItem>}
-                        {props.chatSelected && <MenuItem>
-                            <IconedButton onClick={() => onMenuItemClick(setIsMembersModalOpened)}
-                                          icon={<Groups style={{marginRight: '10px'}} fontSize={"medium"}/>}
-                                          text={"Members"}/>
-                        </MenuItem>}
-                        <MenuItem>
-                            <CreateNewPublicButton/>
-                        </MenuItem>
-                        <MenuItem>
-                            <IconedButton onClick={() => onMenuItemClick(logout)}
-                                          icon={<ExitToAppIcon style={{marginRight: '10px'}} fontSize={"medium"}/>}
-                                          text={"Logout"}/>
-                        </MenuItem>
-                        {/*<Divider/>*/}
-                        {/*<MenuItem onClick={() => {*/}
-                        {/*}}>*/}
-                        {/*    <ExitToAppIcon style={{marginRight: '10px'}} fontSize={'medium'}/>*/}
-                        {/*    Leave room*/}
-                        {/*</MenuItem>*/}
-                    </div>
+                <div>
+                    {props.chatSelected && <MenuItem>
+                        <EditUserTitleButton/>
+                    </MenuItem>}
+                    {props.chatSelected && <MenuItem>
+                        <IconedButton onClick={() => onMenuItemClick(setIsEditRoomTitleModalOpen)}
+                                      icon={<EditIcon style={{marginRight: '10px'}} fontSize={"medium"}/>}
+                                      text={"Rename Room"}/>
+                    </MenuItem>}
+                    {props.chatSelected && <MenuItem>
+                        <IconedButton onClick={() => onMenuItemClick(setIsMembersModalOpened)}
+                                      icon={<Groups style={{marginRight: '10px'}} fontSize={"medium"}/>}
+                                      text={"Members"}/>
+                    </MenuItem>}
+                    <MenuItem>
+                        <CreateNewPublicButton/>
+                    </MenuItem>
+                    <MenuItem>
+                        <IconedButton onClick={() => onMenuItemClick(logout)}
+                                      icon={<ExitToAppIcon style={{marginRight: '10px'}} fontSize={"medium"}/>}
+                                      text={"Logout"}/>
+                    </MenuItem>
+                    {/*<Divider/>*/}
+                    {/*<MenuItem onClick={() => {*/}
+                    {/*}}>*/}
+                    {/*    <ExitToAppIcon style={{marginRight: '10px'}} fontSize={'medium'}/>*/}
+                    {/*    Leave room*/}
+                    {/*</MenuItem>*/}
+                </div>
 
                 {/*{3 === 3 &&     // if room type is private or current user is room admin*/}
                 {/*    <MenuItem onClick={() => {*/}

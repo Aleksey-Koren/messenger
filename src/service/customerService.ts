@@ -1,17 +1,18 @@
-import {Message} from "../model/message";
-import {MessageType} from "../model/messageType";
+import {Message} from "../model/messenger/message";
+import {MessageType} from "../model/messenger/messageType";
 import {MessageApi} from "../api/messageApi";
-import {Chat} from "../model/chat";
-import {User} from "../model/user";
+import {Chat} from "../model/messenger/chat";
+import {User} from "../model/messenger/user";
+import {StringIndexArray} from "../model/stringIndexArray";
 
 export class CustomerService {
 
-    static processParticipants(participants: User[], knownParticipants:Message[], currentChat: Chat, senderId: string) {
+    static processParticipants(participants: User[], knownParticipants: Message[], currentChat: Chat, senderId: string) {
 
-        const names:{[key:string]:string} = knownParticipants.reduce((map, participant) => {
+        const names: StringIndexArray<string> = knownParticipants.reduce((map, participant) => {
             map[participant.sender as string] = participant.data as string;
             return map;
-        }, {} as {[key:string]:string})
+        }, {} as StringIndexArray<string>)
 
         participants.filter(participant => {
             return !names[participant.id as string];

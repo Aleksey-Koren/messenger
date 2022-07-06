@@ -5,7 +5,7 @@ import ListItemText from "@mui/material/ListItemText/ListItemText";
 import {AppState} from "../../../index";
 import React, {useEffect, useState} from "react";
 import {connect, ConnectedProps} from "react-redux";
-import {MessageType} from "../../../model/messageType";
+import {MessageType} from "../../../model/messenger/messageType";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import {Alert, Button, Paper, Typography} from "@mui/material";
 import {
