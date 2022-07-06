@@ -17,7 +17,22 @@ const RegistrationModal: React.FC<Props> = (props) => {
 
             <DialogContent className={globalStyles.dialog__content}>
                 <Typography>
-                    Please save your id and private key, it is your credentials. Public key is associated with your ID and saved in our database.
+                    {props.isGhost
+                        ?
+                        <p>
+                            You have registered as ghost user.
+                            <br/>
+                            To make other users be able to chat with you, let them know not only ID but and Public Key
+                            too.
+                            <br/>
+                            You are not saved in database. If you log out, your ghost account will be lost.
+                        </p>
+                        :
+                        <p>
+                            Please save your id and private key, it is your credentials. Public key is associated with
+                            your ID and saved in our database.
+                        </p>
+                    }
                 </Typography>
                 <div className={style.dialog__info_container}>
                     <div className={style.dialog__content_row}>
@@ -26,12 +41,14 @@ const RegistrationModal: React.FC<Props> = (props) => {
                                   defaultValue={props.userId!}/>
                     </div>
 
-                    <div className={style.dialog__content_row}>
-                        <strong className={style.dialog__content_row_label}>Private Key:</strong>
-                        <textarea rows={3} readOnly className={style.dialog__content_row_input}
-                                  defaultValue={props.privateKey?.join(',')}/>
-                    </div>
-
+                    {!props.isGhost &&
+                        <div className={style.dialog__content_row}>
+                            <strong className={style.dialog__content_row_label}>Private Key:</strong>
+                            <textarea rows={3} readOnly className={style.dialog__content_row_input}
+                                     defaultValue={props.privateKey?.join(',')}/>
+                        </div>
+                    }
+                    
                     <div className={style.dialog__content_row}>
                         <strong className={style.dialog__content_row_label}>Public Key:</strong>
                         <textarea rows={3} readOnly className={style.dialog__content_row_input}
@@ -42,7 +59,7 @@ const RegistrationModal: React.FC<Props> = (props) => {
 
             <DialogActions className={style.dialog__actions}>
                 <Button  onClick={() => {
-                    props.setIsRegistrationModalOpen(false)
+                    props.setIsRegistrationModalOpen(false, false)
                 }}>I save it, go to the chats</Button>
             </DialogActions>
         </Dialog>
@@ -54,7 +71,8 @@ const mapStateToProps = (state: AppState) => {
     return {
         userId: user?.id,
         publicKey: user?.publicKey,
-        privateKey: user?.privateKey
+        privateKey: user?.privateKey,
+        isGhost: state.authorizationReducer.isRegistrationGhost
     }
 }
 

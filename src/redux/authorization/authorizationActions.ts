@@ -1,4 +1,5 @@
 import {
+    IRegistrationModalPayload,
     LOGOUT,
     SET_IS_LOGIN_MODAL_OPEN,
     SET_IS_REGISTRATION_MODAL_OPEN,
@@ -35,11 +36,14 @@ export function setIsLoginModalOpen(isOpen: boolean): IPlainDataAction<boolean> 
     }
 }
 
-export function setIsRegistrationModalOpen(isOpen: boolean): IPlainDataAction<boolean> {
+export function setIsRegistrationModalOpen(isOpen: boolean, isGhost: boolean): IPlainDataAction<IRegistrationModalPayload> {
 
     return {
         type: SET_IS_REGISTRATION_MODAL_OPEN,
-        payload: isOpen
+        payload: {
+            isOpen,
+            isGhost
+        }
     }
 }
 
@@ -64,7 +68,7 @@ export function authenticateTF(id: string, privateKeyStr: string) {
     }
 }
 
-export function registerTF(isRegistrationGhost?: boolean) {
+export function registerTF(isGhost?: boolean) {
     return (dispatch: AppDispatch) => {
         const keyPair = nacl.box.keyPair();
 
@@ -72,10 +76,10 @@ export function registerTF(isRegistrationGhost?: boolean) {
             .pk(keyPair.publicKey)
             .build();
 
-        CustomerApi.register(customer, isRegistrationGhost && true)
+        CustomerApi.register(customer, isGhost && true)
             .then(user => {
                 user.privateKey = keyPair.secretKey
-                dispatch(setIsRegistrationModalOpen(true));
+                dispatch(setIsRegistrationModalOpen(true, !!isGhost));
                 dispatch(setIsWelcomeModalOpen(false));
                 dispatch(setUser(user));
                 LocalStorageService.userToStorage(user);
