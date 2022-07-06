@@ -7,50 +7,61 @@ import {
     setIsLoginModalOpen,
     setIsWelcomeModalOpen
 } from "../../../redux/authorization/authorizationActions";
-import {connect, useDispatch} from "react-redux";
+import {connect, ConnectedProps, useDispatch} from "react-redux";
 
-interface WelcomeModalProps {
-    isOpen?: boolean,
-    setIsWelcomeModalOpen?: (b:boolean) => void,
-    registerTF?: () => void,
-    setIsLoginModalOpen?: (b:boolean) => void,
-}
+// interface WelcomeModalProps {
+//     isOpen?: boolean,
+//     setIsWelcomeModalOpen?: (b:boolean) => void,
+//     registerTF?: () => void,
+//     setIsLoginModalOpen?: (b:boolean) => void,
+// }
 
-function WelcomeModal(props:WelcomeModalProps) {
-    const dispatch = useDispatch();
+function WelcomeModal(props: Props) {
+    // const dispatch = useDispatch();
 
     return (
-        <Dialog open={!!props.isOpen}>
+        <Dialog open={true}>
             <DialogTitle className={style.dialog__title}>
                 Hello! Who are you?
             </DialogTitle>
 
             <DialogActions className={style.dialog__actions}>
                 <Button onClick={() => {
-                    dispatch(registerTF());
+                    props.registerTF(false);
                 }}
-                        className={style.dialog__disagree_button}>
+                >
                     I'm new user
                 </Button>
                 <Button onClick={() => {
-                    dispatch(setIsWelcomeModalOpen(false))
-                    dispatch(setIsLoginModalOpen(true))
+                    props.setIsWelcomeModalOpen(false)
+                    props.setIsLoginModalOpen(true)
                 }}>
                     I'm already registered
+                </Button>
+                <Button onClick={() => {
+                    props.registerTF(true);
+                }}
+                >
+                    Ghost registration
                 </Button>
             </DialogActions>
         </Dialog>
     );
 }
 
-const mapStateToProps = (state: AppState) => {
-    return {
+const mapStateToProps = (state: AppState) => ({
         isOpen: state.authorizationReducer.isWelcomeModalOpen,
-    }
+})
+
+const mapDispatchToProps = {
+    setIsWelcomeModalOpen,
+    setIsLoginModalOpen,
+    registerTF
 }
 
 
-const connector = connect(mapStateToProps);
+const connector = connect(mapStateToProps, mapDispatchToProps);
 
+type Props = ConnectedProps<typeof connector>;
 
 export default connector(WelcomeModal);

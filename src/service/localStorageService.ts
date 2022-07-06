@@ -34,6 +34,5 @@ export class LocalStorageService {
             console.error(e);
             return null;
         }
-
     }
 }

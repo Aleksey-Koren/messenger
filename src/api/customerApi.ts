@@ -7,7 +7,18 @@ import {User} from "../model/user";
 export class CustomerApi {
 
     static register(customer: Customer):Promise<User> {
-        return axiosApi.post<CustomerDto>('customers', CustomerMapper.toDto(customer)).then(response => {
+        return axiosApi.post<CustomerDto>('customers', CustomerMapper.toDto(customer))
+            .then(response => {
+                return CustomerMapper.toEntity(response.data);
+            })
+    }
+
+    static registerGhost(customer: Customer):Promise<User> {
+        return axiosApi.post<CustomerDto>('customers', CustomerMapper.toDto(customer), {
+            params: {
+                'ghost': true
+            }
+        }).then(response => {
             return CustomerMapper.toEntity(response.data);
         })
     }

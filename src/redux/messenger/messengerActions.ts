@@ -124,7 +124,7 @@ export function fetchMessagesTF() {
         const state = getState();
         let currentUser = state.messenger.user;
         if(!currentUser) {
-            throw new Error("User not logged in");
+            throw new Error("User is not logged in");
         }
         const currentChat = getState().messenger.currentChat;
 
@@ -154,7 +154,7 @@ export function fetchMessengerStateTF(loggedUserId:string) {
     return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
         const currentUser = getState().messenger.user;
         if(!currentUser) {
-            throw new Error("user not logged in");
+            throw new Error("user is not logged in");
         }
         const decryptionRequirements:{ [key:string]:string} = {};
         let users:{[key:string]:User} = {};
@@ -234,7 +234,6 @@ export function fetchMessengerStateTF(loggedUserId:string) {
                     });
                 })
             })
-
         })
     }
 }
