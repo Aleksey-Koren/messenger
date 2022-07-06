@@ -9,8 +9,8 @@ import {ThunkDispatch} from "redux-thunk";
 import {Action} from "redux";
 import {MessageApi} from "../../api/messageApi";
 import { setCurrentChat} from "../messenger/messengerActions";
-import {MessageType} from "../../model/messageType";
-import {Message} from "../../model/message";
+import {MessageType} from "../../model/messenger/messageType";
+import {Message} from "../../model/messenger/message";
 import {setIsMembersModalOpened} from "../messenger-menu/messengerMenuActions";
 import Notification from '../../Notification';
 

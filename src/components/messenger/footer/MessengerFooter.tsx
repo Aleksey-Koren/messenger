@@ -9,7 +9,7 @@ import style from "../Messenger.module.css";
 import React, {useEffect} from "react";
 import {sendMessage} from "../../../redux/messenger/messengerActions";
 import PerfectScrollbar from "react-perfect-scrollbar";
-import {MessageType} from "../../../model/messageType";
+import {MessageType} from "../../../model/messenger/messageType";
 
 
 interface MessengerFooterProps {

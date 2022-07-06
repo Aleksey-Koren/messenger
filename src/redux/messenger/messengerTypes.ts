@@ -1,25 +1,26 @@
 import {IPlainDataAction} from "../redux-types";
-import {User} from "../../model/user";
-import {Chat} from "../../model/chat";
-import {Message} from "../../model/message";
-
-export type GlobalUsers = {[key:string]:{user:string, certificates:string[], titles:{[key:string]:string}}}
+import {User} from "../../model/messenger/user";
+import {Chat} from "../../model/messenger/chat";
+import {Message} from "../../model/messenger/message";
+import {GlobalUsers} from "../../model/local-storage/localStorageTypes";
+import {StringIndexArray} from "../../model/stringIndexArray";
 
 export interface IMessengerStateOpt {
-    chats?: {[key:string]:Chat};
+    chats?: StringIndexArray<Chat>;
     messages?: Message[];
-    users?: {[key:string]:User};
+    users?: StringIndexArray<User>;
     globalUsers?: GlobalUsers;
-    user?: User|null;
-    currentChat?: string|null;
+    user?: User | null;
+    currentChat?: string | null;
 }
+
 export interface IMessengerState extends IMessengerStateOpt {
-    chats: {[key:string]:Chat};
+    chats: StringIndexArray<Chat>;
     messages: Message[];
-    users: {[key:string]:User};
+    users: StringIndexArray<User>;
     globalUsers: GlobalUsers;
-    user: User|null;
-    currentChat: string|null;
+    user: User | null;
+    currentChat: string | null;
 }
 
 export type TMessengerAction = IPlainDataAction<IMessengerState>

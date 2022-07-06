@@ -1,4 +1,5 @@
 import {
+    IRegistrationModalPayload,
     LOGOUT,
     SET_IS_LOGIN_MODAL_OPEN,
     SET_IS_REGISTRATION_MODAL_OPEN,
@@ -12,12 +13,11 @@ import {fetchMessengerStateTF, setUser} from "../messenger/messengerActions";
 import {LocalStorageService} from "../../service/localStorageService";
 import Notification from '../../Notification';
 import {Builder} from "builder-pattern";
-import {Customer} from "../../model/customer";
+import {Customer} from "../../model/messenger/customer";
 import nacl from "tweetnacl";
 import {Action} from "redux";
 import {ThunkDispatch} from "redux-thunk";
 import {CryptService} from "../../service/cryptService";
-import {Buffer} from 'buffer';
 
 
 export function setIsWelcomeModalOpen(isOpen: boolean): IPlainDataAction<boolean> {
@@ -36,11 +36,14 @@ export function setIsLoginModalOpen(isOpen: boolean): IPlainDataAction<boolean> 
     }
 }
 
-export function setIsRegistrationModalOpen(isOpen: boolean): IPlainDataAction<boolean> {
+export function setIsRegistrationModalOpen(isOpen: boolean, isGhost: boolean): IPlainDataAction<IRegistrationModalPayload> {
 
     return {
         type: SET_IS_REGISTRATION_MODAL_OPEN,
-        payload: isOpen
+        payload: {
+            isOpen,
+            isGhost
+        }
     }
 }
 
@@ -65,7 +68,7 @@ export function authenticateTF(id: string, privateKeyStr: string) {
     }
 }
 
-export function registerTF() {
+export function registerTF(isGhost?: boolean) {
     return (dispatch: AppDispatch) => {
         const keyPair = nacl.box.keyPair();
 
@@ -73,13 +76,14 @@ export function registerTF() {
             .pk(keyPair.publicKey)
             .build();
 
-        CustomerApi.register(customer).then(user => {
-            user.privateKey = keyPair.secretKey
-            dispatch(setIsRegistrationModalOpen(true));
-            dispatch(setIsWelcomeModalOpen(false));
-            dispatch(setUser(user));
-            LocalStorageService.userToStorage(user);
-        }).catch((e) => {
+        CustomerApi.register(customer, isGhost && true)
+            .then(user => {
+                user.privateKey = keyPair.secretKey
+                dispatch(setIsRegistrationModalOpen(true, !!isGhost));
+                dispatch(setIsWelcomeModalOpen(false));
+                dispatch(setUser(user));
+                LocalStorageService.userToStorage(user);
+            }).catch((e) => {
             dispatch(setIsWelcomeModalOpen(true));
             Notification.add({message: 'Something went wrong.', severity: 'error', error: e})
         })

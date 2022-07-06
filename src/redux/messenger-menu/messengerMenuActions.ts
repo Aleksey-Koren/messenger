@@ -1,9 +1,9 @@
 import {IPlainDataAction} from "../redux-types";
 import {MessageApi} from "../../api/messageApi";
-import {User} from "../../model/user";
+import {User} from "../../model/messenger/user";
 import {SET_IS_EDIT_ROOM_TITLE_MODAL_OPEN, SET_IS_MEMBERS_MODAL_OPEN} from "./messengerMenuTypes";
-import {MessageType} from "../../model/messageType";
-import {Message} from "../../model/message";
+import {MessageType} from "../../model/messenger/messageType";
+import {Message} from "../../model/messenger/message";
 import {ThunkDispatch} from "redux-thunk";
 import {AppState} from "../../index";
 import {Action} from "redux";

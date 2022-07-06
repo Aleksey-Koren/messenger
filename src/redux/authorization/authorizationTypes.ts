@@ -1,8 +1,15 @@
 import {IPlainDataAction} from "../redux-types";
+
 interface IAuthorizationState {
     isWelcomeModalOpen: boolean;
     isLoginModalOpen: boolean;
     isRegistrationModalOpen: boolean;
+    isRegistrationGhost: boolean
+}
+
+export interface IRegistrationModalPayload {
+    isOpen: boolean;
+    isGhost: boolean;
 }
 
 export type TAuthorizationState = IAuthorizationState;

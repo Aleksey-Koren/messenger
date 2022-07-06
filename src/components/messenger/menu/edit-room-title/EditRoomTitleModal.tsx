@@ -7,7 +7,7 @@ import React from "react";
 import {AppState} from "../../../../index";
 import {setIsEditRoomTitleModalOpen} from "../../../../redux/messenger-menu/messengerMenuActions";
 import {sendMessage} from "../../../../redux/messenger/messengerActions";
-import {MessageType} from "../../../../model/messageType";
+import {MessageType} from "../../../../model/messenger/messageType";
 
 const validationSchema = yup.object().shape({
     title: yup.string().required('Title cannot be empty').min(3,)

@@ -1,8 +1,8 @@
 import {CustomerDto} from "../dto/CustomerDto";
 import {Builder} from "builder-pattern";
-import {Customer} from "../model/customer";
+import {Customer} from "../model/messenger/customer";
 import {CryptService} from "../service/cryptService";
-import {User} from "../model/user";
+import {User} from "../model/messenger/user";
 
 export class CustomerMapper {
 

@@ -26,7 +26,7 @@ import {
 } from "../../../../redux/messenger-menu/messengerMenuActions";
 import {Form, Formik} from "formik";
 import * as yup from "yup";
-import {User} from "../../../../model/user";
+import {User} from "../../../../model/messenger/user";
 import {CustomerApi} from "../../../../api/customerApi";
 import Notification from '../../../../Notification'
 
