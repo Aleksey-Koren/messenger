@@ -7,20 +7,24 @@ import {StringIndexArray} from "../../model/stringIndexArray";
 
 export interface IMessengerStateOpt {
     chats?: StringIndexArray<Chat>;
-    messages?: Message[];
+    messages?: StringIndexArray<Message[]>;
     users?: StringIndexArray<User>;
     globalUsers?: GlobalUsers;
     user?: User | null;
     currentChat?: string | null;
+    lastMessagesFetch?: Date | null;
+    chatsLastSeenAt?: StringIndexArray<Date>;
 }
 
 export interface IMessengerState extends IMessengerStateOpt {
     chats: StringIndexArray<Chat>;
-    messages: Message[];
+    messages: StringIndexArray<Message[]>;
     users: StringIndexArray<User>;
     globalUsers: GlobalUsers;
     user: User | null;
     currentChat: string | null;
+    lastMessagesFetch: Date | null;
+    chatsLastSeenAt: StringIndexArray<Date>;
 }
 
 export type TMessengerAction = IPlainDataAction<IMessengerState>

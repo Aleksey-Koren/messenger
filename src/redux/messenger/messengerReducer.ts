@@ -17,10 +17,12 @@ import {StringIndexArray} from "../../model/stringIndexArray";
 const initialState: IMessengerState = {
     user: null,
     chats: {},
-    messages: [],
+    messages: {},
     users: {},
     globalUsers: {},
-    currentChat: null
+    currentChat: null,
+    lastMessagesFetch: null,
+    chatsLastSeenAt: {}
 }
 
 export function messengerReducer(state: IMessengerState = initialState, action: TMessengerAction): IMessengerState {
@@ -75,7 +77,7 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
         case LOGOUT:
             localStorage.clear();
             SchedulerService.stopScheduler();
-            return {...initialState, globalUsers: {}};
+            return initialState;
         default:
             return state;
     }
@@ -93,14 +95,14 @@ function touchGlobalUsers(globalUsers: GlobalUsers, usersCache: StringIndexArray
             console.error("fail to convert public key into string")
             cert = '';
         }
-        if (!globalUsers[key]) {
-            globalUsers[key] = {
+        if (!out[key]) {
+            out[key] = {
                 user: key,
                 certificates: [],
                 titles: {}
             };
         }
-        var global = globalUsers[key];
+        var global = out[key];
         if (currentChat) {
             global.titles[currentChat] = user.title!;
         }
