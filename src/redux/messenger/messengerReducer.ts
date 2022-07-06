@@ -17,11 +17,12 @@ import {StringIndexArray} from "../../model/stringIndexArray";
 const initialState: IMessengerState = {
     user: null,
     chats: {},
-    messages: [],
+    messages: {},
     users: {},
     globalUsers: {},
     currentChat: null,
-    lastMessagesFetch: null
+    lastMessagesFetch: null,
+    chatsLastSeenAt: {}
 }
 
 export function messengerReducer(state: IMessengerState = initialState, action: TMessengerAction): IMessengerState {
