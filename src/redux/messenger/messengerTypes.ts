@@ -12,6 +12,7 @@ export interface IMessengerStateOpt {
     globalUsers?: GlobalUsers;
     user?: User | null;
     currentChat?: string | null;
+    lastMessagesFetch?: Date | null;
 }
 
 export interface IMessengerState extends IMessengerStateOpt {
@@ -21,6 +22,7 @@ export interface IMessengerState extends IMessengerStateOpt {
     globalUsers: GlobalUsers;
     user: User | null;
     currentChat: string | null;
+    lastMessagesFetch: Date | null;
 }
 
 export type TMessengerAction = IPlainDataAction<IMessengerState>
