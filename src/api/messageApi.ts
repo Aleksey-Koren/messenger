@@ -15,12 +15,17 @@ export class MessageApi {
         })
     }
 
-    static async getMessages(request: { receiver?: string, chat: string, created?: Date, type?: MessageType }, users: { [key: string]: User }) {
-        let dto = (await axiosApi.get<{ content: MessageDto[] }>('messages', {
-            params: request
-        })).data
-        return dto.content.map(dto => MessageMapper.toEntity(dto, users[dto.sender]))
+    static async getMessages(request: {
+                                 receiver?: string,
+                                 chat?: string,
+                                 created?: Date,
+                                 before?: Date,
+                                 type?: MessageType}) {
+        let dto = (await axiosApi.get<MessageDto[]>('messages',{params: request})).data;
+        return dto.map(dto => MessageMapper.toEntity(dto, dto.sender);
     }
+
+
 
     static async updateUserTitle(messages: Message[], users: { [key: string]: User }): Promise<Message[]> {
         const dto = messages.map(message => MessageMapper.toDto(message, users[message.receiver]));

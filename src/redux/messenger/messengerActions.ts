@@ -131,14 +131,16 @@ export function fetchMessagesTF() {
         if (!currentUser) {
             throw new Error("User is not logged in");
         }
+        const nextMessageFetch: Date = new Date();
+        // const currentChat = getState().messenger.currentChat;
+        // let users: StringIndexArray<User> = getState().messenger.users;
 
-        const currentChat = getState().messenger.currentChat;
-
-        let users: StringIndexArray<User> = getState().messenger.users;
         MessageApi.getMessages({
             receiver: currentUser.id!,
-            chat: currentChat!
-        }, users).then(messagesResp => {
+            created: state.messenger.lastMessagesFetch!,
+            before: nextMessageFetch
+        }).then(messagesResp => {
+
             processMessages(dispatch, getState, messagesResp, users, currentUser);
         });
     }
