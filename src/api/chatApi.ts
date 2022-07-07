@@ -8,9 +8,7 @@ export class ChatApi {
     static getChats(receiverId: string) {
         return axiosApi.get<MessageDto[]>('chats', {
             params: {'receiver': receiverId}
-        }).then(response => {
-            return response.data;
-        })
+        }).then(response => response.data)
     }
 
     static async getParticipants(chatId: string) {
@@ -19,11 +17,13 @@ export class ChatApi {
         });
     }
 
-    static quitFromChat(chatId: string, myId:string, data:{data:string, nonce: string}) {
-        return axiosApi.delete(`chats/${chatId}`, {params: {
-            sender: myId,
-            data: data.data,
-            nonce: data.nonce
-        }});
+    static quitFromChat(chatId: string, myId: string, data: { data: string, nonce: string }) {
+        return axiosApi.delete(`chats/${chatId}`, {
+            params: {
+                sender: myId,
+                data: data.data,
+                nonce: data.nonce
+            }
+        });
     }
 }

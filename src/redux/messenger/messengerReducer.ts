@@ -3,7 +3,11 @@ import {
     SET_CURRENT_CHAT, SET_CHATS, SET_USERS,
     SET_MESSAGES,
     SET_USER,
-    TMessengerAction, SET_USER_TITLE, SET_LAST_MESSAGES_FETCH, SET_CHATS_LAST_SEEN_AT
+    TMessengerAction,
+    SET_USER_TITLE,
+    SET_LAST_MESSAGES_FETCH,
+    SET_CHATS_LAST_SEEN_AT,
+    SET_GLOBAL_USERS
 } from "./messengerTypes";
 import {User} from "../../model/messenger/user";
 import {CryptService} from "../../service/cryptService";
@@ -59,9 +63,7 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
             if (action.payload.currentChat !== state.currentChat) {
                 return {
                     ...state,
-                    currentChat: action.payload.currentChat,
-                    messages: [],
-                    users: {[user?.id!]: user}
+                    currentChat: action.payload.currentChat
                 }
             } else {
                 return state;
@@ -77,6 +79,10 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
 
         case SET_CHATS:
             return {...state, chats: action.payload.chats}
+
+        case SET_GLOBAL_USERS:
+            LocalStorageService.globalUsersToStorage(action.payload.globalUsers);
+            return {...state, globalUsers: action.payload.globalUsers};
 
         case LOGOUT:
             localStorage.clear();
