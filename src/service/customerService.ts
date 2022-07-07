@@ -29,8 +29,16 @@ export class CustomerService {
                     data: ""
                 } as Message);
             })
-
         MessageApi.sendMessages(whoMessages, {});
+
+        return participants.reduce((array, participant) => {
+            array[participant.id] = {
+                id: participant?.id!,
+                title: knownParticipantsTitles[participant.id],
+                publicKey: participant?.publicKey
+            }
+            return array;
+        }, {} as StringIndexArray<User>)
     }
 
     static addUnknownUsersToGlobalUsers(helloMessages: MessageDto[], globalUsers: GlobalUsers) {

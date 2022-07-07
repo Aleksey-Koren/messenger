@@ -212,7 +212,7 @@ export function openChatNewVersion(chat: Chat) {
 
         ChatApi.getParticipants(chat.id)
             .then((chatParticipants) => {
-                const users = chatParticipants.reduce((previousValue, currentValue) => {
+                let users: StringIndexArray<User> = chatParticipants.reduce((previousValue, currentValue) => {
                     previousValue[currentValue.id] = {
                         id: currentValue.id,
                         publicKey: currentValue.publicKey,
@@ -224,13 +224,17 @@ export function openChatNewVersion(chat: Chat) {
                     receiver: currentUser.id,
                     chat: chat.id,
                     type: MessageType.iam,
-                }, users).then(knownParticipants => {
-                    CustomerService.processUnknownChatParticipants(chatParticipants, knownParticipants, chat, currentUser.id);
-                    dispatch(setCurrentChat(chat.id));
-                    dispatch(setUsers(users, chat.id));
-                }).then(() => {
-                    dispatch(fetchMessagesTF());
-                });
+                }, users)
+                    .then(knownParticipants => {
+
+                        users = CustomerService.processUnknownChatParticipants(chatParticipants, knownParticipants, chat, currentUser.id);
+                        dispatch(setCurrentChat(chat.id));
+                        dispatch(setUsers(users, chat.id));
+
+                    })
+                    .then(() => {
+                        dispatch(fetchMessagesTF());
+                    });
             })
     }
 }
