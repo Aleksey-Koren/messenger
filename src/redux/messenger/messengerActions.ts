@@ -1,7 +1,7 @@
 import {
     IMessengerStateOpt,
     SET_CHATS,
-    SET_CURRENT_CHAT,
+    SET_CURRENT_CHAT, SET_GLOBAL_USERS,
     SET_MESSAGES,
     SET_USER,
     SET_USER_TITLE,
@@ -14,7 +14,6 @@ import {ChatApi} from "../../api/chatApi";
 import {MessageApi} from "../../api/messageApi";
 import {Message} from "../../model/messenger/message";
 import {Chat} from "../../model/messenger/chat";
-import {CustomerService} from "../../service/customerService";
 import {Action} from "redux";
 import {ThunkDispatch} from "redux-thunk";
 import {MessageType} from "../../model/messenger/messageType";
@@ -24,7 +23,8 @@ import {CryptService} from "../../service/cryptService";
 import Notification from "../../Notification";
 import {MessageMapper} from "../../mapper/messageMapper";
 import {StringIndexArray} from "../../model/stringIndexArray";
-import {LocalStorageService} from "../../service/localStorageService";
+import {CustomerService} from "../../service/customerService";
+import {GlobalUsers} from "../../model/local-storage/localStorageTypes";
 
 export function setUser(user: User): IPlainDataAction<IMessengerStateOpt> {
 
@@ -82,6 +82,13 @@ export function setUserTitle(title: string): IPlainDataAction<IMessengerStateOpt
         payload: {
             user: {title: title, id: '', publicKey: new Uint8Array()}
         }
+    }
+}
+
+export function setGlobalUsers(globalUsers: GlobalUsers): IPlainDataAction<IMessengerStateOpt> {
+    return {
+        type: SET_GLOBAL_USERS,
+        payload: {globalUsers: globalUsers}
     }
 }
 
@@ -163,88 +170,71 @@ export function fetchMessengerStateTF(loggedUserId: string) {
         if (!currentUser) {
             throw new Error("user not logged in");
         }
-        const decryptionRequirements: { [key: string]: string } = {};
-        let users: { [key: string]: User } = {};
-        const globals = getState().messenger.globalUsers;
-        for (let id in globals) {
-            users[id] = {
-                id: globals[id].user,
-                publicKey: CryptService.base64ToUint8(globals[id].certificates[0])
-            }
-            if (globals[id].certificates.length > 0) {
-                console.error("too much certs for " + id);
-            }
-        }
-        ChatApi.getChats(loggedUserId).then(chatResp => {
-            if (chatResp.length === 0) {
-                return;
-            }
 
-            chatResp.forEach(chat => {
-                const sender = users[chat.sender];
-                if (!sender) {
-                    decryptionRequirements[chat.sender] = '';
+        const globalUsers = {...getState().messenger.globalUsers};
+        ChatApi.getChats(loggedUserId)
+            .then(chatResp => {
+                if (chatResp.length === 0) {
+                    return;
                 }
-            });
-            const requiredUsers = [];
-            for (let id in decryptionRequirements) {
-                requiredUsers.push(id);
-            }
-            CustomerApi.getUsers(requiredUsers).then(response => {
-                response.forEach((user) => {
-                    users[user.id!] = user;
-                });
-                return null;
-            }).then(() => {
-                return chatResp.map<Chat>(chatDto => {
-                    if (users[chatDto.sender]) {
-                        try {
-                            const chat = MessageMapper.toEntity(chatDto, users[chatDto.sender]);
+
+                CustomerService.addUnknownUsersToGlobalUsers(chatResp, globalUsers)
+                    .then(() => chatResp.map<Chat>(chatDto => {
+                        const sender = globalUsers[chatDto.sender];
+                        if (sender) {
+                            const chat = MessageMapper.toEntity(chatDto, sender.user);
                             return {
                                 id: chat.chat!,
                                 title: chat.data!,
-                                confirmed: false,
+                                confirmed: false, //TODO: FLAG DECRYPTED / NON-DECRYPTED??
                             }
-                        } catch (e) {
-                            Notification.add({message: 'Fail to decrypt chat title', severity: 'error', error: e})
                         }
-                    }
-                    return {id: chatDto.chat!, title: chatDto.chat!, confirmed: false}
-                });
-            }).then(chats => {
-                const currentChat = chats[0];
-                ChatApi.getParticipants(currentChat?.id!).then((allParticipants) => {
-                    users = allParticipants.reduce((prev, next) => {
-                        prev[next.id!] = {
-                            id: next.id as string,
-                            publicKey: next.publicKey,
-                        }
-                        return prev;
-                    }, {} as { [key: string]: User });
-
-                    return MessageApi.getMessages({
-                        type: MessageType.iam,
-                        receiver: currentUser.id,
-                        chat: currentChat.id
-                    }, users).then(knownParticipants => {
-
-                        CustomerService.processParticipants(allParticipants, knownParticipants, currentChat, loggedUserId);
-                        dispatch(setChats(chats.reduce((prev, next) => {
+                        return {id: chatDto.chat!, title: chatDto.chat!, confirmed: false}
+                    }))
+                    .then(chats => {
+                        const currentChat = chats[0];
+                        const stringIndexArrayChats = chats.reduce((prev, next) => {
                             prev[next.id] = next;
                             return prev;
-                        }, {} as { [key: string]: Chat })));
-                        dispatch(setCurrentChat(currentChat.id));
-                        dispatch(setUsers(users, currentChat.id));
-                        return null;
-                    }).then(() => {
-                        dispatch(fetchMessagesTF());
-                    });
-                })
-            })
+                        }, {} as StringIndexArray<Chat>);
 
-        })
+                        dispatch(openChatNewVersion(currentChat))
+                        dispatch(setChats(stringIndexArrayChats));
+                    })
+            })
     }
 }
+
+export function openChatNewVersion(chat: Chat) {
+
+    return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
+        const currentUser = getState().messenger.user!;
+
+        ChatApi.getParticipants(chat.id)
+            .then((chatParticipants) => {
+                const users = chatParticipants.reduce((previousValue, currentValue) => {
+                    previousValue[currentValue.id] = {
+                        id: currentValue.id,
+                        publicKey: currentValue.publicKey,
+                    }
+                    return previousValue;
+                }, {} as StringIndexArray<User>);
+
+                MessageApi.getMessages({
+                    receiver: currentUser.id,
+                    chat: chat.id,
+                    type: MessageType.iam,
+                }, users).then(knownParticipants => {
+                    CustomerService.processUnknownChatParticipants(chatParticipants, knownParticipants, chat, currentUser.id);
+                    dispatch(setCurrentChat(chat.id));
+                    dispatch(setUsers(users, chat.id));
+                }).then(() => {
+                    dispatch(fetchMessagesTF());
+                });
+            })
+    }
+}
+
 
 function processMessages(dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState, messages: Message[], users: { [p: string]: User }, currentUser: User | null) {
     const chatMessages: Message[] = [];
