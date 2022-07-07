@@ -141,7 +141,7 @@ export function sendMessage(messageText: string, messageType: MessageType, callb
                         messages.push(response[i]);
                     }
                 }
-                dispatch(setMessages(appendMessages(chatMessages, messages)))
+                // dispatch(setMessages(appendMessages(chatMessages, messages)))
             }).then(response => {
                 callback();
                 return response;
@@ -207,9 +207,10 @@ export function fetchMessengerStateTF(loggedUserId: string) {
                                 id: chat.chat!,
                                 title: chat.data!,
                                 confirmed: false, //TODO: FLAG DECRYPTED / NON-DECRYPTED??
+                                unreadMessages: 0
                             }
                         }
-                        return {id: chatDto.chat!, title: chatDto.chat!, confirmed: false}
+                        return {id: chatDto.chat!, title: chatDto.chat!, confirmed: false, unreadMessages: 0}
                     }))
                     .then(chats => {
                         const currentChat = chats[0];
@@ -232,22 +233,14 @@ export function openChatNewVersion(chat: Chat) {
 
         ChatApi.getParticipants(chat.id)
             .then((chatParticipants) => {
-                let users: StringIndexArray<User> = chatParticipants.reduce((previousValue, currentValue) => {
-                    previousValue[currentValue.id] = {
-                        id: currentValue.id,
-                        publicKey: currentValue.publicKey,
-                    }
-                    return previousValue;
-                }, {} as StringIndexArray<User>);
-
                 MessageApi.getMessages({
                     receiver: currentUser.id,
                     chat: chat.id,
                     type: MessageType.iam,
-                }, users)
+                })
                     .then(knownParticipants => {
-
-                        users = CustomerService.processUnknownChatParticipants(chatParticipants, knownParticipants, chat, currentUser.id);
+                        console.log("Before process unknown part...nts")
+                        const users = CustomerService.processUnknownChatParticipants(chatParticipants, knownParticipants, chat, currentUser.id);
                         dispatch(setCurrentChat(chat.id));
                         dispatch(setUsers(users, chat.id));
 
@@ -287,7 +280,7 @@ export function updateUserTitle(title: string) {
         return MessageApi.updateUserTitle(messages, users)
             .then((response) => {
                 dispatch(setIsEditUserTitleModalOpen(false));
-                dispatch(setMessages(appendMessages(getState().messenger.messages, response.filter(message => message.receiver === user.id))));
+                // dispatch(setMessages(appendMessages(getState().messenger.messages, response.filter(message => message.receiver === user.id))));
             })
             .catch((e) => Notification.add({message: 'Fail to update user title', error: e, severity: "error"}));
     }

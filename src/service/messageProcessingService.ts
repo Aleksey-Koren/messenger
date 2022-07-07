@@ -8,7 +8,7 @@ import {
     sendMessage,
     setChats,
     setChatsLastSeenAt,
-    setCurrentChat,
+    setCurrentChat, setGlobalUsers,
     setMessages,
     setUser
 } from "../redux/messenger/messengerActions";

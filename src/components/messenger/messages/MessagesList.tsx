@@ -40,7 +40,7 @@ const MessagesList: React.FC<Props> = (props) => {
             </Alert> : null}
             <List id={'list'}>
                 {/* This place should start a loop for room messages and create ListItem for each message */}
-                {props.messages?.map(message => (
+                {props.messages[props.currentChat!]?.map(message => (
                     <ListItem key={message.id} style={{display: 'flex', flexDirection: (message.sender === userId ? 'row-reverse' : 'row'), /* my messages - right, others - left*/}}>
                                 {message.type === MessageType.whisper &&
 
