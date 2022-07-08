@@ -24,9 +24,10 @@ import {CryptService} from "../../service/cryptService";
 import Notification from "../../Notification";
 import {MessageMapper} from "../../mapper/messageMapper";
 import {StringIndexArray} from "../../model/stringIndexArray";
-import {CustomerService} from "../../service/customerService";
+import {CustomerService} from "../../service/messenger/customerService";
 import {GlobalUsers} from "../../model/local-storage/localStorageTypes";
-import {MessageProcessingService} from "../../service/messageProcessingService";
+import {MessageProcessingService} from "../../service/messenger/messageProcessingService";
+import {ChatService} from "../../service/messenger/chatService";
 
 export function setUser(user: User): IPlainDataAction<IMessengerStateOpt> {
 
@@ -190,19 +191,7 @@ export function fetchMessengerStateTF(loggedUserId: string) {
                 }
 
                 CustomerService.addUnknownUsersToGlobalUsers(chatResp, globalUsers)
-                    .then(() => chatResp.map<Chat>(chatDto => {
-                        const sender = globalUsers[chatDto.sender];
-                        if (sender) {
-                            const chat = MessageMapper.toEntity(chatDto, sender.user);
-                            return {
-                                id: chat.chat!,
-                                title: chat.data!,
-                                confirmed: false, //TODO: FLAG DECRYPTED / NON-DECRYPTED??
-                                unreadMessages: 0
-                            }
-                        }
-                        return {id: chatDto.chat!, title: chatDto.chat!, confirmed: false, unreadMessages: 0}
-                    }))
+                    .then(() => ChatService.tryDecryptChatsTitles(chatResp, globalUsers))
                     .then(chats => {
                         const currentChat = chats[0];
                         const stringIndexArrayChats = chats.reduce((prev, next) => {
@@ -210,7 +199,8 @@ export function fetchMessengerStateTF(loggedUserId: string) {
                             return prev;
                         }, {} as StringIndexArray<Chat>);
 
-                        dispatch(openChatNewVersion(currentChat))
+                        dispatch(setGlobalUsers(globalUsers));
+                        dispatch(openChatNewVersion(currentChat));
                         dispatch(setChats(stringIndexArrayChats));
                     })
             })
@@ -221,20 +211,21 @@ export function openChatNewVersion(chat: Chat) {
 
     return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
         const currentUser = getState().messenger.user!;
+        const globalUsers = {...getState().messenger.globalUsers}
 
         ChatApi.getParticipants(chat.id)
             .then((chatParticipants) => {
+
                 MessageApi.getMessages({
                     receiver: currentUser.id,
                     chat: chat.id,
                     type: MessageType.iam,
                 })
                     .then(knownParticipants => {
-                        console.log("Before process unknown part...nts")
                         const users = CustomerService.processUnknownChatParticipants(chatParticipants, knownParticipants, chat, currentUser.id);
+                        CustomerService.updateChatParticipantsCertificates(globalUsers, chatParticipants, dispatch);
                         dispatch(setCurrentChat(chat.id));
                         dispatch(setUsers(users, chat.id));
-
                     })
                     .then(() => {
                         dispatch(fetchMessagesTF());

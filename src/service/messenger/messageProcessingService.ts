@@ -1,15 +1,18 @@
 import {ThunkDispatch} from "redux-thunk";
-import {AppState} from "../index";
+import {AppState} from "../../index";
 import {Action} from "redux";
 import {Message} from "../model/messenger/message";
 import {MessageType} from "../model/messenger/messageType";
+import {Message} from "../../model/messenger/message";
+import {MessageType} from "../../model/messenger/messageType";
+import {User} from "../../model/messenger/user";
 import {
     sendMessage,
     setChats,
     setCurrentChat, setGlobalUsers,
     setMessages,
     setUser
-} from "../redux/messenger/messengerActions";
+} from "../../redux/messenger/messengerActions";
 
 export class MessageProcessingService {
 
