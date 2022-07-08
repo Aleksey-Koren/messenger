@@ -8,11 +8,13 @@ import {AppState} from "../../index";
 import {ThunkDispatch} from "redux-thunk";
 import {Action} from "redux";
 import {MessageApi} from "../../api/messageApi";
-import { setCurrentChat} from "../messenger/messengerActions";
+import {openChatTF, setChats, setCurrentChat, setGlobalUsers} from "../messenger/messengerActions";
 import {MessageType} from "../../model/messenger/messageType";
 import {Message} from "../../model/messenger/message";
 import {setIsMembersModalOpened} from "../messenger-menu/messengerMenuActions";
 import Notification from '../../Notification';
+import {Chat} from "../../model/messenger/chat";
+import {Builder} from "builder-pattern";
 
 export function setIsNewPrivateModalOpened(isOpened: boolean): IPlainDataAction<boolean> {
     return {
@@ -40,7 +42,7 @@ export function createNewRoomTF(title: string, userTitle:string) {
     return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
         const user = getState().messenger.user;
         if(!user) {
-            throw new Error("User not logged in");
+            throw new Error("User is not logged in");
         }
         const users = getState().messenger.users;
         MessageApi.sendMessages([{
@@ -48,15 +50,24 @@ export function createNewRoomTF(title: string, userTitle:string) {
             sender: user.id!,
             receiver: user.id!,
             data: title
-        } as Message, {
-            type: MessageType.iam,
-            sender: user.id!,
-            receiver: user.id!,
-            data: userTitle
-        } as Message], users)
+        } as Message], {[user.id]: user})
             .then((messages) => {
                 const message = messages[0];
-                dispatch(setCurrentChat(message.chat));
+                const newChat: Chat = Builder<Chat>()
+                    .id(message.chat)
+                    .title(title)
+                    .isUnreadMessagesExist(false)
+                    .lastSeenAt(new Date())
+                    .build()
+                const state = getState();
+                const chats = {...state.messenger.chats};
+                const globalUsers = {...state.messenger.globalUsers};
+                chats[newChat.id] = newChat;
+                globalUsers[user.id].titles[newChat.id] = userTitle;
+                dispatch(setChats(chats));
+                dispatch(setGlobalUsers(globalUsers));
+                dispatch(openChatTF(newChat));
+
                 dispatch(setIsNewPrivateModalOpened(false));
                 dispatch(setIsMembersModalOpened(true));
             }).catch(err => {

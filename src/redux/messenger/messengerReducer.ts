@@ -3,7 +3,10 @@ import {
     SET_CURRENT_CHAT, SET_CHATS, SET_USERS,
     SET_MESSAGES,
     SET_USER,
-    TMessengerAction, SET_USER_TITLE
+    TMessengerAction,
+    SET_USER_TITLE,
+    SET_LAST_MESSAGES_FETCH,
+    SET_GLOBAL_USERS
 } from "./messengerTypes";
 import {User} from "../../model/messenger/user";
 import {CryptService} from "../../service/cryptService";
@@ -20,7 +23,8 @@ const initialState: IMessengerState = {
     messages: [],
     users: {},
     globalUsers: {},
-    currentChat: null
+    currentChat: null,
+    lastMessagesFetch: null,
 }
 
 export function messengerReducer(state: IMessengerState = initialState, action: TMessengerAction): IMessengerState {
@@ -31,8 +35,10 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
             const user: User = {...state.user!, title: action.payload.user!.title}
             LocalStorageService.userToStorage(user);
             return {...state, user: user};
+
         case SET_MESSAGES:
             return {...state, messages: action.payload.messages};
+
         case SET_USER: {
             const user = action.payload.user;
             if (!user) {
@@ -46,6 +52,7 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
                 globalUsers: touchGlobalUsers(state.globalUsers, {[user.id]: user}, null)
             };
         }
+
         case SET_CURRENT_CHAT: {
             const user = state.user;
             if (!user) {
@@ -54,28 +61,35 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
             if (action.payload.currentChat !== state.currentChat) {
                 return {
                     ...state,
-                    currentChat: action.payload.currentChat,
-                    messages: [],
-                    users: {[user?.id!]: user}
+                    currentChat: action.payload.currentChat
                 }
             } else {
                 return state;
             }
         }
+
         case SET_USERS:
             return {
                 ...state,
                 users: action.payload.users,
                 globalUsers: touchGlobalUsers(state.globalUsers, action.payload.users, action.payload.currentChat!)
             }
+
         case SET_CHATS:
             return {...state, chats: action.payload.chats}
 
-        //TODO: CHECK DROP GLOBAL USERS
+        case SET_GLOBAL_USERS:
+            LocalStorageService.globalUsersToStorage(action.payload.globalUsers);
+            return {...state, globalUsers: action.payload.globalUsers};
+
         case LOGOUT:
             localStorage.clear();
             SchedulerService.stopScheduler();
-            return {...initialState, globalUsers: {}};
+            return initialState;
+
+        case SET_LAST_MESSAGES_FETCH:
+            return {...state, lastMessagesFetch: action.payload.lastMessagesFetch};
+
         default:
             return state;
     }
@@ -93,14 +107,14 @@ function touchGlobalUsers(globalUsers: GlobalUsers, usersCache: StringIndexArray
             console.error("fail to convert public key into string")
             cert = '';
         }
-        if (!globalUsers[key]) {
-            globalUsers[key] = {
+        if (!out[key]) {
+            out[key] = {
                 user: key,
                 certificates: [],
                 titles: {}
             };
         }
-        var global = globalUsers[key];
+        var global = out[key];
         if (currentChat) {
             global.titles[currentChat] = user.title!;
         }

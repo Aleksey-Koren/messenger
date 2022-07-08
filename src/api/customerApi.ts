@@ -40,7 +40,7 @@ export class CustomerApi {
             packages.push(chunk);
         }
         return Promise.all(
-            packages.map(chunk => axiosApi.get<CustomerDto[]>("/customers/?id=" + chunk.join(',')))
+            packages.map(chunk => axiosApi.get<CustomerDto[]>("/customers?id=" + chunk.join(',')))
         ).then(responses => {
             let out: User[] = [];
             responses.forEach(response => {

@@ -12,6 +12,7 @@ export interface IMessengerStateOpt {
     globalUsers?: GlobalUsers;
     user?: User | null;
     currentChat?: string | null;
+    lastMessagesFetch?: Date | null;
 }
 
 export interface IMessengerState extends IMessengerStateOpt {
@@ -21,6 +22,7 @@ export interface IMessengerState extends IMessengerStateOpt {
     globalUsers: GlobalUsers;
     user: User | null;
     currentChat: string | null;
+    lastMessagesFetch: Date | null;
 }
 
 export type TMessengerAction = IPlainDataAction<IMessengerState>
@@ -32,3 +34,5 @@ export const SET_USER_TITLE = 'SET_USER_TITLE';
 export const SET_USERS = 'SET_CURRENT_USERS';
 export const SET_CHATS = 'SET_CURRENT_CHATS';
 export const SET_PRIVATE_KEY = 'SET_PRIVATE_KEY';
+export const SET_GLOBAL_USERS = 'SET_GLOBAL_USERS';
+export const SET_LAST_MESSAGES_FETCH = 'SET_LAST_MESSAGES_FETCH';
