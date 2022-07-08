@@ -1,13 +1,17 @@
-import {Message} from "../model/messenger/message";
-import {MessageType} from "../model/messenger/messageType";
-import {MessageApi} from "../api/messageApi";
-import {Chat} from "../model/messenger/chat";
-import {User} from "../model/messenger/user";
-import {StringIndexArray} from "../model/stringIndexArray";
-import {CustomerApi} from "../api/customerApi";
-import {CryptService} from "./cryptService";
-import {GlobalUsers} from "../model/local-storage/localStorageTypes";
-import {MessageDto} from "../dto/messageDto";
+import {Message} from "../../model/messenger/message";
+import {MessageType} from "../../model/messenger/messageType";
+import {MessageApi} from "../../api/messageApi";
+import {Chat} from "../../model/messenger/chat";
+import {User} from "../../model/messenger/user";
+import {StringIndexArray} from "../../model/stringIndexArray";
+import {CustomerApi} from "../../api/customerApi";
+import {CryptService} from "../cryptService";
+import {GlobalUsers} from "../../model/local-storage/localStorageTypes";
+import {MessageDto} from "../../dto/messageDto";
+import {ThunkDispatch} from "redux-thunk";
+import {AppState} from "../../index";
+import {Action} from "redux";
+import {setGlobalUsers} from "../../redux/messenger/messengerActions";
 
 export class CustomerService {
 
@@ -60,4 +64,23 @@ export class CustomerService {
                 };
             }));
     }
+
+    static updateChatParticipantsCertificates(globalUsers: GlobalUsers, chatParticipants: User[], dispatch: ThunkDispatch<AppState, void, Action>) {
+        let isGlobalUsersUpdate = false;
+
+        chatParticipants.forEach(participant => {
+            const participantCertificates = globalUsers[participant.id].certificates;
+            const actualParticipantPublicKey = CryptService.uint8ToPlainString(participant.publicKey);
+
+            if (participantCertificates.indexOf(actualParticipantPublicKey) == -1) {
+                participantCertificates.push(actualParticipantPublicKey)
+                isGlobalUsersUpdate = true;
+            }
+        })
+
+        if (isGlobalUsersUpdate) {
+            dispatch(setGlobalUsers(globalUsers));
+        }
+    }
 }
+
