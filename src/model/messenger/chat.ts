@@ -3,5 +3,6 @@ export interface Chat {
     id: string;
     title: string;
     confirmed: boolean;
-    unreadMessages: number;
+    isUnreadMessagesExist: boolean;
+    lastSeenAt: Date;
 }

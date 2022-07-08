@@ -9,6 +9,7 @@ import {StringIndexArray} from "../model/stringIndexArray";
 export class MessageApi {
 
     static async sendMessages(messages: Message[], users: StringIndexArray<User>) {
+
         return Promise.all(messages.map(message => MessageMapper.toDto(message, users[message.receiver]))).then(dto => {
             return axiosApi.post<MessageDto[]>('messages?iam=' + messages[0].sender, dto);
         }).then(response => {

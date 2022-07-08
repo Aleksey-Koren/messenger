@@ -9,7 +9,7 @@ export class CryptService {
         const privateKey = privateKeyToSign || messenger.user?.privateKey;
         nonce = nonce || crypto.getRandomValues(new Uint8Array(24));
         if (!privateKey) {
-            throw new Error("User not logged in");
+            throw new Error("User is not logged in");
         }
 
         const data = nacl.box(
