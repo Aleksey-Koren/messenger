@@ -1,6 +1,7 @@
 import {store} from "../index";
 import nacl from "tweetnacl";
 import naclUtil from "tweetnacl-util";
+import {fromByteArray, toByteArray} from "base64-js";
 
 export class CryptService {
 
@@ -50,11 +51,13 @@ export class CryptService {
     }
 
     static uint8ToBase64(array: Uint8Array) {
-        return naclUtil.encodeBase64(array);
+        const decoder = new TextDecoder('utf8');
+        return decoder.decode(array);
     }
 
     static base64ToUint8(string: string) {
-        return naclUtil.decodeBase64(string);
+        const encoder = new TextEncoder();
+        return encoder.encode(string);
     }
 
     static plainStringToUint8(string: string) {

@@ -200,14 +200,14 @@ export function fetchMessengerStateTF(loggedUserId: string) {
                         }, {} as StringIndexArray<Chat>);
 
                         dispatch(setGlobalUsers(globalUsers));
-                        dispatch(openChatNewVersion(currentChat));
+                        dispatch(openChatTF(currentChat));
                         dispatch(setChats(stringIndexArrayChats));
                     })
             })
     }
 }
 
-export function openChatNewVersion(chat: Chat) {
+export function openChatTF(chat: Chat) {
 
     return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
         const currentUser = getState().messenger.user!;
@@ -268,8 +268,8 @@ export function updateUserTitle(title: string) {
     }
 }
 
-export function openChatTF(chat: Chat) {
-    return (dispatch: ThunkDispatch<AppState, void, Action>) => {
-        dispatch(setCurrentChat(chat.id!));
-    }
-}
+// export function openChatTF(chat: Chat) {
+//     return (dispatch: ThunkDispatch<AppState, void, Action>) => {
+//         dispatch(setCurrentChat(chat.id!));
+//     }
+// }

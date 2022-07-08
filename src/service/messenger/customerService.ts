@@ -23,6 +23,15 @@ export class CustomerService {
 
         const whoMessages: Message[] = [];
 
+        const participantsIndexArray = participants.reduce((array, participant) => {
+            array[participant.id] = {
+                id: participant?.id!,
+                title: knownParticipantsTitles[participant.id],
+                publicKey: participant?.publicKey
+            }
+            return array;
+        }, {} as StringIndexArray<User>);
+
         participants.filter(participant => !knownParticipantsTitles[participant.id])
             .forEach(unknownParticipant => {
                 whoMessages.push({
@@ -33,16 +42,11 @@ export class CustomerService {
                     data: ""
                 } as Message);
             })
-        MessageApi.sendMessages(whoMessages, {});
 
-        return participants.reduce((array, participant) => {
-            array[participant.id] = {
-                id: participant?.id!,
-                title: knownParticipantsTitles[participant.id],
-                publicKey: participant?.publicKey
-            }
-            return array;
-        }, {} as StringIndexArray<User>)
+        if (whoMessages.length !== 0) {
+            MessageApi.sendMessages(whoMessages, participantsIndexArray);
+        }
+        return participantsIndexArray;
     }
 
     static addUnknownUsersToGlobalUsers(helloMessages: MessageDto[], globalUsers: GlobalUsers) {

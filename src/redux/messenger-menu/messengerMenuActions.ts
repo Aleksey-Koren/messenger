@@ -25,6 +25,7 @@ export function setIsMembersModalOpened(isOpened: boolean): IPlainDataAction<boo
 export function addUserToRoomTF(me: User, customer:User, otherId: string) {
     return (dispatch: ThunkDispatch<AppState, any, Action>, getState: () => AppState) => {
         const currentChat = getState().messenger.chats[getState().messenger.currentChat!];
+        console.log(customer.publicKey);
         return MessageApi.sendMessages([{
             type: MessageType.HELLO,
             receiver: otherId,

@@ -1,10 +1,8 @@
 import {ThunkDispatch} from "redux-thunk";
 import {AppState} from "../../index";
 import {Action} from "redux";
-import {Message} from "../model/messenger/message";
-import {MessageType} from "../model/messenger/messageType";
-import {Message} from "../../model/messenger/message";
 import {MessageType} from "../../model/messenger/messageType";
+import {Message} from "../../model/messenger/message";
 import {User} from "../../model/messenger/user";
 import {
     sendMessage,
@@ -24,7 +22,7 @@ export class MessageProcessingService {
         const currentChat = state.messenger.currentChat;
         let currentUser = {...state.messenger.user!};
         const chats = {...state.messenger.chats};
-        const messages = {...state.messenger.messages};
+        const messages = [...state.messenger.messages];
         const globalUsers = {...state.messenger.globalUsers};
 
         let isChatsUpdated = false;
