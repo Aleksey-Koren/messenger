@@ -1,6 +1,6 @@
 import {
     IMessengerStateOpt,
-    SET_CHATS, SET_CHATS_LAST_SEEN_AT,
+    SET_CHATS,
     SET_CURRENT_CHAT, SET_LAST_MESSAGES_FETCH,
     SET_GLOBAL_USERS,
     SET_MESSAGES,
@@ -68,7 +68,7 @@ export function setCurrentChat(chatId: string | null): IPlainDataAction<IMesseng
     }
 }
 
-export function setMessages(messages: StringIndexArray<Message[]>): IPlainDataAction<IMessengerStateOpt> {
+export function setMessages(messages: Message[]): IPlainDataAction<IMessengerStateOpt> {
 
     return {
         type: SET_MESSAGES,
@@ -92,15 +92,6 @@ export function setLastMessagesFetch(lastMessagesFetch: Date): IPlainDataAction<
         type: SET_LAST_MESSAGES_FETCH,
         payload: {
             lastMessagesFetch
-        }
-    }
-}
-
-export function setChatsLastSeenAt(chatsLastSeenAt: StringIndexArray<Date>): IPlainDataAction<IMessengerStateOpt> {
-    return {
-        type: SET_CHATS_LAST_SEEN_AT,
-        payload: {
-            chatsLastSeenAt
         }
     }
 }

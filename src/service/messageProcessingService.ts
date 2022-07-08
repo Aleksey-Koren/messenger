@@ -3,11 +3,9 @@ import {AppState} from "../index";
 import {Action} from "redux";
 import {Message} from "../model/messenger/message";
 import {MessageType} from "../model/messenger/messageType";
-import {User} from "../model/messenger/user";
 import {
     sendMessage,
     setChats,
-    setChatsLastSeenAt,
     setCurrentChat, setGlobalUsers,
     setMessages,
     setUser
@@ -26,6 +24,11 @@ export class MessageProcessingService {
         const messages = {...state.messenger.messages};
         const globalUsers = {...state.messenger.globalUsers};
 
+        let isChatsUpdated = false;
+        let isGlobalUsersUpdated = false;
+        let isMessagesUpdated = false;
+        let isCurrentUserUpdated = false;
+
         newMessages.forEach(message => {
             switch (message.type) {
                 case MessageType.HELLO:
@@ -34,63 +37,84 @@ export class MessageProcessingService {
                             id: message.chat,
                             title: message.data!,
                             confirmed: false,
-                            unreadMessages: 0
+                            isUnreadMessagesExist: false,
+                            lastSeenAt: new Date()
                         }
+                        isChatsUpdated = true;
                     } else if (chats[message.chat] && message.data) {
                         chats[message.chat].title = message.data;
+                        isChatsUpdated = true;
                     }
-                    dispatch(setChats(chats));
+
                     if (currentChat == null) {
                         //case when user just create account (current chat null)
                         //and was invited in chat
                         dispatch(setCurrentChat(message.chat));
                     }
-                    messages[message.chat].push(message);
+                    if (message.chat === currentChat) {
+                        messages.push(message);
+                        isMessagesUpdated = true;
+                    }
                     break;
                 case MessageType.whisper:
-                    messages[message.chat].push(message);
+                    if (message.chat === currentChat) {
+                        messages.push(message);
+                        isMessagesUpdated = true;
+                    } else {
+                        chats[message.chat].isUnreadMessagesExist = true;
+                        isChatsUpdated = true;
+                    }
                     break;
                 case MessageType.iam:
                     globalUsers[message.sender].titles[message.chat] = message.data!;
-                    dispatch(setGlobalUsers(globalUsers));
+                    isGlobalUsersUpdated = true;
                     if (message.sender === currentUser?.id!) {
-                        currentUser = {...currentUser, title: message.data} as User;
-                        dispatch(setUser(currentUser))
+                        currentUser.title = message.data;
+                        isCurrentUserUpdated = true;
                     }
-                    messages[message.chat].push(message);
+                    if (message.chat === currentChat) {
+                        messages.push(message);
+                        isMessagesUpdated = true;
+                    }
                     break;
-
                 case MessageType.who:
                     dispatch(sendMessage(globalUsers[currentUser!.id].titles[message.chat] || currentUser!.id, MessageType.iam, () => {
                     }));
-                    messages[message.chat].push(message);
                     break;
                 default:
                     throw new Error('Unknown message type: ' + message.type);
             }
 
-            dispatch(setMessages(messages));
-
-            processUnreadMessages(dispatch, getState);
-
+            if (isChatsUpdated) {
+                dispatch(setChats(chats));
+            }
+            if (isGlobalUsersUpdated) {
+                dispatch(setGlobalUsers(globalUsers));
+            }
+            if (isMessagesUpdated) {
+                dispatch(setMessages(messages));
+            }
+            if (isCurrentUserUpdated) {
+                dispatch(setUser(currentUser));
+            }
         })
     }
 }
 
-function processUnreadMessages(dispatch: ThunkDispatch<AppState, void, Action>,
-                               getState: () => AppState) {
-    const state = getState();
-
-    const chatsLastSeenAt = {...state.messenger.chatsLastSeenAt};
-    chatsLastSeenAt[state.messenger.currentChat!] = new Date();
-    dispatch(setChatsLastSeenAt(chatsLastSeenAt));
-
-    const chats = {...state.messenger.chats};
-    const messages = state.messenger.messages;
-    for(const chatId in chats) {
-        const lastSeenAt = chatsLastSeenAt[chatId];
-        chats[chatId].unreadMessages = messages[chatId].filter(message => message.created! > lastSeenAt).length;
-    }
-
-    dispatch(setChats(chats));
-}
+// function processUnreadMessages(dispatch: ThunkDispatch<AppState, void, Action>,
+//                                getState: () => AppState) {
+//     const state = getState();
+//
+//     const chatsLastSeenAt = {...state.messenger.chatsLastSeenAt};
+//     chatsLastSeenAt[state.messenger.currentChat!] = new Date();
+//     dispatch(setChatsLastSeenAt(chatsLastSeenAt));
+//
+//     const chats = {...state.messenger.chats};
+//     const messages = state.messenger.messages;
+//     for(const chatId in chats) {
+//         const lastSeenAt = chatsLastSeenAt[chatId];
+//         chats[chatId].unreadMessages = messages[chatId].filter(message => message.created! > lastSeenAt).length;
+//     }
+//
+//     dispatch(setChats(chats));
+// }

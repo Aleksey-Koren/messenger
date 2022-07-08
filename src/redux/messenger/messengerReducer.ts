@@ -6,7 +6,6 @@ import {
     TMessengerAction,
     SET_USER_TITLE,
     SET_LAST_MESSAGES_FETCH,
-    SET_CHATS_LAST_SEEN_AT,
     SET_GLOBAL_USERS
 } from "./messengerTypes";
 import {User} from "../../model/messenger/user";
@@ -90,9 +89,6 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
 
         case SET_LAST_MESSAGES_FETCH:
             return {...state, lastMessagesFetch: action.payload.lastMessagesFetch};
-
-        case SET_CHATS_LAST_SEEN_AT:
-            return {...state, chatsLastSeenAt: action.payload.chatsLastSeenAt}
 
         default:
             return state;
