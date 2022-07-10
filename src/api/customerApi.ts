@@ -6,12 +6,8 @@ import {User} from "../model/messenger/user";
 
 export class CustomerApi {
 
-    static register(customer: Customer, isRegistrationGhost?: boolean): Promise<User> {
-        return axiosApi.post<CustomerDto>('customers', CustomerMapper.toDto(customer), {
-            params: {
-                'ghost': isRegistrationGhost && true
-            }
-        }).then(response => {
+    static register(customer: Customer): Promise<User> {
+        return axiosApi.post<CustomerDto>('customers', CustomerMapper.toDto(customer)).then(response => {
             return CustomerMapper.toEntity(response.data);
         })
     }
