@@ -152,27 +152,17 @@ export function fetchMessagesTF() {
         }
         const nextMessageFetch: Date = new Date();
 
+        // const instant = new Date({...state.messenger.lastMessagesFetch!}.setSeconds(state.messenger.lastMessagesFetch!.getSeconds() - 1));
         MessageApi.getMessages({
             receiver: currentUser.id!,
             created: state.messenger.lastMessagesFetch!,
+            // created: state.messenger.lastMessagesFetch!,
             before: nextMessageFetch
         }).then(messagesResp => {
             dispatch(setLastMessagesFetch(nextMessageFetch));
             MessageProcessingService.processMessages(dispatch, getState, messagesResp);
         });
     }
-}
-
-export function appendMessages(existing: Message[], incoming: Message[]) {
-    const result = [...existing];
-    const map: { [key: string]: 1 } = result.reduce((map, message) => {
-            map[message.id!] = 1;
-            return map;
-        },
-        {} as { [key: string]: 1 });
-    return existing.concat(incoming.filter(message => {
-        return !map[message.id!];
-    }))
 }
 
 export function fetchMessengerStateTF(loggedUserId: string) {

@@ -73,7 +73,7 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
             return {
                 ...state,
                 users: action.payload.users,
-                globalUsers: touchGlobalUsers(state.globalUsers, action.payload.users, action.payload.currentChat!)
+                // globalUsers: touchGlobalUsers(state.globalUsers, action.payload.users, action.payload.currentChat!)
             }
 
         case SET_CHATS:

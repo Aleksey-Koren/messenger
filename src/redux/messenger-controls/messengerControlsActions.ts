@@ -39,6 +39,8 @@ export function setIsEditUserTitleModalOpen(isOpen: boolean): IPlainDataAction<b
 
 export function createNewRoomTF(title: string, userTitle:string) {
 
+    console.log("CreateNewRoomTF at start userTitle -- " + userTitle);
+
     return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
         const user = getState().messenger.user;
         if(!user) {
@@ -64,6 +66,7 @@ export function createNewRoomTF(title: string, userTitle:string) {
                 const globalUsers = {...state.messenger.globalUsers};
                 chats[newChat.id] = newChat;
                 globalUsers[user.id].titles[newChat.id] = userTitle;
+                console.log("GlobalUsers --- " + JSON.stringify(globalUsers));
                 dispatch(setChats(chats));
                 dispatch(setGlobalUsers(globalUsers));
                 dispatch(openChatTF(newChat));

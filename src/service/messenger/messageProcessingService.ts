@@ -3,7 +3,6 @@ import {AppState} from "../../index";
 import {Action} from "redux";
 import {MessageType} from "../../model/messenger/messageType";
 import {Message} from "../../model/messenger/message";
-import {User} from "../../model/messenger/user";
 import {
     sendMessage,
     setChats,
@@ -22,13 +21,14 @@ export class MessageProcessingService {
         const currentChat = state.messenger.currentChat;
         let currentUser = {...state.messenger.user!};
         const chats = {...state.messenger.chats};
-        const messages = [...state.messenger.messages];
+        const existing = [...state.messenger.messages];
         const globalUsers = {...state.messenger.globalUsers};
 
         let isChatsUpdated = false;
         let isGlobalUsersUpdated = false;
         let isMessagesUpdated = false;
         let isCurrentUserUpdated = false;
+        const incoming: Message[] = [];
 
         newMessages.forEach(message => {
             switch (message.type) {
@@ -53,13 +53,13 @@ export class MessageProcessingService {
                         dispatch(setCurrentChat(message.chat));
                     }
                     if (message.chat === currentChat) {
-                        messages.push(message);
+                        incoming.push(message);
                         isMessagesUpdated = true;
                     }
                     break;
                 case MessageType.whisper:
                     if (message.chat === currentChat) {
-                        messages.push(message);
+                        incoming.push(message);
                         isMessagesUpdated = true;
                     } else {
                         chats[message.chat].isUnreadMessagesExist = true;
@@ -74,7 +74,7 @@ export class MessageProcessingService {
                         isCurrentUserUpdated = true;
                     }
                     if (message.chat === currentChat) {
-                        messages.push(message);
+                        incoming.push(message);
                         isMessagesUpdated = true;
                     }
                     break;
@@ -94,12 +94,24 @@ export class MessageProcessingService {
             dispatch(setGlobalUsers(globalUsers));
         }
         if (isMessagesUpdated) {
-            dispatch(setMessages(messages));
+            dispatch(setMessages(appendMessages(existing, incoming)));
         }
         if (isCurrentUserUpdated) {
             dispatch(setUser(currentUser));
         }
     }
+}
+
+function appendMessages(existing: Message[], incoming: Message[]) {
+    console.log("Incoming messages!!! -- " + incoming);
+    const map: { [key: string]: 1 } = existing.reduce((map, message) => {
+            map[message.id!] = 1;
+            return map;
+        },
+        {} as { [key: string]: 1 });
+    return existing.concat(incoming.filter(message => {
+        return !map[message.id!];
+    }))
 }
 
 // function processUnreadMessages(dispatch: ThunkDispatch<AppState, void, Action>,

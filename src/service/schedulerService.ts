@@ -11,7 +11,7 @@ export class SchedulerService {
         }
         SchedulerService.timerId = setInterval(() => {
             dispatch(fetchMessagesTF())
-        }, 5000);
+        }, 10000);
     }
 
     static stopScheduler() {
