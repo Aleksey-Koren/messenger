@@ -41,13 +41,11 @@ const RegistrationModal: React.FC<Props> = (props) => {
                                   defaultValue={props.userId!}/>
                     </div>
 
-                    {!props.isGhost &&
-                        <div className={style.dialog__content_row}>
-                            <strong className={style.dialog__content_row_label}>Private Key:</strong>
-                            <textarea rows={3} readOnly className={style.dialog__content_row_input}
-                                     defaultValue={props.privateKey?.join(',')}/>
-                        </div>
-                    }
+                    <div className={style.dialog__content_row}>
+                        <strong className={style.dialog__content_row_label}>Private Key:</strong>
+                        <textarea rows={3} readOnly className={style.dialog__content_row_input}
+                                 defaultValue={props.privateKey?.join(',')}/>
+                    </div>
                     
                     <div className={style.dialog__content_row}>
                         <strong className={style.dialog__content_row_label}>Public Key:</strong>

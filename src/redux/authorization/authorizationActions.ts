@@ -18,6 +18,8 @@ import nacl from "tweetnacl";
 import {Action} from "redux";
 import {ThunkDispatch} from "redux-thunk";
 import {CryptService} from "../../service/cryptService";
+import {User} from "../../model/messenger/user";
+import {v4} from "uuid";
 
 
 export function setIsWelcomeModalOpen(isOpen: boolean): IPlainDataAction<boolean> {
@@ -76,8 +78,12 @@ export function registerTF(isGhost?: boolean) {
             .pk(keyPair.publicKey)
             .build();
 
-       CustomerApi.register(customer, isGhost && true)
-            .then(user => {
+        (isGhost ? new Promise<User>(resolve => {resolve({
+            id: v4(),
+            privateKey: keyPair.secretKey,
+            publicKey: keyPair.publicKey})}
+        ) : CustomerApi.register(customer))
+            .then((user:User) => {
                 user.privateKey = keyPair.secretKey
                 dispatch(setIsRegistrationModalOpen(true, !!isGhost));
                 dispatch(setIsWelcomeModalOpen(false));
