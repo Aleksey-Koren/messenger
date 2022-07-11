@@ -74,9 +74,9 @@ export class CustomerService {
 
         chatParticipants.forEach(participant => {
             const participantCertificates = globalUsers[participant.id].certificates;
-            const actualParticipantPublicKey = CryptService.uint8ToPlainString(participant.publicKey);
+            const actualParticipantPublicKey = CryptService.uint8ToBase64(participant.publicKey);
 
-            if (participantCertificates.indexOf(actualParticipantPublicKey) == -1) {
+            if (participantCertificates.indexOf(actualParticipantPublicKey) === -1) {
                 participantCertificates.push(actualParticipantPublicKey)
                 isGlobalUsersUpdate = true;
             }

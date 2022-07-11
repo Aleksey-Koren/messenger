@@ -8,8 +8,7 @@ export class MessageService {
 
     static decryptMessageDataByIterateOverPublicKeys(message: Message, userId: string) {
         const userPublicKeys = store.getState().messenger.globalUsers[userId].certificates;
-
-        for (let publicKey in userPublicKeys) {
+        for (const publicKey of userPublicKeys) {
             try {
                 const decryptedMessageData = decryptMessageData(message, publicKey);
                 if (decryptedMessageData) {
@@ -18,6 +17,7 @@ export class MessageService {
                     return;
                 }
             } catch (e) {
+                console.error(e);
                 message.decrypted = false;
                 return;
             }
@@ -40,7 +40,7 @@ export class MessageService {
                         message.data = decryptedMessageData;
                         message.decrypted = !!decryptedMessageData;
 
-                        if (globalUsers[senderId].certificates.indexOf(foundedPublicKey) == -1) {
+                        if (globalUsers[senderId].certificates.indexOf(foundedPublicKey) === -1) {
                             globalUsers[senderId].certificates.unshift(foundedPublicKey);
                         }
                     })
@@ -58,12 +58,12 @@ export class MessageService {
 function decryptMessageData(message: Message, publicKeyToVerify: string, privateKeyToDecrypt?: Uint8Array) {
     privateKeyToDecrypt = privateKeyToDecrypt || store.getState().messenger.user?.privateKey;
     if (!privateKeyToDecrypt) {
-        throw new Error("user not logged in")
+        throw new Error("user is not logged in")
     }
 
     return CryptService.decryptToString(
         CryptService.base64ToUint8(message.data!),
-        CryptService.plainStringToUint8(publicKeyToVerify),
+        CryptService.base64ToUint8(publicKeyToVerify),
         message.nonce!,
         privateKeyToDecrypt
     ) || undefined;

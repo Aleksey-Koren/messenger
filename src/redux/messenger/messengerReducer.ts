@@ -61,7 +61,8 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
             if (action.payload.currentChat !== state.currentChat) {
                 return {
                     ...state,
-                    currentChat: action.payload.currentChat
+                    currentChat: action.payload.currentChat,
+                    messages: []
                 }
             } else {
                 return state;
@@ -96,7 +97,6 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
 }
 
 function touchGlobalUsers(globalUsers: GlobalUsers, usersCache: StringIndexArray<User>, currentChat: string | null) {
-    console.log('touch global users')
     const out = {...globalUsers};
     for (let key in usersCache) {
         const user = usersCache[key];

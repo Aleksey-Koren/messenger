@@ -228,7 +228,14 @@ export function openChatTF(chat: Chat) {
                         dispatch(setUsers(users, chat.id));
                     })
                     .then(() => {
-                        dispatch(fetchMessagesTF());
+                        MessageApi.getMessages({
+                            receiver: currentUser.id,
+                            chat: chat.id,
+                            page: 0,
+                            size: 20
+                        }).then(messages => {
+                            MessageProcessingService.processMessages(dispatch, getState, messages);
+                        })
                     });
             })
     }

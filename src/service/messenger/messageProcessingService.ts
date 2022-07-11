@@ -85,20 +85,20 @@ export class MessageProcessingService {
                 default:
                     throw new Error('Unknown message type: ' + message.type);
             }
-
-            if (isChatsUpdated) {
-                dispatch(setChats(chats));
-            }
-            if (isGlobalUsersUpdated) {
-                dispatch(setGlobalUsers(globalUsers));
-            }
-            if (isMessagesUpdated) {
-                dispatch(setMessages(messages));
-            }
-            if (isCurrentUserUpdated) {
-                dispatch(setUser(currentUser));
-            }
         })
+
+        if (isChatsUpdated) {
+            dispatch(setChats(chats));
+        }
+        if (isGlobalUsersUpdated) {
+            dispatch(setGlobalUsers(globalUsers));
+        }
+        if (isMessagesUpdated) {
+            dispatch(setMessages(messages));
+        }
+        if (isCurrentUserUpdated) {
+            dispatch(setUser(currentUser));
+        }
     }
 }
 
