@@ -13,7 +13,6 @@ export class MessageApi {
         return Promise.all(messages.map(message => MessageMapper.toDto(message, users[message.receiver]))).then(dto => {
             return axiosApi.post<MessageDto[]>('messages?iam=' + messages[0].sender, dto);
         }).then(response => {
-            console.log(JSON.stringify(users));
             return response.data.map(dto => MessageMapper.toEntity(dto, users[dto.sender].id));
         })
     }

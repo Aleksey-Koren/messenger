@@ -76,7 +76,7 @@ export function registerTF(isGhost?: boolean) {
             .pk(keyPair.publicKey)
             .build();
 
-        CustomerApi.register(customer, isGhost && true)
+       CustomerApi.register(customer, isGhost && true)
             .then(user => {
                 user.privateKey = keyPair.secretKey
                 dispatch(setIsRegistrationModalOpen(true, !!isGhost));

@@ -50,14 +50,25 @@ export class CryptService {
         return naclUtil.encodeUTF8(decrypt);
     }
 
+    // static uint8ToBase64(array: Uint8Array) {
+    //     const decoder = new TextDecoder('utf8');
+    //     return decoder.decode(array);
+    // }
+    //
+    // static base64ToUint8(string: string) {
+    //     const encoder = new TextEncoder();
+    //     return encoder.encode(string);
+    // }
+
     static uint8ToBase64(array: Uint8Array) {
-        const decoder = new TextDecoder('utf8');
-        return decoder.decode(array);
+        console.log("UINT8 TO Base64 --- " + array);
+        return naclUtil.encodeBase64(array);
     }
 
     static base64ToUint8(string: string) {
-        const encoder = new TextEncoder();
-        return encoder.encode(string);
+        let a = naclUtil.decodeBase64(string);
+        console.log("BASE^$ to UINT8 --- " + JSON.stringify(a))
+        return a
     }
 
     static plainStringToUint8(string: string) {
