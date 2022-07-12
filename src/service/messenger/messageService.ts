@@ -28,11 +28,11 @@ export class MessageService {
         }
 
         if (message.type === MessageType.hello) {
-            MessageService.tryDecryptUndecipheredMessages([message])
+            MessageService.tryDecryptUndecryptableMessages([message])
         }
     }
 
-    static tryDecryptUndecipheredMessages(messages: Message[]) {
+    static tryDecryptUndecryptableMessages(messages: Message[]) {
         const messagesSendersIds: Set<string> = new Set();
         const globalUsers = {...store.getState().messenger.globalUsers}
 

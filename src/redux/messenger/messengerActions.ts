@@ -176,9 +176,9 @@ export function fetchMessagesTF() {
         }
         let nextMessageFetch: Date = new Date();
 
-        // if (currentChatId) {
-        //     ChatService.processChatParticipants(dispatch, currentChatId, {...state.messenger.globalUsers}, currentUser.id);
-        // }
+        if (currentChatId) {
+            ChatService.processChatParticipants(dispatch, currentChatId, {...state.messenger.globalUsers}, currentUser.id);
+        }
 
         MessageApi.getMessages({
             receiver: currentUser.id!,
@@ -251,12 +251,12 @@ export function updateUserTitle(title: string) {
     return (dispatch: ThunkDispatch<AppState, any, Action>, getState: () => AppState) => {
         const user = getState().messenger.user;
         if (!user) {
-            throw new Error("User not logged in");
+            throw new Error("User is not logged in");
         }
         const users = getState().messenger.users!;
         const currentChat = getState().messenger.currentChat!
         if (!currentChat) {
-            throw new Error("Chat not selected");
+            throw new Error("Chat is not selected");
         }
         const messages: Message[] = []
 
@@ -269,6 +269,8 @@ export function updateUserTitle(title: string) {
                 data: title
             } as Message);
         }
+
+        console.log("Messages --- " + JSON.stringify(messages));
 
         return MessageApi.updateUserTitle(messages, users)
             .then((response) => {

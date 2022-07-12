@@ -4,6 +4,7 @@ import {CryptService} from "../service/cryptService";
 import {User} from "../model/messenger/user";
 import {store} from "../index";
 import {MessageService} from "../service/messenger/messageService";
+import {CustomerApi} from "../api/customerApi";
 
 export class MessageMapper {
 
@@ -27,7 +28,7 @@ export class MessageMapper {
         return message;
     }
 
-    static toDto(message: Message, receiver: User) {
+    static async toDto(message: Message, receiver: User) {
         const dto = {
             id: message.id,
             sender: message.sender,
@@ -38,10 +39,17 @@ export class MessageMapper {
         } as MessageDto;
 
         if (message.data) {
+            if (!receiver) {
+                console.log("I am IN (!receiver)!!!!!!!!")
+                receiver = await CustomerApi.getCustomer(message.receiver).then(user => {
+                    return user;
+                });
+            }
             const data = CryptService.encrypt(CryptService.plainStringToUint8(message.data), receiver.publicKey);
             dto.data = CryptService.uint8ToBase64(data.data);
             dto.nonce = CryptService.uint8ToBase64(data.nonce);
         }
+        console.log("DTO at the EXIT!!!!!!!!! --- " + JSON.stringify(dto));
         return dto;
     }
 }
