@@ -120,7 +120,10 @@ export function sendMessageNewVersion(messageText: string, messageType: MessageT
             .build();
 
         MessageApi.sendMessages([message], users)
-            .catch((e) => Notification.add({severity: 'error', message: 'Message not sent', error: e}));
+            .catch((e) => {
+                console.error(e)
+                Notification.add({severity: 'error', message: 'Message not sent', error: e})
+            });
     }
 }
 
@@ -173,16 +176,9 @@ export function fetchMessagesTF() {
         }
         let nextMessageFetch: Date = new Date();
 
-        if (currentChatId) {
-            ChatService.processChatParticipants(dispatch, currentChatId, {...state.messenger.globalUsers}, currentUser.id);
-        } else {
-            ChatApi.getChats(currentUser?.id!)
-                .then(chats => {
-                    if (chats.length > 0) {
-                        dispatch(openChatTF(chats[0]?.id!))
-                    }
-                })
-        }
+        // if (currentChatId) {
+        //     ChatService.processChatParticipants(dispatch, currentChatId, {...state.messenger.globalUsers}, currentUser.id);
+        // }
 
         MessageApi.getMessages({
             receiver: currentUser.id!,

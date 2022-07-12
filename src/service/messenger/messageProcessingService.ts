@@ -5,12 +5,15 @@ import {MessageType} from "../../model/messenger/messageType";
 import {Message} from "../../model/messenger/message";
 import {
     openChatTF,
-    sendMessage, sendMessageNewVersion,
-    setChats, setCurrentChat,
+    sendMessageNewVersion,
+    setChats,
     setGlobalUsers,
     setMessages,
-    setUser
+    setUser,
+    setUsers
 } from "../../redux/messenger/messengerActions";
+import {Builder} from "builder-pattern";
+import {MessageApi} from "../../api/messageApi";
 
 export class MessageProcessingService {
 
@@ -24,11 +27,13 @@ export class MessageProcessingService {
         const chats = {...state.messenger.chats};
         const existing = [...state.messenger.messages];
         const globalUsers = {...state.messenger.globalUsers};
+        const users = {...state.messenger.users}
 
         let isChatsUpdated = false;
         let isGlobalUsersUpdated = false;
         let isMessagesUpdated = false;
         let isCurrentUserUpdated = false;
+        let isUsersUpdated = false;
         const incoming: Message[] = [];
 
         newMessages.forEach(message => {
@@ -48,11 +53,11 @@ export class MessageProcessingService {
                         isChatsUpdated = true;
                     }
 
-                    // if (currentChat == null) {
-                    //     //case when user just create account (current chat null)
-                    //     //and was invited in chat
-                    //     dispatch(setCurrentChat(message.chat));
-                    // }
+                    if (currentChat == null) {
+                        //case when user just create account (current chat null)
+                        //and was invited in chat
+                        dispatch(openChatTF(message.chat));
+                    }
 
                     if (message.chat === currentChat) {
 
@@ -79,6 +84,9 @@ export class MessageProcessingService {
                     }
                     if (message.chat === currentChat) {
                         incoming.push(message);
+
+                        users[message.sender].title = message.data;
+                        isUsersUpdated = true;
                         isMessagesUpdated = true;
                     }
                     break;
@@ -101,6 +109,9 @@ export class MessageProcessingService {
         }
         if (isCurrentUserUpdated) {
             dispatch(setUser(currentUser));
+        }
+        if (isUsersUpdated) {
+            dispatch(setUsers(users, currentChat!));
         }
     }
 }

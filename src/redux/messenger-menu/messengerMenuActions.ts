@@ -8,7 +8,7 @@ import {ThunkDispatch} from "redux-thunk";
 import {AppState} from "../../index";
 import {Action} from "redux";
 import {CustomerApi} from "../../api/customerApi";
-import {setChats, setCurrentChat} from "../messenger/messengerActions";
+import {setChats, setCurrentChat, setUsers} from "../messenger/messengerActions";
 import {ChatApi} from "../../api/chatApi";
 import {CryptService} from "../../service/cryptService";
 import Notification from "../../Notification";
@@ -22,10 +22,14 @@ export function setIsMembersModalOpened(isOpened: boolean): IPlainDataAction<boo
     }
 }
 
-export function addUserToRoomTF(me: User, customer:User, otherId: string) {
+export function addUserToRoomTF(me: User, customer: User, otherId: string) {
     return (dispatch: ThunkDispatch<AppState, any, Action>, getState: () => AppState) => {
         const currentChat = getState().messenger.chats[getState().messenger.currentChat!];
-        console.log(customer.publicKey);
+
+        const users = {...getState().messenger.users};
+        users[otherId] = customer;
+        dispatch(setUsers(users, currentChat.id));
+
         return MessageApi.sendMessages([{
             type: MessageType.hello,
             receiver: otherId,
@@ -38,6 +42,7 @@ export function addUserToRoomTF(me: User, customer:User, otherId: string) {
         })
     }
 }
+
 export function leaveChatTF(me: User, chatId: string) {
     return (dispatch: ThunkDispatch<AppState, any, Action>, getState: () => AppState) => {
         const encrypted = CryptService.encrypt(
@@ -48,14 +53,14 @@ export function leaveChatTF(me: User, chatId: string) {
             data: CryptService.uint8ToBase64(encrypted.data)
         }).then(() => {
             const chats = {...getState().messenger.chats};
-            delete(chats[chatId]);
+            delete (chats[chatId]);
             dispatch(setChats(chats));
             let chatSet = false;
-            for(let id in chats) {
+            for (let id in chats) {
                 chatSet = true;
                 dispatch(setCurrentChat(id));
             }
-            if(!chatSet) {
+            if (!chatSet) {
                 dispatch(setCurrentChat(null));
             }
         })
