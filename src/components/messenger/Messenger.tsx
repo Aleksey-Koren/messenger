@@ -10,7 +10,13 @@ import MessengerMenu from "./menu/MessengerMenu";
 import MessengerSelect from "./select/MessengerSelect";
 import {AppState} from "../../index";
 import {setIsWelcomeModalOpen} from "../../redux/authorization/authorizationActions";
-import {fetchMessengerStateTF, openChatTF, setCurrentChat, setUser} from "../../redux/messenger/messengerActions";
+import {
+    fetchMessengerStateTF,
+    openChatTF,
+    setCurrentChat,
+    setLastMessagesFetch,
+    setUser
+} from "../../redux/messenger/messengerActions";
 import MessengerModalWindows from "./modal-windows/MessengerModalWindows";
 import {Box, Button, Typography} from "@mui/material";
 import PerfectScrollbar from 'react-perfect-scrollbar'
@@ -35,7 +41,6 @@ const Messenger: React.FC<TProps> = (props) => {
             console.log('use effect')
             props.setUser(user);
             dispatch(fetchMessengerStateTF(user.id));
-
             SchedulerService.startScheduler(dispatch);
             props.setIsWelcomeModalOpen(false)
         }
@@ -93,12 +98,12 @@ const Messenger: React.FC<TProps> = (props) => {
     );
 }
 
-function renderChats(chats: StringIndexArray<Chat>, openChat: (chat: Chat) => void, currentChat: string | null) {
+function renderChats(chats: StringIndexArray<Chat>, openChat: (chatId: string) => void, currentChat: string | null) {
     const out = [];
     for (let key in chats) {
         let chat = chats[key];
         out.push(<ListItemButton key={chat.id} className={style.room_button}
-                                 onClick={() => openChat(chat)}>
+                                 onClick={() => openChat(chat.id)}>
             <div
                 className={chat.id === currentChat ? style.chat_selected : style.chat_unselected}>&nbsp;</div>
             <Typography color={'primary'}>

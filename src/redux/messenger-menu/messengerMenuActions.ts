@@ -27,7 +27,7 @@ export function addUserToRoomTF(me: User, customer:User, otherId: string) {
         const currentChat = getState().messenger.chats[getState().messenger.currentChat!];
         console.log(customer.publicKey);
         return MessageApi.sendMessages([{
-            type: MessageType.HELLO,
+            type: MessageType.hello,
             receiver: otherId,
             sender: me.id,
             chat: currentChat?.id,

@@ -4,9 +4,10 @@ import {Action} from "redux";
 import {MessageType} from "../../model/messenger/messageType";
 import {Message} from "../../model/messenger/message";
 import {
-    sendMessage,
-    setChats,
-    setCurrentChat, setGlobalUsers,
+    openChatTF,
+    sendMessage, sendMessageNewVersion,
+    setChats, setCurrentChat,
+    setGlobalUsers,
     setMessages,
     setUser
 } from "../../redux/messenger/messengerActions";
@@ -32,7 +33,7 @@ export class MessageProcessingService {
 
         newMessages.forEach(message => {
             switch (message.type) {
-                case MessageType.HELLO:
+                case MessageType.hello:
                     if (!chats[message.chat]) {
                         chats[message.chat] = {
                             id: message.chat,
@@ -47,12 +48,14 @@ export class MessageProcessingService {
                         isChatsUpdated = true;
                     }
 
-                    if (currentChat == null) {
-                        //case when user just create account (current chat null)
-                        //and was invited in chat
-                        dispatch(setCurrentChat(message.chat));
-                    }
+                    // if (currentChat == null) {
+                    //     //case when user just create account (current chat null)
+                    //     //and was invited in chat
+                    //     dispatch(setCurrentChat(message.chat));
+                    // }
+
                     if (message.chat === currentChat) {
+
                         incoming.push(message);
                         isMessagesUpdated = true;
                     }
@@ -68,6 +71,7 @@ export class MessageProcessingService {
                     break;
                 case MessageType.iam:
                     globalUsers[message.sender].titles[message.chat] = message.data!;
+
                     isGlobalUsersUpdated = true;
                     if (message.sender === currentUser?.id!) {
                         currentUser.title = message.data;
@@ -79,8 +83,7 @@ export class MessageProcessingService {
                     }
                     break;
                 case MessageType.who:
-                    dispatch(sendMessage(globalUsers[currentUser!.id].titles[message.chat] || currentUser!.id, MessageType.iam, () => {
-                    }));
+                    dispatch(sendMessageNewVersion(globalUsers[currentUser!.id].titles[message.chat] || currentUser!.id, MessageType.iam, message.sender));
                     break;
                 default:
                     throw new Error('Unknown message type: ' + message.type);
@@ -103,7 +106,6 @@ export class MessageProcessingService {
 }
 
 function appendMessages(existing: Message[], incoming: Message[]) {
-    console.log("Incoming messages!!! -- " + incoming);
     const map: { [key: string]: 1 } = existing.reduce((map, message) => {
             map[message.id!] = 1;
             return map;

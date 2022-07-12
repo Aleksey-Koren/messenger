@@ -1,5 +1,5 @@
 export enum MessageType {
-    HELLO = 'hello',
+    hello = 'hello',
     iam = 'iam',
     whisper = 'whisper',
     who = 'who'

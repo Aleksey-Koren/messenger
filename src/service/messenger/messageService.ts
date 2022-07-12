@@ -3,24 +3,32 @@ import {store} from "../../index";
 import {CryptService} from "../cryptService";
 import {CustomerApi} from "../../api/customerApi";
 import {setGlobalUsers} from "../../redux/messenger/messengerActions";
+import {MessageType} from "../../model/messenger/messageType";
 
 export class MessageService {
 
     static decryptMessageDataByIterateOverPublicKeys(message: Message, userId: string) {
-        const userPublicKeys = store.getState().messenger.globalUsers[userId].certificates;
-        for (const publicKey of userPublicKeys) {
-            try {
-                const decryptedMessageData = decryptMessageData(message, publicKey);
-                if (decryptedMessageData) {
-                    message.data = decryptedMessageData;
-                    message.decrypted = true;
+        const userPublicKeys = store.getState().messenger.globalUsers[userId]?.certificates;
+
+        if (userPublicKeys) {
+            for (const publicKey of userPublicKeys) {
+                try {
+                    const decryptedMessageData = decryptMessageData(message, publicKey);
+                    if (decryptedMessageData) {
+                        message.data = decryptedMessageData;
+                        message.decrypted = true;
+                        return;
+                    }
+                } catch (e) {
+                    console.error(e);
+                    message.decrypted = false;
                     return;
                 }
-            } catch (e) {
-                console.error(e);
-                message.decrypted = false;
-                return;
             }
+        }
+
+        if (message.type === MessageType.hello) {
+            MessageService.tryDecryptUndecipheredMessages([message])
         }
     }
 
@@ -35,7 +43,7 @@ export class MessageService {
 
                 CustomerApi.getCustomer(senderId)
                     .then(user => {
-                        const foundedPublicKey = CryptService.uint8ToPlainString(user.publicKey);
+                        const foundedPublicKey = CryptService.uint8ToBase64(user.publicKey);
                         const decryptedMessageData = decryptMessageData(message, foundedPublicKey);
                         message.data = decryptedMessageData;
                         message.decrypted = !!decryptedMessageData;

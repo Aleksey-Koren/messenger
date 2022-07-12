@@ -37,18 +37,18 @@ export function setIsEditUserTitleModalOpen(isOpen: boolean): IPlainDataAction<b
     }
 }
 
-export function createNewRoomTF(title: string, userTitle:string) {
+export function createNewRoomTF(title: string, userTitle: string) {
 
     console.log("CreateNewRoomTF at start userTitle -- " + userTitle);
 
     return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
         const user = getState().messenger.user;
-        if(!user) {
+        if (!user) {
             throw new Error("User is not logged in");
         }
         const users = getState().messenger.users;
         MessageApi.sendMessages([{
-            type: MessageType.HELLO,
+            type: MessageType.hello,
             sender: user.id!,
             receiver: user.id!,
             data: title
@@ -69,7 +69,7 @@ export function createNewRoomTF(title: string, userTitle:string) {
                 console.log("GlobalUsers --- " + JSON.stringify(globalUsers));
                 dispatch(setChats(chats));
                 dispatch(setGlobalUsers(globalUsers));
-                dispatch(openChatTF(newChat));
+                dispatch(openChatTF(newChat.id));
 
                 dispatch(setIsNewPrivateModalOpened(false));
                 dispatch(setIsMembersModalOpened(true));

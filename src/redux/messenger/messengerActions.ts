@@ -28,6 +28,7 @@ import {CustomerService} from "../../service/messenger/customerService";
 import {GlobalUsers} from "../../model/local-storage/localStorageTypes";
 import {MessageProcessingService} from "../../service/messenger/messageProcessingService";
 import {ChatService} from "../../service/messenger/chatService";
+import {Builder} from "builder-pattern";
 
 export function setUser(user: User): IPlainDataAction<IMessengerStateOpt> {
 
@@ -104,6 +105,25 @@ export function setGlobalUsers(globalUsers: GlobalUsers): IPlainDataAction<IMess
     }
 }
 
+export function sendMessageNewVersion(messageText: string, messageType: MessageType, receiverId: string) {
+    return (dispatch: AppDispatch, getState: () => AppState) => {
+        const currentChatId = getState().messenger.currentChat!;
+        const senderId = getState().messenger.user?.id!;
+        const users = getState().messenger.users;
+
+        const message = Builder<Message>()
+            .chat(currentChatId)
+            .data(messageText)
+            .type(messageType)
+            .sender(senderId)
+            .receiver(receiverId)
+            .build();
+
+        MessageApi.sendMessages([message], users)
+            .catch((e) => Notification.add({severity: 'error', message: 'Message not sent', error: e}));
+    }
+}
+
 export function sendMessage(messageText: string, messageType: MessageType, callback: () => void) {
     return (dispatch: AppDispatch, getState: () => AppState) => {
         const currentChat = getState().messenger.currentChat;
@@ -146,17 +166,27 @@ export function sendMessage(messageText: string, messageType: MessageType, callb
 export function fetchMessagesTF() {
     return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
         const state = getState();
+        const currentChatId = state.messenger.currentChat;
         let currentUser = state.messenger.user;
         if (!currentUser) {
             throw new Error("User is not logged in");
         }
-        const nextMessageFetch: Date = new Date();
+        let nextMessageFetch: Date = new Date();
 
-        // const instant = new Date({...state.messenger.lastMessagesFetch!}.setSeconds(state.messenger.lastMessagesFetch!.getSeconds() - 1));
+        if (currentChatId) {
+            ChatService.processChatParticipants(dispatch, currentChatId, {...state.messenger.globalUsers}, currentUser.id);
+        } else {
+            ChatApi.getChats(currentUser?.id!)
+                .then(chats => {
+                    if (chats.length > 0) {
+                        dispatch(openChatTF(chats[0]?.id!))
+                    }
+                })
+        }
+
         MessageApi.getMessages({
             receiver: currentUser.id!,
             created: state.messenger.lastMessagesFetch!,
-            // created: state.messenger.lastMessagesFetch!,
             before: nextMessageFetch
         }).then(messagesResp => {
             dispatch(setLastMessagesFetch(nextMessageFetch));
@@ -190,44 +220,32 @@ export function fetchMessengerStateTF(loggedUserId: string) {
                         }, {} as StringIndexArray<Chat>);
 
                         dispatch(setGlobalUsers(globalUsers));
-                        dispatch(openChatTF(currentChat));
+                        dispatch(openChatTF(currentChat.id));
                         dispatch(setChats(stringIndexArrayChats));
                     })
             })
     }
 }
 
-export function openChatTF(chat: Chat) {
+export function openChatTF(chatId: string) {
 
     return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
         const currentUser = getState().messenger.user!;
         const globalUsers = {...getState().messenger.globalUsers}
 
-        ChatApi.getParticipants(chat.id)
-            .then((chatParticipants) => {
+        dispatch(setCurrentChat(chatId));
 
+        ChatService.processChatParticipants(dispatch, chatId, globalUsers, currentUser.id)
+            .then(() => {
                 MessageApi.getMessages({
                     receiver: currentUser.id,
-                    chat: chat.id,
-                    type: MessageType.iam,
+                    chat: chatId,
+                    page: 0,
+                    size: 20
+                }).then(messages => {
+                    MessageProcessingService.processMessages(dispatch, getState, messages);
                 })
-                    .then(knownParticipants => {
-                        const users = CustomerService.processUnknownChatParticipants(chatParticipants, knownParticipants, chat, currentUser.id);
-                        CustomerService.updateChatParticipantsCertificates(globalUsers, chatParticipants, dispatch);
-                        dispatch(setCurrentChat(chat.id));
-                        dispatch(setUsers(users, chat.id));
-                    })
-                    .then(() => {
-                        MessageApi.getMessages({
-                            receiver: currentUser.id,
-                            chat: chat.id,
-                            page: 0,
-                            size: 20
-                        }).then(messages => {
-                            MessageProcessingService.processMessages(dispatch, getState, messages);
-                        })
-                    });
-            })
+            });
     }
 }
 

@@ -1,17 +1,20 @@
 import {Dispatch} from "redux";
 
-import {fetchMessagesTF} from "../redux/messenger/messengerActions";
+import {fetchMessagesTF, setLastMessagesFetch} from "../redux/messenger/messengerActions";
 
 export class SchedulerService {
     private static timerId: NodeJS.Timer | null = null;
 
     static startScheduler(dispatch: Dispatch<any>) {
-        if(SchedulerService.timerId !== null) {
+        if (SchedulerService.timerId !== null) {
             clearInterval(SchedulerService.timerId);
         }
+
+        dispatch(setLastMessagesFetch(new Date()));
+
         SchedulerService.timerId = setInterval(() => {
             dispatch(fetchMessagesTF())
-        }, 10000);
+        }, 5000);
     }
 
     static stopScheduler() {

@@ -15,7 +15,7 @@ import {setGlobalUsers} from "../../redux/messenger/messengerActions";
 
 export class CustomerService {
 
-    static processUnknownChatParticipants(participants: User[], knownParticipants: Message[], currentChat: Chat, senderId: string) {
+    static processUnknownChatParticipants(participants: User[], knownParticipants: Message[], currentChatId: string, senderId: string) {
         const knownParticipantsTitles: StringIndexArray<string> = knownParticipants.reduce((map, participant) => {
             map[participant.sender] = participant.data!;
             return map;
@@ -35,7 +35,7 @@ export class CustomerService {
         participants.filter(participant => !knownParticipantsTitles[participant.id])
             .forEach(unknownParticipant => {
                 whoMessages.push({
-                    chat: currentChat.id,
+                    chat: currentChatId,
                     type: MessageType.who,
                     sender: senderId,
                     receiver: unknownParticipant!.id,
@@ -73,12 +73,24 @@ export class CustomerService {
         let isGlobalUsersUpdate = false;
 
         chatParticipants.forEach(participant => {
-            const participantCertificates = globalUsers[participant.id].certificates;
+            const globalUser = globalUsers[participant.id];
             const actualParticipantPublicKey = CryptService.uint8ToBase64(participant.publicKey);
 
-            if (participantCertificates.indexOf(actualParticipantPublicKey) === -1) {
-                participantCertificates.push(actualParticipantPublicKey)
+            if (!globalUser) {
+                globalUsers[participant.id] = {
+                    user: participant.id,
+                    certificates: [actualParticipantPublicKey],
+                    titles: {}
+                };
                 isGlobalUsersUpdate = true;
+
+            } else {
+                const participantCertificates = globalUser.certificates;
+
+                if (participantCertificates.indexOf(actualParticipantPublicKey) === -1) {
+                    participantCertificates.push(actualParticipantPublicKey)
+                    isGlobalUsersUpdate = true;
+                }
             }
         })
 

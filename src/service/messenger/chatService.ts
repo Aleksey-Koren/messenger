@@ -2,6 +2,12 @@ import {MessageDto} from "../../dto/messageDto";
 import {Chat} from "../../model/messenger/chat";
 import {MessageMapper} from "../../mapper/messageMapper";
 import {GlobalUsers} from "../../model/local-storage/localStorageTypes";
+import {ChatApi} from "../../api/chatApi";
+import {MessageApi} from "../../api/messageApi";
+import {MessageType} from "../../model/messenger/messageType";
+import {CustomerService} from "./customerService";
+import {setUsers} from "../../redux/messenger/messengerActions";
+import {AppDispatch, AppState} from "../../index";
 
 export class ChatService {
 
@@ -27,5 +33,23 @@ export class ChatService {
                 lastSeenAt: new Date()
             }
         })
+    }
+
+    static processChatParticipants(dispatch: AppDispatch, chatId: string, globalUsers: GlobalUsers, currentUserId: string) {
+
+        return ChatApi.getParticipants(chatId)
+            .then((chatParticipants) => {
+
+                MessageApi.getMessages({
+                    receiver: currentUserId,
+                    chat: chatId,
+                    type: MessageType.iam,
+                })
+                    .then(knownParticipants => {
+                        const users = CustomerService.processUnknownChatParticipants(chatParticipants, knownParticipants, chatId, currentUserId);
+                        CustomerService.updateChatParticipantsCertificates(globalUsers, chatParticipants, dispatch);
+                        dispatch(setUsers(users, chatId));
+                    })
+            });
     }
 }
