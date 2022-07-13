@@ -44,7 +44,7 @@ export class CustomerService {
             })
 
         if (whoMessages.length !== 0) {
-            MessageApi.sendMessages(whoMessages, participantsIndexArray);
+            MessageApi.sendMessages(whoMessages, participantsIndexArray).then();
         }
         return participantsIndexArray;
     }

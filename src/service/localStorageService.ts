@@ -3,10 +3,6 @@ import {GlobalUsers, LocalStorageData, StateData} from "../model/local-storage/l
 import {Builder} from "builder-pattern";
 import {CryptService} from "./cryptService";
 
-interface FetchedLocalStorage {
-
-}
-
 export class LocalStorageService {
 
     static userToStorage(user: User) {
@@ -72,9 +68,7 @@ function mapLocalStorageToState (localStorageData: LocalStorageData): StateData 
     }
 }
 
-
 function retrieveParsedLocalStorageData(): LocalStorageData | null {
     const localStorageData = localStorage.getItem('whisper');
     return localStorageData && JSON.parse(localStorageData);
 }
-

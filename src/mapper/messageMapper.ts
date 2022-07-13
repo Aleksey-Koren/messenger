@@ -40,7 +40,6 @@ export class MessageMapper {
 
         if (message.data) {
             if (!receiver) {
-                console.log("I am IN (!receiver)!!!!!!!!")
                 receiver = await CustomerApi.getCustomer(message.receiver).then(user => {
                     return user;
                 });
@@ -49,7 +48,6 @@ export class MessageMapper {
             dto.data = CryptService.uint8ToBase64(data.data);
             dto.nonce = CryptService.uint8ToBase64(data.nonce);
         }
-        console.log("DTO at the EXIT!!!!!!!!! --- " + JSON.stringify(dto));
         return dto;
     }
 }

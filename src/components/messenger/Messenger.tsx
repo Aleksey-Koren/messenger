@@ -99,12 +99,12 @@ const Messenger: React.FC<TProps> = (props) => {
     );
 }
 
-function renderChats(chats: StringIndexArray<Chat>, openChat: (chatId: string) => void, currentChat: string | null) {
+function renderChats(chats: StringIndexArray<Chat>, openChatTF: (chatId: string) => void, currentChat: string | null) {
     const out = [];
     for (let key in chats) {
         let chat = chats[key];
         out.push(<ListItemButton key={chat.id} className={style.room_button}
-                                 onClick={() => openChat(chat.id)}>
+                                 onClick={() => openChatTF(chat.id)}>
             <div
                 className={chat.id === currentChat ? style.chat_selected : style.chat_unselected}>&nbsp;</div>
             <Typography color={'primary'}>

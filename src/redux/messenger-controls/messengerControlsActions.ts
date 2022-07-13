@@ -39,14 +39,11 @@ export function setIsEditUserTitleModalOpen(isOpen: boolean): IPlainDataAction<b
 
 export function createNewRoomTF(title: string, userTitle: string) {
 
-    console.log("CreateNewRoomTF at start userTitle -- " + userTitle);
-
     return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
         const user = getState().messenger.user;
         if (!user) {
             throw new Error("User is not logged in");
         }
-        const users = getState().messenger.users;
         MessageApi.sendMessages([{
             type: MessageType.hello,
             sender: user.id!,
@@ -66,13 +63,37 @@ export function createNewRoomTF(title: string, userTitle: string) {
                 const globalUsers = {...state.messenger.globalUsers};
                 chats[newChat.id] = newChat;
                 globalUsers[user.id].titles[newChat.id] = userTitle;
-                console.log("GlobalUsers --- " + JSON.stringify(globalUsers));
                 dispatch(setChats(chats));
                 dispatch(setGlobalUsers(globalUsers));
-                dispatch(openChatTF(newChat.id));
+                dispatch(setCurrentChat(newChat.id));
 
                 dispatch(setIsNewPrivateModalOpened(false));
                 dispatch(setIsMembersModalOpened(true));
+
+
+
+
+
+
+
+                // const message = messages[0];
+                // const newChat: Chat = Builder<Chat>()
+                //     .id(message.chat)
+                //     .title(title)
+                //     .isUnreadMessagesExist(false)
+                //     .lastSeenAt(new Date())
+                //     .build()
+                // const state = getState();
+                // const chats = {...state.messenger.chats};
+                // const globalUsers = {...state.messenger.globalUsers};
+                // chats[newChat.id] = newChat;
+                // globalUsers[user.id].titles[newChat.id] = userTitle;
+                // dispatch(setChats(chats));
+                // dispatch(setGlobalUsers(globalUsers));
+                // dispatch(openChatTF(newChat.id));
+
+                // dispatch(setIsNewPrivateModalOpened(false));
+                // dispatch(setIsMembersModalOpened(true));
             }).catch(err => {
             console.error(err)
             Notification.add({message: 'Something went wrong.', error: err, severity: 'error'});

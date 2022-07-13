@@ -1,6 +1,12 @@
 import {StringIndexArray} from "../stringIndexArray";
 import {User} from "../messenger/user";
 
+export interface GlobalUser {
+    user: string,
+    certificates: string[],
+    titles: StringIndexArray<string>
+}
+
 export interface GlobalUsers {
     [key: string]: {
         user: string,

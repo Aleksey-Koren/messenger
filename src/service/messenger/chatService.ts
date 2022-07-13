@@ -39,17 +39,33 @@ export class ChatService {
 
         return ChatApi.getParticipants(chatId)
             .then((chatParticipants) => {
-
-                MessageApi.getMessages({
+                return MessageApi.getMessages({
                     receiver: currentUserId,
                     chat: chatId,
                     type: MessageType.iam,
+                }).then(s => {
+                    return {
+                        knownParticipants: s,
+                        chatParticipants: chatParticipants
+                    }
                 })
-                    .then(knownParticipants => {
-                        const users = CustomerService.processUnknownChatParticipants(chatParticipants, knownParticipants, chatId, currentUserId);
-                        CustomerService.updateChatParticipantsCertificates(globalUsers, chatParticipants, dispatch);
-                        dispatch(setUsers(users, chatId));
-                    })
+            }).then(s => {
+                const users = CustomerService.processUnknownChatParticipants(s.chatParticipants, s.knownParticipants, chatId, currentUserId);
+                CustomerService.updateChatParticipantsCertificates(globalUsers, s.chatParticipants, dispatch);
+                dispatch(setUsers(users, chatId));
             });
+
+            // .then((chatParticipants) => {
+            //
+            //     MessageApi.getMessages({
+            //         receiver: currentUserId,
+            //         chat: chatId,
+            //         type: MessageType.iam,
+            //     }).then(knownParticipants => {
+            //             const users = CustomerService.processUnknownChatParticipants(chatParticipants, knownParticipants, chatId, currentUserId);
+            //             CustomerService.updateChatParticipantsCertificates(globalUsers, chatParticipants, dispatch);
+            //             dispatch(setUsers(users, chatId));
+            //         })
+            // });
     }
 }

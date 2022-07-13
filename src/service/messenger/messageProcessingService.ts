@@ -12,8 +12,6 @@ import {
     setUser,
     setUsers
 } from "../../redux/messenger/messengerActions";
-import {Builder} from "builder-pattern";
-import {MessageApi} from "../../api/messageApi";
 
 export class MessageProcessingService {
 
@@ -60,7 +58,6 @@ export class MessageProcessingService {
                     }
 
                     if (message.chat === currentChat) {
-
                         incoming.push(message);
                         isMessagesUpdated = true;
                     }
@@ -91,7 +88,8 @@ export class MessageProcessingService {
                     }
                     break;
                 case MessageType.who:
-                    dispatch(sendMessageNewVersion(globalUsers[currentUser!.id].titles[message.chat] || currentUser!.id, MessageType.iam, message.sender));
+                    dispatch(sendMessageNewVersion(globalUsers[currentUser!.id].titles[message.chat] || currentUser!.id, MessageType.iam,
+                        message.chat, message.sender));
                     break;
                 default:
                     throw new Error('Unknown message type: ' + message.type);

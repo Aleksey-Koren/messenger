@@ -105,21 +105,22 @@ export function setGlobalUsers(globalUsers: GlobalUsers): IPlainDataAction<IMess
     }
 }
 
-export function sendMessageNewVersion(messageText: string, messageType: MessageType, receiverId: string) {
+export function sendMessageNewVersion(messageText: string,
+                                      messageType: MessageType,
+                                      chatId: string,
+                                      receiverId: string) {
     return (dispatch: AppDispatch, getState: () => AppState) => {
-        const currentChatId = getState().messenger.currentChat!;
-        const senderId = getState().messenger.user?.id!;
         const users = getState().messenger.users;
 
-        const message = Builder<Message>()
-            .chat(currentChatId)
+        const messagetoSend = Builder<Message>()
+            .chat(chatId)
             .data(messageText)
             .type(messageType)
-            .sender(senderId)
+            .sender(getState().messenger.user?.id!)
             .receiver(receiverId)
             .build();
 
-        MessageApi.sendMessages([message], users)
+        MessageApi.sendMessages([messagetoSend], users)
             .catch((e) => {
                 console.error(e)
                 Notification.add({severity: 'error', message: 'Message not sent', error: e})
@@ -177,17 +178,27 @@ export function fetchMessagesTF() {
         let nextMessageFetch: Date = new Date();
 
         if (currentChatId) {
-            ChatService.processChatParticipants(dispatch, currentChatId, {...state.messenger.globalUsers}, currentUser.id);
+            ChatService.processChatParticipants(dispatch, currentChatId, {...state.messenger.globalUsers}, currentUser.id)
+                .then(() => {
+                    MessageApi.getMessages({
+                        receiver: currentUser?.id!,
+                        created: state.messenger.lastMessagesFetch!,
+                        before: nextMessageFetch
+                    }).then(messagesResp => {
+                        dispatch(setLastMessagesFetch(nextMessageFetch));
+                        MessageProcessingService.processMessages(dispatch, getState, messagesResp);
+                    });
+                });
+        } else {
+            MessageApi.getMessages({
+                receiver: currentUser.id!,
+                created: state.messenger.lastMessagesFetch!,
+                before: nextMessageFetch
+            }).then(messagesResp => {
+                dispatch(setLastMessagesFetch(nextMessageFetch));
+                MessageProcessingService.processMessages(dispatch, getState, messagesResp);
+            });
         }
-
-        MessageApi.getMessages({
-            receiver: currentUser.id!,
-            created: state.messenger.lastMessagesFetch!,
-            before: nextMessageFetch
-        }).then(messagesResp => {
-            dispatch(setLastMessagesFetch(nextMessageFetch));
-            MessageProcessingService.processMessages(dispatch, getState, messagesResp);
-        });
     }
 }
 
@@ -231,17 +242,29 @@ export function openChatTF(chatId: string) {
 
         dispatch(setCurrentChat(chatId));
 
-        ChatService.processChatParticipants(dispatch, chatId, globalUsers, currentUser.id)
-            .then(() => {
-                MessageApi.getMessages({
-                    receiver: currentUser.id,
-                    chat: chatId,
-                    page: 0,
-                    size: 20
-                }).then(messages => {
-                    MessageProcessingService.processMessages(dispatch, getState, messages);
-                })
-            });
+        MessageApi.getMessages({
+            receiver: currentUser.id,
+            chat: chatId,
+            page: 0,
+            size: 20,
+            before: getState().messenger.lastMessagesFetch!
+        }).then(messages => {
+            dispatch(setMessages(messages.filter(message => message.type !== MessageType.who)))
+        })
+
+        // ChatService.processChatParticipants(dispatch, chatId, globalUsers, currentUser.id)
+        //     .then(() => {
+        //
+        //         MessageApi.getMessages({
+        //             receiver: currentUser.id,
+        //             chat: chatId,
+        //             page: 0,
+        //             size: 20,
+        //             before: getState().messenger.lastMessagesFetch!
+        //         }).then(messages => {
+        //             MessageProcessingService.processMessages(dispatch, getState, messages);
+        //         })
+        //     });
     }
 }
 
