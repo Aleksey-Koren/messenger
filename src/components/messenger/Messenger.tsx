@@ -13,7 +13,7 @@ import {setIsWelcomeModalOpen} from "../../redux/authorization/authorizationActi
 import {
     fetchMessengerStateTF,
     openChatTF,
-    setCurrentChat,
+    setCurrentChat, setGlobalUsers,
     setLastMessagesFetch,
     setUser
 } from "../../redux/messenger/messengerActions";
@@ -36,18 +36,19 @@ const Messenger: React.FC<TProps> = (props) => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        const user = LocalStorageService.retrieveUserFromLocalStorage();
-        if (user && !SchedulerService.isSchedulerStarted()) {
-            console.log('use effect')
-            props.setUser(user);
-            dispatch(fetchMessengerStateTF(user.id));
+
+        if (LocalStorageService.isLocalStorageExists() && !SchedulerService.isSchedulerStarted()) {
+            const data = LocalStorageService.loadDataFromLocalStorage();
+            props.setUser(data!.user);
+            props.setGlobalUsers(data!.globalUsers);
+            props.fetchMessengerStateTF(data!.user.id);
             SchedulerService.startScheduler(dispatch);
-            props.setIsWelcomeModalOpen(false)
+            props.setIsWelcomeModalOpen(false);
         }
         if (scrollContext.charged) {
             scrollContext.charged = false;
             setTimeout(function () {
-                scrollContext.container?.scroll({top: scrollContext.container?.scrollHeight})
+                scrollContext.container?.scroll({top: scrollContext.container?.scrollHeight});
             }, 50);
         }
     });
@@ -134,7 +135,9 @@ const mapDispatchToProps = {
     setIsWelcomeModalOpen,
     setCurrentChat,
     setUser,
-    openChatTF
+    openChatTF,
+    fetchMessengerStateTF,
+    setGlobalUsers
 }
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

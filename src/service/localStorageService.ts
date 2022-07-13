@@ -1,6 +1,11 @@
 import {User} from "../model/messenger/user";
-import {GlobalUsers, LocalStorageState} from "../model/local-storage/localStorageTypes";
+import {GlobalUsers, LocalStorageData, StateData} from "../model/local-storage/localStorageTypes";
 import {Builder} from "builder-pattern";
+import {CryptService} from "./cryptService";
+
+interface FetchedLocalStorage {
+
+}
 
 export class LocalStorageService {
 
@@ -10,8 +15,8 @@ export class LocalStorageService {
         const localStorageState = {
             user: {
                 id: user.id,
-                publicKey: Array.from(user.publicKey!),
-                privateKey: Array.from(user.privateKey!),
+                publicKey: CryptService.uint8ToBase64(user.publicKey),
+                privateKey: CryptService.uint8ToBase64(user.privateKey!),
                 title: user.title!
             },
             globalUsers: parsedLocalStorageData ? parsedLocalStorageData.globalUsers : {}
@@ -25,8 +30,8 @@ export class LocalStorageService {
 
         return parsedLocalStorageData && Builder<User>()
             .id(parsedLocalStorageData.user.id)
-            .publicKey(new Uint8Array(parsedLocalStorageData.user.publicKey))
-            .privateKey(new Uint8Array(parsedLocalStorageData.user.privateKey))
+            .publicKey(CryptService.base64ToUint8(parsedLocalStorageData.user.publicKey))
+            .privateKey(CryptService.base64ToUint8(parsedLocalStorageData.user.privateKey))
             .title(parsedLocalStorageData.user.title)
             .build();
     }
@@ -44,11 +49,32 @@ export class LocalStorageService {
 
         return parsedLocalStorageData && parsedLocalStorageData.globalUsers;
     }
+
+    static loadDataFromLocalStorage() {
+        const data = retrieveParsedLocalStorageData();
+        return data && mapLocalStorageToState(data);
+    }
+
+    static isLocalStorageExists() {
+        return !!localStorage.getItem('whisper');
+    }
+}
+
+function mapLocalStorageToState (localStorageData: LocalStorageData): StateData {
+    return  {
+        user: {
+            id: localStorageData.user.id,
+            publicKey: CryptService.base64ToUint8(localStorageData.user.publicKey),
+            privateKey: CryptService.base64ToUint8(localStorageData.user.privateKey),
+            title: localStorageData.user.title
+        },
+        globalUsers: localStorageData.globalUsers
+    }
 }
 
 
-function retrieveParsedLocalStorageData(): LocalStorageState | null {
+function retrieveParsedLocalStorageData(): LocalStorageData | null {
     const localStorageData = localStorage.getItem('whisper');
-
     return localStorageData && JSON.parse(localStorageData);
 }
+
