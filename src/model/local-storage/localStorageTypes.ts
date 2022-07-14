@@ -2,18 +2,14 @@ import {StringIndexArray} from "../stringIndexArray";
 import {User} from "../messenger/user";
 
 export interface GlobalUser {
-    user: string,
+    userId: string,
     certificates: string[],
     titles: StringIndexArray<string>
 }
 
-export interface GlobalUsers {
-    [key: string]: {
-        user: string,
-        certificates: string[],
-        titles: StringIndexArray<string>
-    }
-}
+// export interface GlobalUsers {
+//     users: StringIndexArray<GlobalUser>
+// }
 
 export interface LocalStorageUser {
     id: string,
@@ -24,10 +20,10 @@ export interface LocalStorageUser {
 
 export interface LocalStorageData {
     user: LocalStorageUser,
-    globalUsers: GlobalUsers
+    globalUsers: StringIndexArray<GlobalUser>
 }
 
 export interface StateData {
     user: User,
-    globalUsers: GlobalUsers
+    globalUsers: StringIndexArray<GlobalUser>
 }

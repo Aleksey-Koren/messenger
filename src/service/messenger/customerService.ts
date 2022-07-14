@@ -1,17 +1,16 @@
 import {Message} from "../../model/messenger/message";
 import {MessageType} from "../../model/messenger/messageType";
 import {MessageApi} from "../../api/messageApi";
-import {Chat} from "../../model/messenger/chat";
 import {User} from "../../model/messenger/user";
 import {StringIndexArray} from "../../model/stringIndexArray";
 import {CustomerApi} from "../../api/customerApi";
 import {CryptService} from "../cryptService";
-import {GlobalUsers} from "../../model/local-storage/localStorageTypes";
 import {MessageDto} from "../../dto/messageDto";
 import {ThunkDispatch} from "redux-thunk";
 import {AppState} from "../../index";
 import {Action} from "redux";
 import {setGlobalUsers} from "../../redux/messenger/messengerActions";
+import {GlobalUser} from "../../model/local-storage/localStorageTypes";
 
 export class CustomerService {
 
@@ -49,7 +48,7 @@ export class CustomerService {
         return participantsIndexArray;
     }
 
-    static addUnknownUsersToGlobalUsers(helloMessages: MessageDto[], globalUsers: GlobalUsers) {
+    static addUnknownUsersToGlobalUsers(helloMessages: MessageDto[], globalUsers: StringIndexArray<GlobalUser>) {
         const requiredUsers: string[] = [];
 
         helloMessages.forEach(helloMessage => {
@@ -62,14 +61,14 @@ export class CustomerService {
         return CustomerApi.getUsers(requiredUsers).then(response =>
             response.forEach((user) => {
                 globalUsers[user.id!] = {
-                    user: user.id,
+                    userId: user.id,
                     certificates: [CryptService.uint8ToBase64(user.publicKey)],
                     titles: {}
                 };
             }));
     }
 
-    static updateChatParticipantsCertificates(globalUsers: GlobalUsers, chatParticipants: User[], dispatch: ThunkDispatch<AppState, void, Action>) {
+    static updateChatParticipantsCertificates(globalUsers: StringIndexArray<GlobalUser>, chatParticipants: User[], dispatch: ThunkDispatch<AppState, void, Action>) {
         let isGlobalUsersUpdate = false;
 
         chatParticipants.forEach(participant => {
@@ -78,7 +77,7 @@ export class CustomerService {
 
             if (!globalUser) {
                 globalUsers[participant.id] = {
-                    user: participant.id,
+                    userId: participant.id,
                     certificates: [actualParticipantPublicKey],
                     titles: {}
                 };

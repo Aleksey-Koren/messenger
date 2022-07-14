@@ -13,8 +13,8 @@ import {CryptService} from "../../service/cryptService";
 import {LOGOUT} from "../authorization/authorizationTypes";
 import {SchedulerService} from "../../service/schedulerService";
 import {LocalStorageService} from "../../service/localStorageService";
-import {GlobalUsers} from "../../model/local-storage/localStorageTypes";
 import {StringIndexArray} from "../../model/stringIndexArray";
+import {GlobalUser} from "../../model/local-storage/localStorageTypes";
 
 
 const initialState: IMessengerState = {
@@ -96,7 +96,7 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
     }
 }
 
-function touchGlobalUsers(globalUsers: GlobalUsers, usersCache: StringIndexArray<User>, currentChat: string | null) {
+function touchGlobalUsers(globalUsers: StringIndexArray<GlobalUser>, usersCache: StringIndexArray<User>, currentChat: string | null) {
     const out = {...globalUsers};
     for (let key in usersCache) {
         const user = usersCache[key];
@@ -109,7 +109,7 @@ function touchGlobalUsers(globalUsers: GlobalUsers, usersCache: StringIndexArray
         }
         if (!out[key]) {
             out[key] = {
-                user: key,
+                userId: key,
                 certificates: [],
                 titles: {}
             };

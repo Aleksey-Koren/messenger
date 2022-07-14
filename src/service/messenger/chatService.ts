@@ -1,22 +1,23 @@
 import {MessageDto} from "../../dto/messageDto";
 import {Chat} from "../../model/messenger/chat";
 import {MessageMapper} from "../../mapper/messageMapper";
-import {GlobalUsers} from "../../model/local-storage/localStorageTypes";
 import {ChatApi} from "../../api/chatApi";
 import {MessageApi} from "../../api/messageApi";
 import {MessageType} from "../../model/messenger/messageType";
 import {CustomerService} from "./customerService";
 import {setUsers} from "../../redux/messenger/messengerActions";
 import {AppDispatch, AppState} from "../../index";
+import {StringIndexArray} from "../../model/stringIndexArray";
+import {GlobalUser} from "../../model/local-storage/localStorageTypes";
 
 export class ChatService {
 
-    static tryDecryptChatsTitles(chats: MessageDto[], globalUsers: GlobalUsers): Chat[] {
+    static tryDecryptChatsTitles(chats: MessageDto[], globalUsers: StringIndexArray<GlobalUser>): Chat[] {
 
         return chats.map<Chat>(chatDto => {
             const sender = globalUsers[chatDto.sender];
             if (sender) {
-                const chat = MessageMapper.toEntity(chatDto, sender.user);
+                const chat = MessageMapper.toEntity(chatDto, sender.userId);
                 return {
                     id: chat.chat!,
                     title: chat.data!,
@@ -35,7 +36,7 @@ export class ChatService {
         })
     }
 
-    static processChatParticipants(dispatch: AppDispatch, chatId: string, globalUsers: GlobalUsers, currentUserId: string) {
+    static processChatParticipants(dispatch: AppDispatch, chatId: string, globalUsers: StringIndexArray<GlobalUser>, currentUserId: string) {
 
         return ChatApi.getParticipants(chatId)
             .then((chatParticipants) => {

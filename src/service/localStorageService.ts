@@ -1,7 +1,8 @@
 import {User} from "../model/messenger/user";
-import {GlobalUsers, LocalStorageData, StateData} from "../model/local-storage/localStorageTypes";
+import {GlobalUser, LocalStorageData, StateData} from "../model/local-storage/localStorageTypes";
 import {Builder} from "builder-pattern";
 import {CryptService} from "./cryptService";
+import {StringIndexArray} from "../model/stringIndexArray";
 
 export class LocalStorageService {
 
@@ -32,7 +33,7 @@ export class LocalStorageService {
             .build();
     }
 
-    static globalUsersToStorage(globalUsers: GlobalUsers) {
+    static globalUsersToStorage(globalUsers: StringIndexArray<GlobalUser>) {
         const parsedLocalStorageData = retrieveParsedLocalStorageData()!;
 
         parsedLocalStorageData.globalUsers = globalUsers;
@@ -40,7 +41,7 @@ export class LocalStorageService {
         localStorage.setItem('whisper', JSON.stringify(parsedLocalStorageData));
     }
 
-    static retrieveGlobalUsersFromLocalStorage(): GlobalUsers | null {
+    static retrieveGlobalUsersFromLocalStorage(): StringIndexArray<GlobalUser> | null {
         const parsedLocalStorageData = retrieveParsedLocalStorageData();
 
         return parsedLocalStorageData && parsedLocalStorageData.globalUsers;

@@ -5,6 +5,8 @@ import {User} from "../model/messenger/user";
 import {store} from "../index";
 import {MessageService} from "../service/messenger/messageService";
 import {CustomerApi} from "../api/customerApi";
+import {GlobalUser} from "../model/local-storage/localStorageTypes";
+import {Customer} from "../model/messenger/customer";
 
 export class MessageMapper {
 
@@ -28,7 +30,7 @@ export class MessageMapper {
         return message;
     }
 
-    static async toDto(message: Message, receiver: User) {
+    static async toDto(message: Message, receiver: GlobalUser) {
         const dto = {
             id: message.id,
             sender: message.sender,
@@ -40,11 +42,14 @@ export class MessageMapper {
 
         if (message.data) {
             if (!receiver) {
-                receiver = await CustomerApi.getCustomer(message.receiver).then(user => {
-                    return user;
-                });
+                const user = await CustomerApi.getCustomer(message.receiver).then(user => user);
+                receiver = {
+                    userId: user.id,
+                    certificates: [CryptService.uint8ToBase64(user.publicKey)],
+                    titles: {}
+                }
             }
-            const data = CryptService.encrypt(CryptService.plainStringToUint8(message.data), receiver.publicKey);
+            const data = CryptService.encrypt(CryptService.plainStringToUint8(message.data), CryptService.base64ToUint8(receiver.certificates[0]));
             dto.data = CryptService.uint8ToBase64(data.data);
             dto.nonce = CryptService.uint8ToBase64(data.nonce);
         }

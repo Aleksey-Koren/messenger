@@ -19,16 +19,13 @@ import {Action} from "redux";
 import {ThunkDispatch} from "redux-thunk";
 import {MessageType} from "../../model/messenger/messageType";
 import {setIsEditUserTitleModalOpen} from "../messenger-controls/messengerControlsActions";
-import {CustomerApi} from "../../api/customerApi";
-import {CryptService} from "../../service/cryptService";
 import Notification from "../../Notification";
-import {MessageMapper} from "../../mapper/messageMapper";
 import {StringIndexArray} from "../../model/stringIndexArray";
 import {CustomerService} from "../../service/messenger/customerService";
-import {GlobalUsers} from "../../model/local-storage/localStorageTypes";
 import {MessageProcessingService} from "../../service/messenger/messageProcessingService";
 import {ChatService} from "../../service/messenger/chatService";
 import {Builder} from "builder-pattern";
+import {GlobalUser} from "../../model/local-storage/localStorageTypes";
 
 export function setUser(user: User): IPlainDataAction<IMessengerStateOpt> {
 
@@ -98,7 +95,7 @@ export function setLastMessagesFetch(lastMessagesFetch: Date): IPlainDataAction<
     }
 }
 
-export function setGlobalUsers(globalUsers: GlobalUsers): IPlainDataAction<IMessengerStateOpt> {
+export function setGlobalUsers(globalUsers: StringIndexArray<GlobalUser>): IPlainDataAction<IMessengerStateOpt> {
     return {
         type: SET_GLOBAL_USERS,
         payload: {globalUsers: globalUsers}
