@@ -38,6 +38,9 @@ export class MessageProcessingService {
             switch (message.type) {
                 case MessageType.hello:
                     if (!chats[message.chat]) {
+
+                        console.log('ADD NEW CHAT: ' + JSON.stringify(message))
+
                         chats[message.chat] = {
                             id: message.chat,
                             title: message.data!,
@@ -88,8 +91,11 @@ export class MessageProcessingService {
                     }
                     break;
                 case MessageType.who:
-                    dispatch(sendMessageNewVersion(globalUsers[currentUser!.id].titles[message.chat] || currentUser!.id, MessageType.iam,
-                        message.chat, message.sender));
+                    dispatch(sendMessageNewVersion(globalUsers[currentUser!.id].titles[message.chat] || currentUser!.id,
+                        MessageType.iam,
+                        message.chat,
+                        message.sender)
+                    );
                     break;
                 default:
                     throw new Error('Unknown message type: ' + message.type);

@@ -10,7 +10,7 @@ import {Customer} from "../model/messenger/customer";
 
 export class MessageMapper {
 
-    static toEntity(dto: MessageDto, userId: string): Message {
+    static async toEntity(dto: MessageDto, userId: string) {
         const message: Message = {
             id: dto.id,
             sender: dto.sender,
@@ -24,7 +24,7 @@ export class MessageMapper {
         };
 
         if (message.data) {
-            MessageService.decryptMessageDataByIterateOverPublicKeys(message, userId);
+            await MessageService.decryptMessageDataByIterateOverPublicKeys(message, userId);
         }
 
         return message;

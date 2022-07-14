@@ -11,6 +11,7 @@ import {AppState} from "../../index";
 import {Action} from "redux";
 import {setGlobalUsers} from "../../redux/messenger/messengerActions";
 import {GlobalUser} from "../../model/local-storage/localStorageTypes";
+import {UserMapper} from "../../mapper/userMapper";
 
 export class CustomerService {
 
@@ -43,7 +44,7 @@ export class CustomerService {
             })
 
         if (whoMessages.length !== 0) {
-            MessageApi.sendMessages(whoMessages, participantsIndexArray).then();
+            MessageApi.sendMessages(whoMessages, UserMapper.toGlobalUsers(participants)).then();
         }
         return participantsIndexArray;
     }

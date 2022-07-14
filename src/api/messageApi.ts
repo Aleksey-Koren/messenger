@@ -14,20 +14,28 @@ export class MessageApi {
         return Promise.all(messages.map(message => MessageMapper.toDto(message, users[message.receiver]))).then(dto => {
             return axiosApi.post<MessageDto[]>('messages?iam=' + messages[0].sender, dto);
         }).then(response => {
-            return response.data.map(dto => MessageMapper.toEntity(dto, users[dto.sender].id));
+            return response.data.map(dto => MessageMapper.toEntity(dto, users[dto.sender].userId));
         })
     }
 
     static async getMessages(request: {
-                                 receiver?: string,
-                                 chat?: string,
-                                 created?: Date,
-                                 before?: Date,
-                                 type?: MessageType,
-                                 page?: number,
-                                 size?: number}) {
-        let dto = (await axiosApi.get<{content: MessageDto[]}>('messages',{params: request})).data;
-        return dto.content.map(dto => MessageMapper.toEntity(dto, dto.sender));
+        receiver?: string,
+        chat?: string,
+        created?: Date,
+        before?: Date,
+        type?: MessageType,
+        page?: number,
+        size?: number
+    }) {
+        let dto = (await axiosApi.get<{ content: MessageDto[] }>('messages', {params: request})).data;
+
+        return await dto.content.map(dto => {
+            const decryptedMessage = MessageMapper.toEntity(dto, dto.sender);
+
+            console.log('GET MESSAGES. DECRYPTED MESSAGE --- ' + JSON.stringify(decryptedMessage))
+
+            return decryptedMessage
+        });
     }
 
     static async updateUserTitle(messages: Message[], users: StringIndexArray<GlobalUser>): Promise<Message[]> {

@@ -73,7 +73,7 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
             return {
                 ...state,
                 users: action.payload.users,
-                // globalUsers: touchGlobalUsers(state.globalUsers, action.payload.users, action.payload.currentChat!)
+                globalUsers: touchGlobalUsers({...state.globalUsers}, action.payload.users, action.payload.currentChat!)
             }
 
         case SET_CHATS:
@@ -97,7 +97,6 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
 }
 
 function touchGlobalUsers(globalUsers: StringIndexArray<GlobalUser>, usersCache: StringIndexArray<User>, currentChat: string | null) {
-    const out = {...globalUsers};
     for (let key in usersCache) {
         const user = usersCache[key];
         let cert;
@@ -107,22 +106,23 @@ function touchGlobalUsers(globalUsers: StringIndexArray<GlobalUser>, usersCache:
             console.error("fail to convert public key into string")
             cert = '';
         }
-        if (!out[key]) {
-            out[key] = {
+        if (!globalUsers[key]) {
+            globalUsers[key] = {
                 userId: key,
                 certificates: [],
                 titles: {}
             };
         }
-        var global = out[key];
-        if (currentChat) {
-            global.titles[currentChat] = user.title!;
-        }
-        if (cert && global.certificates.indexOf(cert) === -1) {
-            global.certificates.push(cert)
+
+        const globalUser = globalUsers[key];
+        // if (currentChat) {
+        //     globalUser.titles[currentChat] = user.title!;
+        // }
+        if (cert && globalUser.certificates.indexOf(cert) === -1) {
+            globalUser.certificates.unshift(cert)
         }
     }
+    LocalStorageService.globalUsersToStorage(globalUsers);
 
-    LocalStorageService.globalUsersToStorage(out);
-    return out;
+    return globalUsers;
 }

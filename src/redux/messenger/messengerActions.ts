@@ -107,7 +107,7 @@ export function sendMessageNewVersion(messageText: string,
                                       chatId: string,
                                       receiverId: string) {
     return (dispatch: AppDispatch, getState: () => AppState) => {
-        const users = getState().messenger.users;
+        const globalUsers = getState().messenger.globalUsers;
 
         const messagetoSend = Builder<Message>()
             .chat(chatId)
@@ -117,7 +117,7 @@ export function sendMessageNewVersion(messageText: string,
             .receiver(receiverId)
             .build();
 
-        MessageApi.sendMessages([messagetoSend], users)
+        MessageApi.sendMessages([messagetoSend], globalUsers)
             .catch((e) => {
                 console.error(e)
                 Notification.add({severity: 'error', message: 'Message not sent', error: e})
@@ -129,7 +129,7 @@ export function sendMessage(messageText: string, messageType: MessageType, callb
     return (dispatch: AppDispatch, getState: () => AppState) => {
         const currentChat = getState().messenger.currentChat;
         const user = getState().messenger.user;
-        const chatMessages = getState().messenger.messages || [];
+        const globalUsers = getState().messenger.globalUsers;
         const users = getState().messenger.users;
         const messagesToSend: Message[] = []
 
@@ -146,7 +146,7 @@ export function sendMessage(messageText: string, messageType: MessageType, callb
             messagesToSend.push(message);
         }
 
-        return MessageApi.sendMessages(messagesToSend, users)
+        return MessageApi.sendMessages(messagesToSend, globalUsers)
             .then(response => {
                 const messages = []
                 for (let i = 0; i < response.length; i++) {
@@ -292,7 +292,7 @@ export function updateUserTitle(title: string) {
 
         console.log("Messages --- " + JSON.stringify(messages));
 
-        return MessageApi.updateUserTitle(messages, users)
+        return MessageApi.updateUserTitle(messages, getState().messenger.globalUsers)
             .then((response) => {
                 dispatch(setIsEditUserTitleModalOpen(false));
                 // dispatch(setMessages(appendMessages(getState().messenger.messages, response.filter(message => message.receiver === user.id))));

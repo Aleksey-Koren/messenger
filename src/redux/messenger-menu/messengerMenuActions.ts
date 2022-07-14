@@ -36,7 +36,7 @@ export function addUserToRoomTF(me: User, customer: User, otherId: string) {
             sender: me.id,
             chat: currentChat?.id,
             data: currentChat?.title
-        } as Message], {[otherId]: customer}).then((response) => {
+        } as Message], getState().messenger.globalUsers).then((response) => {
             Notification.add({message: "Invitation sent", severity: 'info'});
             return response;
         })

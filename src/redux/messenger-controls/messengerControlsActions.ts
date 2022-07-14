@@ -41,15 +41,18 @@ export function createNewRoomTF(title: string, userTitle: string) {
 
     return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
         const user = getState().messenger.user;
+        const globalUsers = {...getState().messenger.globalUsers};
+
         if (!user) {
             throw new Error("User is not logged in");
         }
+
         MessageApi.sendMessages([{
             type: MessageType.hello,
             sender: user.id!,
             receiver: user.id!,
             data: title
-        } as Message], {[user.id]: user})
+        } as Message], globalUsers)
             .then((messages) => {
                 const message = messages[0];
                 const newChat: Chat = Builder<Chat>()
@@ -60,7 +63,6 @@ export function createNewRoomTF(title: string, userTitle: string) {
                     .build()
                 const state = getState();
                 const chats = {...state.messenger.chats};
-                const globalUsers = {...state.messenger.globalUsers};
                 chats[newChat.id] = newChat;
                 globalUsers[user.id].titles[newChat.id] = userTitle;
                 dispatch(setChats(chats));
@@ -69,11 +71,6 @@ export function createNewRoomTF(title: string, userTitle: string) {
 
                 dispatch(setIsNewPrivateModalOpened(false));
                 dispatch(setIsMembersModalOpened(true));
-
-
-
-
-
 
 
                 // const message = messages[0];
