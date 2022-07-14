@@ -12,12 +12,12 @@ import {GlobalUser} from "../../model/local-storage/localStorageTypes";
 
 export class ChatService {
 
-    static tryDecryptChatsTitles(chats: MessageDto[], globalUsers: StringIndexArray<GlobalUser>): Chat[] {
+    static async tryDecryptChatsTitles(chats: MessageDto[], globalUsers: StringIndexArray<GlobalUser>) {
 
-        return chats.map<Chat>(chatDto => {
+        return await Promise.all(chats.map<Promise<Chat>>(async chatDto => {
             const sender = globalUsers[chatDto.sender];
             if (sender) {
-                const chat = MessageMapper.toEntity(chatDto, sender.userId);
+                const chat = await MessageMapper.toEntity(chatDto, sender.userId);
                 return {
                     id: chat.chat!,
                     title: chat.data!,
@@ -33,7 +33,7 @@ export class ChatService {
                 isUnreadMessagesExist: false,
                 lastSeenAt: new Date()
             }
-        })
+        }))
     }
 
     static processChatParticipants(dispatch: AppDispatch, chatId: string, globalUsers: StringIndexArray<GlobalUser>, currentUserId: string) {
