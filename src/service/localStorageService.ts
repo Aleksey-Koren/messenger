@@ -47,8 +47,24 @@ export class LocalStorageService {
         return parsedLocalStorageData && parsedLocalStorageData.globalUsers;
     }
 
+    static lastMessagesFetchToStorage(lastMessagesFetch: Date) {
+        localStorage.setItem('lastMessagesFetch', lastMessagesFetch.toISOString());
+    }
+
+    static lastMessagesFetchFromLocalStorage(): Date | null {
+        const lastMessagesFetch = localStorage.getItem('lastMessagesFetch');
+
+        if (lastMessagesFetch) {
+            return new Date(lastMessagesFetch)
+        } else {
+            return null;
+        }
+    }
+
+
     static loadDataFromLocalStorage() {
         const data = retrieveParsedLocalStorageData();
+
         return data && mapLocalStorageToState(data);
     }
 
@@ -57,8 +73,8 @@ export class LocalStorageService {
     }
 }
 
-function mapLocalStorageToState (localStorageData: LocalStorageData): StateData {
-    return  {
+function mapLocalStorageToState(localStorageData: LocalStorageData): StateData {
+    return {
         user: {
             id: localStorageData.user.id,
             publicKey: CryptService.base64ToUint8(localStorageData.user.publicKey),
@@ -71,5 +87,6 @@ function mapLocalStorageToState (localStorageData: LocalStorageData): StateData 
 
 function retrieveParsedLocalStorageData(): LocalStorageData | null {
     const localStorageData = localStorage.getItem('whisper');
+
     return localStorageData && JSON.parse(localStorageData);
 }

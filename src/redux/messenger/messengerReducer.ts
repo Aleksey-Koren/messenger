@@ -89,6 +89,8 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
             return initialState;
 
         case SET_LAST_MESSAGES_FETCH:
+            LocalStorageService.lastMessagesFetchToStorage(action.payload.lastMessagesFetch!)
+            
             return {...state, lastMessagesFetch: action.payload.lastMessagesFetch};
 
         default:

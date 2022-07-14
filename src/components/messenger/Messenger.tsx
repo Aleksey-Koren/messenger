@@ -8,7 +8,7 @@ import MessagesList from "./messages/MessagesList";
 import ListItemButton from '@mui/material/ListItemButton';
 import MessengerMenu from "./menu/MessengerMenu";
 import MessengerSelect from "./select/MessengerSelect";
-import {AppState} from "../../index";
+import {AppState, store, useAppSelector} from "../../index";
 import {setIsWelcomeModalOpen} from "../../redux/authorization/authorizationActions";
 import {
     fetchMessengerStateTF,
@@ -42,7 +42,7 @@ const Messenger: React.FC<TProps> = (props) => {
             props.setUser(data!.user);
             props.setGlobalUsers(data!.globalUsers);
             props.fetchMessengerStateTF(data!.user.id);
-            SchedulerService.startScheduler(dispatch);
+            SchedulerService.startScheduler(dispatch, store.getState);
             props.setIsWelcomeModalOpen(false);
         }
         if (scrollContext.charged) {

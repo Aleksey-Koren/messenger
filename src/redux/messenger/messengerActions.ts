@@ -26,6 +26,7 @@ import {MessageProcessingService} from "../../service/messenger/messageProcessin
 import {ChatService} from "../../service/messenger/chatService";
 import {Builder} from "builder-pattern";
 import {GlobalUser} from "../../model/local-storage/localStorageTypes";
+import {LocalStorageService} from "../../service/localStorageService";
 
 export function setUser(user: User): IPlainDataAction<IMessengerStateOpt> {
 
@@ -173,6 +174,7 @@ export function fetchMessagesTF() {
             throw new Error("User is not logged in");
         }
         let nextMessageFetch: Date = new Date();
+
 
         if (currentChatId) {
             ChatService.processChatParticipants(dispatch, currentChatId, {...state.messenger.globalUsers}, currentUser.id)

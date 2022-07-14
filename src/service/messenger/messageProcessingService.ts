@@ -38,9 +38,6 @@ export class MessageProcessingService {
             switch (message.type) {
                 case MessageType.hello:
                     if (!chats[message.chat]) {
-
-                        console.log('ADD NEW CHAT: ' + JSON.stringify(message))
-
                         chats[message.chat] = {
                             id: message.chat,
                             title: message.data!,
