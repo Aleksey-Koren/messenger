@@ -13,8 +13,8 @@ import {CryptService} from "../../service/cryptService";
 import {LOGOUT} from "../authorization/authorizationTypes";
 import {SchedulerService} from "../../service/schedulerService";
 import {LocalStorageService} from "../../service/localStorageService";
-import {GlobalUsers} from "../../model/local-storage/localStorageTypes";
 import {StringIndexArray} from "../../model/stringIndexArray";
+import {GlobalUser} from "../../model/local-storage/localStorageTypes";
 
 
 const initialState: IMessengerState = {
@@ -61,7 +61,8 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
             if (action.payload.currentChat !== state.currentChat) {
                 return {
                     ...state,
-                    currentChat: action.payload.currentChat
+                    currentChat: action.payload.currentChat,
+                    messages: []
                 }
             } else {
                 return state;
@@ -72,7 +73,7 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
             return {
                 ...state,
                 users: action.payload.users,
-                globalUsers: touchGlobalUsers(state.globalUsers, action.payload.users, action.payload.currentChat!)
+                globalUsers: touchGlobalUsers({...state.globalUsers}, action.payload.users, action.payload.currentChat!)
             }
 
         case SET_CHATS:
@@ -88,6 +89,8 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
             return initialState;
 
         case SET_LAST_MESSAGES_FETCH:
+            LocalStorageService.lastMessagesFetchToStorage(action.payload.lastMessagesFetch!)
+            
             return {...state, lastMessagesFetch: action.payload.lastMessagesFetch};
 
         default:
@@ -95,9 +98,7 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
     }
 }
 
-function touchGlobalUsers(globalUsers: GlobalUsers, usersCache: StringIndexArray<User>, currentChat: string | null) {
-    console.log('touch global users')
-    const out = {...globalUsers};
+function touchGlobalUsers(globalUsers: StringIndexArray<GlobalUser>, usersCache: StringIndexArray<User>, currentChat: string | null) {
     for (let key in usersCache) {
         const user = usersCache[key];
         let cert;
@@ -107,22 +108,23 @@ function touchGlobalUsers(globalUsers: GlobalUsers, usersCache: StringIndexArray
             console.error("fail to convert public key into string")
             cert = '';
         }
-        if (!out[key]) {
-            out[key] = {
-                user: key,
+        if (!globalUsers[key]) {
+            globalUsers[key] = {
+                userId: key,
                 certificates: [],
                 titles: {}
             };
         }
-        var global = out[key];
-        if (currentChat) {
-            global.titles[currentChat] = user.title!;
-        }
-        if (cert && global.certificates.indexOf(cert) === -1) {
-            global.certificates.push(cert)
+
+        const globalUser = globalUsers[key];
+        // if (currentChat) {
+        //     globalUser.titles[currentChat] = user.title!;
+        // }
+        if (cert && globalUser.certificates.indexOf(cert) === -1) {
+            globalUser.certificates.unshift(cert)
         }
     }
+    LocalStorageService.globalUsersToStorage(globalUsers);
 
-    LocalStorageService.globalUsersToStorage(out);
-    return out;
+    return globalUsers;
 }

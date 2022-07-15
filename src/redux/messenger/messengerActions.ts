@@ -19,15 +19,14 @@ import {Action} from "redux";
 import {ThunkDispatch} from "redux-thunk";
 import {MessageType} from "../../model/messenger/messageType";
 import {setIsEditUserTitleModalOpen} from "../messenger-controls/messengerControlsActions";
-import {CustomerApi} from "../../api/customerApi";
-import {CryptService} from "../../service/cryptService";
 import Notification from "../../Notification";
-import {MessageMapper} from "../../mapper/messageMapper";
 import {StringIndexArray} from "../../model/stringIndexArray";
 import {CustomerService} from "../../service/messenger/customerService";
-import {GlobalUsers} from "../../model/local-storage/localStorageTypes";
 import {MessageProcessingService} from "../../service/messenger/messageProcessingService";
 import {ChatService} from "../../service/messenger/chatService";
+import {Builder} from "builder-pattern";
+import {GlobalUser} from "../../model/local-storage/localStorageTypes";
+import {LocalStorageService} from "../../service/localStorageService";
 
 export function setUser(user: User): IPlainDataAction<IMessengerStateOpt> {
 
@@ -97,10 +96,33 @@ export function setLastMessagesFetch(lastMessagesFetch: Date): IPlainDataAction<
     }
 }
 
-export function setGlobalUsers(globalUsers: GlobalUsers): IPlainDataAction<IMessengerStateOpt> {
+export function setGlobalUsers(globalUsers: StringIndexArray<GlobalUser>): IPlainDataAction<IMessengerStateOpt> {
     return {
         type: SET_GLOBAL_USERS,
         payload: {globalUsers: globalUsers}
+    }
+}
+
+export function sendMessageNewVersion(messageText: string,
+                                      messageType: MessageType,
+                                      chatId: string,
+                                      receiverId: string) {
+    return (dispatch: AppDispatch, getState: () => AppState) => {
+        const globalUsers = getState().messenger.globalUsers;
+
+        const messagetoSend = Builder<Message>()
+            .chat(chatId)
+            .data(messageText)
+            .type(messageType)
+            .sender(getState().messenger.user?.id!)
+            .receiver(receiverId)
+            .build();
+
+        MessageApi.sendMessages([messagetoSend], globalUsers)
+            .catch((e) => {
+                console.error(e)
+                Notification.add({severity: 'error', message: 'Message not sent', error: e})
+            });
     }
 }
 
@@ -108,7 +130,7 @@ export function sendMessage(messageText: string, messageType: MessageType, callb
     return (dispatch: AppDispatch, getState: () => AppState) => {
         const currentChat = getState().messenger.currentChat;
         const user = getState().messenger.user;
-        const chatMessages = getState().messenger.messages || [];
+        const globalUsers = getState().messenger.globalUsers;
         const users = getState().messenger.users;
         const messagesToSend: Message[] = []
 
@@ -125,7 +147,7 @@ export function sendMessage(messageText: string, messageType: MessageType, callb
             messagesToSend.push(message);
         }
 
-        return MessageApi.sendMessages(messagesToSend, users)
+        return MessageApi.sendMessages(messagesToSend, globalUsers)
             .then(response => {
                 const messages = []
                 for (let i = 0; i < response.length; i++) {
@@ -146,33 +168,37 @@ export function sendMessage(messageText: string, messageType: MessageType, callb
 export function fetchMessagesTF() {
     return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
         const state = getState();
+        const currentChatId = state.messenger.currentChat;
         let currentUser = state.messenger.user;
         if (!currentUser) {
             throw new Error("User is not logged in");
         }
-        const nextMessageFetch: Date = new Date();
+        let nextMessageFetch: Date = new Date();
 
-        MessageApi.getMessages({
-            receiver: currentUser.id!,
-            created: state.messenger.lastMessagesFetch!,
-            before: nextMessageFetch
-        }).then(messagesResp => {
-            dispatch(setLastMessagesFetch(nextMessageFetch));
-            MessageProcessingService.processMessages(dispatch, getState, messagesResp);
-        });
+
+        if (currentChatId) {
+            ChatService.processChatParticipants(dispatch, currentChatId, {...state.messenger.globalUsers}, currentUser.id)
+                .then(() => {
+                    MessageApi.getMessages({
+                        receiver: currentUser?.id!,
+                        created: state.messenger.lastMessagesFetch!,
+                        before: nextMessageFetch
+                    }).then(messagesResp => {
+                        dispatch(setLastMessagesFetch(nextMessageFetch));
+                        MessageProcessingService.processMessages(dispatch, getState, messagesResp);
+                    });
+                });
+        } else {
+            MessageApi.getMessages({
+                receiver: currentUser.id!,
+                created: state.messenger.lastMessagesFetch!,
+                before: nextMessageFetch
+            }).then(messagesResp => {
+                dispatch(setLastMessagesFetch(nextMessageFetch));
+                MessageProcessingService.processMessages(dispatch, getState, messagesResp);
+            });
+        }
     }
-}
-
-export function appendMessages(existing: Message[], incoming: Message[]) {
-    const result = [...existing];
-    const map: { [key: string]: 1 } = result.reduce((map, message) => {
-            map[message.id!] = 1;
-            return map;
-        },
-        {} as { [key: string]: 1 });
-    return existing.concat(incoming.filter(message => {
-        return !map[message.id!];
-    }))
 }
 
 export function fetchMessengerStateTF(loggedUserId: string) {
@@ -200,37 +226,44 @@ export function fetchMessengerStateTF(loggedUserId: string) {
                         }, {} as StringIndexArray<Chat>);
 
                         dispatch(setGlobalUsers(globalUsers));
-                        dispatch(openChatTF(currentChat));
+                        dispatch(openChatTF(currentChat.id));
                         dispatch(setChats(stringIndexArrayChats));
                     })
             })
     }
 }
 
-export function openChatTF(chat: Chat) {
+export function openChatTF(chatId: string) {
 
     return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
         const currentUser = getState().messenger.user!;
         const globalUsers = {...getState().messenger.globalUsers}
 
-        ChatApi.getParticipants(chat.id)
-            .then((chatParticipants) => {
+        dispatch(setCurrentChat(chatId));
 
-                MessageApi.getMessages({
-                    receiver: currentUser.id,
-                    chat: chat.id,
-                    type: MessageType.iam,
-                })
-                    .then(knownParticipants => {
-                        const users = CustomerService.processUnknownChatParticipants(chatParticipants, knownParticipants, chat, currentUser.id);
-                        CustomerService.updateChatParticipantsCertificates(globalUsers, chatParticipants, dispatch);
-                        dispatch(setCurrentChat(chat.id));
-                        dispatch(setUsers(users, chat.id));
-                    })
-                    .then(() => {
-                        dispatch(fetchMessagesTF());
-                    });
-            })
+        MessageApi.getMessages({
+            receiver: currentUser.id,
+            chat: chatId,
+            page: 0,
+            size: 20,
+            before: getState().messenger.lastMessagesFetch!
+        }).then(messages => {
+            dispatch(setMessages(messages.filter(message => message.type !== MessageType.who)))
+        })
+
+        // ChatService.processChatParticipants(dispatch, chatId, globalUsers, currentUser.id)
+        //     .then(() => {
+        //
+        //         MessageApi.getMessages({
+        //             receiver: currentUser.id,
+        //             chat: chatId,
+        //             page: 0,
+        //             size: 20,
+        //             before: getState().messenger.lastMessagesFetch!
+        //         }).then(messages => {
+        //             MessageProcessingService.processMessages(dispatch, getState, messages);
+        //         })
+        //     });
     }
 }
 
@@ -240,12 +273,12 @@ export function updateUserTitle(title: string) {
     return (dispatch: ThunkDispatch<AppState, any, Action>, getState: () => AppState) => {
         const user = getState().messenger.user;
         if (!user) {
-            throw new Error("User not logged in");
+            throw new Error("User is not logged in");
         }
         const users = getState().messenger.users!;
         const currentChat = getState().messenger.currentChat!
         if (!currentChat) {
-            throw new Error("Chat not selected");
+            throw new Error("Chat is not selected");
         }
         const messages: Message[] = []
 
@@ -259,7 +292,9 @@ export function updateUserTitle(title: string) {
             } as Message);
         }
 
-        return MessageApi.updateUserTitle(messages, users)
+        console.log("Messages --- " + JSON.stringify(messages));
+
+        return MessageApi.updateUserTitle(messages, getState().messenger.globalUsers)
             .then((response) => {
                 dispatch(setIsEditUserTitleModalOpen(false));
                 // dispatch(setMessages(appendMessages(getState().messenger.messages, response.filter(message => message.receiver === user.id))));

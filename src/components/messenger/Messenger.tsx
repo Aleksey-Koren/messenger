@@ -8,9 +8,15 @@ import MessagesList from "./messages/MessagesList";
 import ListItemButton from '@mui/material/ListItemButton';
 import MessengerMenu from "./menu/MessengerMenu";
 import MessengerSelect from "./select/MessengerSelect";
-import {AppState} from "../../index";
+import {AppState, store, useAppSelector} from "../../index";
 import {setIsWelcomeModalOpen} from "../../redux/authorization/authorizationActions";
-import {fetchMessengerStateTF, openChatTF, setCurrentChat, setUser} from "../../redux/messenger/messengerActions";
+import {
+    fetchMessengerStateTF,
+    openChatTF,
+    setCurrentChat, setGlobalUsers,
+    setLastMessagesFetch,
+    setUser
+} from "../../redux/messenger/messengerActions";
 import MessengerModalWindows from "./modal-windows/MessengerModalWindows";
 import {Box, Button, Typography} from "@mui/material";
 import PerfectScrollbar from 'react-perfect-scrollbar'
@@ -30,19 +36,19 @@ const Messenger: React.FC<TProps> = (props) => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        const user = LocalStorageService.retrieveUserFromLocalStorage();
-        if (user && !SchedulerService.isSchedulerStarted()) {
-            console.log('use effect')
-            props.setUser(user);
-            dispatch(fetchMessengerStateTF(user.id));
 
-            SchedulerService.startScheduler(dispatch);
-            props.setIsWelcomeModalOpen(false)
+        if (LocalStorageService.isLocalStorageExists() && !SchedulerService.isSchedulerStarted()) {
+            const data = LocalStorageService.loadDataFromLocalStorage();
+            props.setUser(data!.user);
+            props.setGlobalUsers(data!.globalUsers);
+            props.fetchMessengerStateTF(data!.user.id);
+            SchedulerService.startScheduler(dispatch, store.getState);
+            props.setIsWelcomeModalOpen(false);
         }
         if (scrollContext.charged) {
             scrollContext.charged = false;
             setTimeout(function () {
-                scrollContext.container?.scroll({top: scrollContext.container?.scrollHeight})
+                scrollContext.container?.scroll({top: scrollContext.container?.scrollHeight});
             }, 50);
         }
     });
@@ -93,12 +99,12 @@ const Messenger: React.FC<TProps> = (props) => {
     );
 }
 
-function renderChats(chats: StringIndexArray<Chat>, openChat: (chat: Chat) => void, currentChat: string | null) {
+function renderChats(chats: StringIndexArray<Chat>, openChatTF: (chatId: string) => void, currentChat: string | null) {
     const out = [];
     for (let key in chats) {
         let chat = chats[key];
         out.push(<ListItemButton key={chat.id} className={style.room_button}
-                                 onClick={() => openChat(chat)}>
+                                 onClick={() => openChatTF(chat.id)}>
             <div
                 className={chat.id === currentChat ? style.chat_selected : style.chat_unselected}>&nbsp;</div>
             <Typography color={'primary'}>
@@ -129,7 +135,9 @@ const mapDispatchToProps = {
     setIsWelcomeModalOpen,
     setCurrentChat,
     setUser,
-    openChatTF
+    openChatTF,
+    fetchMessengerStateTF,
+    setGlobalUsers
 }
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

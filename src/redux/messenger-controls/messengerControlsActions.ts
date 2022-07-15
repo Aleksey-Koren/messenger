@@ -37,20 +37,22 @@ export function setIsEditUserTitleModalOpen(isOpen: boolean): IPlainDataAction<b
     }
 }
 
-export function createNewRoomTF(title: string, userTitle:string) {
+export function createNewRoomTF(title: string, userTitle: string) {
 
     return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
         const user = getState().messenger.user;
-        if(!user) {
+        const globalUsers = {...getState().messenger.globalUsers};
+
+        if (!user) {
             throw new Error("User is not logged in");
         }
-        const users = getState().messenger.users;
+
         MessageApi.sendMessages([{
-            type: MessageType.HELLO,
+            type: MessageType.hello,
             sender: user.id!,
             receiver: user.id!,
             data: title
-        } as Message], {[user.id]: user})
+        } as Message], globalUsers)
             .then((messages) => {
                 const message = messages[0];
                 const newChat: Chat = Builder<Chat>()
@@ -61,15 +63,34 @@ export function createNewRoomTF(title: string, userTitle:string) {
                     .build()
                 const state = getState();
                 const chats = {...state.messenger.chats};
-                const globalUsers = {...state.messenger.globalUsers};
                 chats[newChat.id] = newChat;
                 globalUsers[user.id].titles[newChat.id] = userTitle;
                 dispatch(setChats(chats));
                 dispatch(setGlobalUsers(globalUsers));
-                dispatch(openChatTF(newChat));
+                dispatch(setCurrentChat(newChat.id));
 
                 dispatch(setIsNewPrivateModalOpened(false));
                 dispatch(setIsMembersModalOpened(true));
+
+
+                // const message = messages[0];
+                // const newChat: Chat = Builder<Chat>()
+                //     .id(message.chat)
+                //     .title(title)
+                //     .isUnreadMessagesExist(false)
+                //     .lastSeenAt(new Date())
+                //     .build()
+                // const state = getState();
+                // const chats = {...state.messenger.chats};
+                // const globalUsers = {...state.messenger.globalUsers};
+                // chats[newChat.id] = newChat;
+                // globalUsers[user.id].titles[newChat.id] = userTitle;
+                // dispatch(setChats(chats));
+                // dispatch(setGlobalUsers(globalUsers));
+                // dispatch(openChatTF(newChat.id));
+
+                // dispatch(setIsNewPrivateModalOpened(false));
+                // dispatch(setIsMembersModalOpened(true));
             }).catch(err => {
             console.error(err)
             Notification.add({message: 'Something went wrong.', error: err, severity: 'error'});

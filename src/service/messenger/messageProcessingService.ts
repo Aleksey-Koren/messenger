@@ -3,13 +3,14 @@ import {AppState} from "../../index";
 import {Action} from "redux";
 import {MessageType} from "../../model/messenger/messageType";
 import {Message} from "../../model/messenger/message";
-import {User} from "../../model/messenger/user";
 import {
-    sendMessage,
+    openChatTF,
+    sendMessageNewVersion,
     setChats,
-    setCurrentChat, setGlobalUsers,
+    setGlobalUsers,
     setMessages,
-    setUser
+    setUser,
+    setUsers
 } from "../../redux/messenger/messengerActions";
 
 export class MessageProcessingService {
@@ -22,17 +23,20 @@ export class MessageProcessingService {
         const currentChat = state.messenger.currentChat;
         let currentUser = {...state.messenger.user!};
         const chats = {...state.messenger.chats};
-        const messages = [...state.messenger.messages];
+        const existing = [...state.messenger.messages];
         const globalUsers = {...state.messenger.globalUsers};
+        const users = {...state.messenger.users}
 
         let isChatsUpdated = false;
         let isGlobalUsersUpdated = false;
         let isMessagesUpdated = false;
         let isCurrentUserUpdated = false;
+        let isUsersUpdated = false;
+        const incoming: Message[] = [];
 
         newMessages.forEach(message => {
             switch (message.type) {
-                case MessageType.HELLO:
+                case MessageType.hello:
                     if (!chats[message.chat]) {
                         chats[message.chat] = {
                             id: message.chat,
@@ -50,16 +54,17 @@ export class MessageProcessingService {
                     if (currentChat == null) {
                         //case when user just create account (current chat null)
                         //and was invited in chat
-                        dispatch(setCurrentChat(message.chat));
+                        dispatch(openChatTF(message.chat));
                     }
+
                     if (message.chat === currentChat) {
-                        messages.push(message);
+                        incoming.push(message);
                         isMessagesUpdated = true;
                     }
                     break;
                 case MessageType.whisper:
                     if (message.chat === currentChat) {
-                        messages.push(message);
+                        incoming.push(message);
                         isMessagesUpdated = true;
                     } else {
                         chats[message.chat].isUnreadMessagesExist = true;
@@ -68,38 +73,59 @@ export class MessageProcessingService {
                     break;
                 case MessageType.iam:
                     globalUsers[message.sender].titles[message.chat] = message.data!;
+
                     isGlobalUsersUpdated = true;
                     if (message.sender === currentUser?.id!) {
                         currentUser.title = message.data;
                         isCurrentUserUpdated = true;
                     }
                     if (message.chat === currentChat) {
-                        messages.push(message);
+                        incoming.push(message);
+
+                        users[message.sender].title = message.data;
+                        isUsersUpdated = true;
                         isMessagesUpdated = true;
                     }
                     break;
                 case MessageType.who:
-                    dispatch(sendMessage(globalUsers[currentUser!.id].titles[message.chat] || currentUser!.id, MessageType.iam, () => {
-                    }));
+                    dispatch(sendMessageNewVersion(globalUsers[currentUser!.id].titles[message.chat] || currentUser!.id,
+                        MessageType.iam,
+                        message.chat,
+                        message.sender)
+                    );
                     break;
                 default:
                     throw new Error('Unknown message type: ' + message.type);
             }
-
-            if (isChatsUpdated) {
-                dispatch(setChats(chats));
-            }
-            if (isGlobalUsersUpdated) {
-                dispatch(setGlobalUsers(globalUsers));
-            }
-            if (isMessagesUpdated) {
-                dispatch(setMessages(messages));
-            }
-            if (isCurrentUserUpdated) {
-                dispatch(setUser(currentUser));
-            }
         })
+
+        if (isChatsUpdated) {
+            dispatch(setChats(chats));
+        }
+        if (isGlobalUsersUpdated) {
+            dispatch(setGlobalUsers(globalUsers));
+        }
+        if (isMessagesUpdated) {
+            dispatch(setMessages(appendMessages(existing, incoming)));
+        }
+        if (isCurrentUserUpdated) {
+            dispatch(setUser(currentUser));
+        }
+        if (isUsersUpdated) {
+            dispatch(setUsers(users, currentChat!));
+        }
     }
+}
+
+function appendMessages(existing: Message[], incoming: Message[]) {
+    const map: { [key: string]: 1 } = existing.reduce((map, message) => {
+            map[message.id!] = 1;
+            return map;
+        },
+        {} as { [key: string]: 1 });
+    return existing.concat(incoming.filter(message => {
+        return !map[message.id!];
+    }))
 }
 
 // function processUnreadMessages(dispatch: ThunkDispatch<AppState, void, Action>,

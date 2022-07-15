@@ -2,14 +2,14 @@ import {IPlainDataAction} from "../redux-types";
 import {User} from "../../model/messenger/user";
 import {Chat} from "../../model/messenger/chat";
 import {Message} from "../../model/messenger/message";
-import {GlobalUsers} from "../../model/local-storage/localStorageTypes";
 import {StringIndexArray} from "../../model/stringIndexArray";
+import {GlobalUser} from "../../model/local-storage/localStorageTypes";
 
 export interface IMessengerStateOpt {
     chats?: StringIndexArray<Chat>;
     messages?: Message[];
     users?: StringIndexArray<User>;
-    globalUsers?: GlobalUsers;
+    globalUsers?: StringIndexArray<GlobalUser>;
     user?: User | null;
     currentChat?: string | null;
     lastMessagesFetch?: Date | null;
@@ -19,7 +19,7 @@ export interface IMessengerState extends IMessengerStateOpt {
     chats: StringIndexArray<Chat>;
     messages: Message[];
     users: StringIndexArray<User>;
-    globalUsers: GlobalUsers;
+    globalUsers: StringIndexArray<GlobalUser>;
     user: User | null;
     currentChat: string | null;
     lastMessagesFetch: Date | null;

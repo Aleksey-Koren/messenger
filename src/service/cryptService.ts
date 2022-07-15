@@ -47,17 +47,15 @@ export class CryptService {
         if (!decrypt) {
             return null;
         }
-        return naclUtil.encodeUTF8(decrypt);
+        return CryptService.uint8ToPlainString(decrypt);
     }
 
     static uint8ToBase64(array: Uint8Array) {
-        const decoder = new TextDecoder('utf8');
-        return decoder.decode(array);
+        return naclUtil.encodeBase64(array);
     }
 
     static base64ToUint8(string: string) {
-        const encoder = new TextEncoder();
-        return encoder.encode(string);
+        return naclUtil.decodeBase64(string);
     }
 
     static plainStringToUint8(string: string) {

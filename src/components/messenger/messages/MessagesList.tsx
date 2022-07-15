@@ -60,7 +60,7 @@ const MessagesList: React.FC<Props> = (props) => {
                                     </Paper>
                                 }
 
-                                {message.type === MessageType.HELLO &&
+                                {message.type === MessageType.hello &&
                                     <div className={style.system_message}>
                                         <span>Room title has been set to '{message.data}'</span>
                                     </div>
@@ -68,10 +68,10 @@ const MessagesList: React.FC<Props> = (props) => {
                                 {message.type === MessageType.iam &&
                                     <div className={style.system_message}>
                                         {userId === message.sender
-                                            ? <span>Your name is {message.data}. <Button onClick={() => {
+                                            ? <span>Your name is '{message.data}'. <Button onClick={() => {
                                                 props.setIsEditUserTitleModalOpen(true);
                                             }}>Change name</Button></span>
-                                            : <span>User&nbsp;<Uuid data={message.sender}/>&nbsp;now known as {message.data}</span>}
+                                            : <span>User&nbsp;<Uuid data={message.sender}/>&nbsp;now known as '{message.data}'</span>}
                                     </div>
                                 }
                     </ListItem>
