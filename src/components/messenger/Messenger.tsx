@@ -53,6 +53,10 @@ const Messenger: React.FC<TProps> = (props) => {
         }
     });
 
+    useEffect(() => {
+        scrollTo(false);
+    }, [props.messages?.length])
+
     const currentChat = props.chats[props.currentChat] || {};
 
     return (

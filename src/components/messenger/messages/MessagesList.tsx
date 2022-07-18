@@ -12,6 +12,8 @@ import {
     setIsEditUserTitleModalOpen,
     setIsNewRoomModalOpened
 } from "../../../redux/messenger-controls/messengerControlsActions";
+import {Message} from "../../../model/messenger/message";
+
 /*
 const createEditIcon = (message: Message, userId:string) => (
 
@@ -22,11 +24,30 @@ const createEditIcon = (message: Message, userId:string) => (
     </IconButton>
 );*/
 
+
+
+function mergeMessages(messages?:Message[]):Message[][] {
+    if(!messages) {
+        return [];
+    }
+    const out:Message[][] = [];
+    let current:Message[]|undefined = undefined;
+    for(let i = 0; i < messages.length; i++) {
+        let message = messages[i];
+        if(!current || current[0].sender !== message.sender || current[0].type !== MessageType.whisper || message.type !== MessageType.whisper) {
+            current = []
+            out.push(current);
+        }
+        current.push(message)
+    }
+    return out;
+}
+
 const MessagesList: React.FC<Props> = (props) => {
 
     const userId = props.user?.id;
 
-
+    const message = mergeMessages(props.messages);
 
     return (
         <PerfectScrollbar onScroll={(e) => {props.updateScroll(e.currentTarget)}} containerRef={container => {
@@ -40,42 +61,44 @@ const MessagesList: React.FC<Props> = (props) => {
             </Alert> : null}
             <List id={'list'}>
                 {/* This place should start a loop for room messages and create ListItem for each message */}
-                {props.messages?.map(message => (
-                    <ListItem key={message.id} style={{display: 'flex', flexDirection: (message.sender === userId ? 'row-reverse' : 'row'), /* my messages - right, others - left*/}}>
-                                {message.type === MessageType.whisper &&
+                {message.map(message => {
+                    const first = message[0];
+                    return (
+                    <ListItem key={first.id} style={{display: 'flex', flexDirection: (first.sender === userId ? 'row-reverse' : 'row'), /* my messages - right, others - left*/}}>
+                                {first.type === MessageType.whisper &&
 
                                     <Paper color={"primary"} className={style.message_container}>
                                         <ListItemText>
                                             <Typography color={"primary"} className={style.message_info}>
                                                 {/*createEditIcon(message, userId)*/}
-                                                {message.sender !== userId && <SenderName title={props.chatParticipants[message.sender!]?.title} id={message.sender}/>}
-                                                {message.sender !== userId && <span>&nbsp;|&nbsp;</span>}
-                                                <TimeSince time={message.created}/>
+                                                {first.sender !== userId && <SenderName title={props.chatParticipants[first.sender!]?.title} id={first.sender}/>}
+                                                {first.sender !== userId && <span>&nbsp;|&nbsp;</span>}
+                                                <TimeSince time={first.created}/>
                                             </Typography>
                                         </ListItemText>
 
                                         <ListItemText>
-                                            <Typography color={""} className={style.message}>{message.data}</Typography>
+                                            {message.map(text => <Typography color={""} className={style.message}>{text.data}</Typography>)}
                                         </ListItemText>
                                     </Paper>
                                 }
 
-                                {message.type === MessageType.hello &&
+                                {first.type === MessageType.hello &&
                                     <div className={style.system_message}>
-                                        <span>Room title has been set to '{message.data}'</span>
+                                        <span>Room title has been set to '{first.data}'</span>
                                     </div>
                                 }
-                                {message.type === MessageType.iam &&
+                                {first.type === MessageType.iam &&
                                     <div className={style.system_message}>
-                                        {userId === message.sender
-                                            ? <span>Your name is '{message.data}'. <Button onClick={() => {
+                                        {userId === first.sender
+                                            ? <span>Your name is '{first.data}'. <Button onClick={() => {
                                                 props.setIsEditUserTitleModalOpen(true);
                                             }}>Change name</Button></span>
-                                            : <span>User&nbsp;<Uuid data={message.sender}/>&nbsp;now known as '{message.data}'</span>}
+                                            : <span>User&nbsp;<Uuid data={first.sender}/>&nbsp;now known as '{first.data}'</span>}
                                     </div>
                                 }
                     </ListItem>
-                ))}
+                )})}
             </List>
         </PerfectScrollbar>
     );
