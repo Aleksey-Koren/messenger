@@ -1,7 +1,7 @@
 import {AppState} from "../../../index";
 import {setIsEditGlobalUsersModalOpened} from "../../../redux/messenger-menu/messengerMenuActions";
 import {connect, ConnectedProps} from "react-redux";
-import React from "react";
+import React, {useState} from "react";
 import {Button, Dialog, IconButton, Toolbar, Typography} from "@mui/material";
 import AppBar from "@mui/material/AppBar/AppBar";
 import style from "./EditGlobalUsers.module.css";
@@ -15,9 +15,19 @@ import {
 } from "../../../model/stringIndexArray";
 import {Chat} from "../../../model/messenger/chat";
 import {setIsGlobalUserConfigurationModalOpen} from "../../../redux/messenger-controls/messengerControlsActions";
+import {GlobalUser} from "../../../model/local-storage/localStorageTypes";
 
+interface ISearchParams {
+    id?: string
+    title?: string
+}
 
 const EditGlobalUsersModal: React.FC<TProps> = (props) => {
+
+    const [usersToRender, setUsersToRender] = useState<GlobalUser[]>(props.globalUsers);
+    const [searchParams, setSearchParams] = useState<ISearchParams>({id: '', title: ''});
+    console.log("searchparams --- " + JSON.stringify(searchParams));
+
     return (
         <Dialog open={true} maxWidth="md" fullWidth>
             <AppBar classes={{root: style.dialog__app_bar}}>
@@ -38,24 +48,32 @@ const EditGlobalUsersModal: React.FC<TProps> = (props) => {
                 <div className={style.search_element_container}>
                     <label>
                         ID:&nbsp;&nbsp;
-                        <input className={style.search_element_input}/>
+                        <input className={style.search_element_input}
+                               value={searchParams?.id}
+                               onChange={e => setSearchParams({...searchParams, id: e.target.value})}
+                        />
                     </label>
                 </div>
                 <div className={style.search_element_container}>
                     <label>
                         Title:&nbsp;&nbsp;
-                        <input className={style.search_element_input}/>
+                        <input className={style.search_element_input}
+                               value={searchParams?.title}
+                               onChange={e => setSearchParams({...searchParams, title: e.target.value})}
+                        />
                     </label>
                 </div>
                 <div className={style.search_element_container}>
-                    <button className={style.search_element_button}>
+                    <button className={style.search_element_button}
+
+                    >
                         Search
                     </button>
                 </div>
             </div>
             <PerfectScrollbar>
                 <div className={style.list_container}>
-                    {props.globalUsers.map(globalUser =>
+                    {usersToRender.map(globalUser =>
                         <div key={globalUser.userId} className={style.list_element_container}>
 
                             <div className={style.list_element_column}>

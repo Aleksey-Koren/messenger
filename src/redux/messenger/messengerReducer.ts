@@ -86,7 +86,7 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
         case LOGOUT:
             localStorage.clear();
             SchedulerService.stopScheduler();
-            return initialState;
+            return {...initialState, globalUsers: {}};
 
         case SET_LAST_MESSAGES_FETCH:
             LocalStorageService.lastMessagesFetchToStorage(action.payload.lastMessagesFetch!)
