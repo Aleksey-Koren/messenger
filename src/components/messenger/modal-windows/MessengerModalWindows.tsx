@@ -9,10 +9,10 @@ import React from "react";
 import {AppState, useAppSelector} from "../../../index";
 import {connect, ConnectedProps} from "react-redux";
 import EditGlobalUsersModal from "../edit-global-users/EditGlobalUsersModal";
+import GlobalUserConfigurationModal from "../edit-global-users/global-user-configuration/GlobalUserConfigurationModal";
 
 
-
-function MessengerModalWindows(props:TProps) {
+function MessengerModalWindows(props: TProps) {
 
     return (
         <>
@@ -24,6 +24,7 @@ function MessengerModalWindows(props:TProps) {
             {props.isEditRoomTitleModalOpen && <EditTitleModal/>}
             {props.isEditUserTitleModalOpen && <EditUserTitleModal/>}
             {props.isEditGlobalUsersModalOpened && <EditGlobalUsersModal/>}
+            {props.isGlobalUserConfigurationModalOpen && <GlobalUserConfigurationModal/>}
         </>
     )
 }
@@ -36,7 +37,8 @@ const mapStateToProps = (state: AppState) => ({
     isCreateNewRoomModalOpened: state.messengerControls.isCreateNewRoomModalOpened,
     isEditRoomTitleModalOpen: state.messengerMenu.isEditRoomTitleModalOpen,
     isEditUserTitleModalOpen: state.messengerControls.isEditUserTitleModalOpen,
-    isEditGlobalUsersModalOpened: state.messengerMenu.isEditGlobalUsersModalOpened
+    isEditGlobalUsersModalOpened: state.messengerMenu.isEditGlobalUsersModalOpened,
+    isGlobalUserConfigurationModalOpen: state.messengerControls.globalUserConfigurationState.isGlobalUserConfigurationModalOpen
 })
 
 

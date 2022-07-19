@@ -1,17 +1,20 @@
 import {AppState} from "../../../index";
-import {
-    setIsEditGlobalUsersModalOpened,
-    setIsEditRoomTitleModalOpen, setIsMembersModalOpened
-} from "../../../redux/messenger-menu/messengerMenuActions";
+import {setIsEditGlobalUsersModalOpened} from "../../../redux/messenger-menu/messengerMenuActions";
 import {connect, ConnectedProps} from "react-redux";
 import React from "react";
-import {Button, Dialog, DialogContent, DialogTitle, IconButton, Toolbar, Typography} from "@mui/material";
+import {Button, Dialog, IconButton, Toolbar, Typography} from "@mui/material";
 import AppBar from "@mui/material/AppBar/AppBar";
 import style from "./EditGlobalUsers.module.css";
 import CloseIcon from "@mui/icons-material/Close";
 import PerfectScrollbar from "react-perfect-scrollbar";
-import {StringIndexArray, stringIndexArrayToArray} from "../../../model/stringIndexArray";
-import {GlobalUser} from "../../../model/local-storage/localStorageTypes";
+import {
+    StringIndexArray,
+    StringIndexArrayEntry,
+    stringIndexArrayToArray,
+    stringIndexArrayToEntryArray
+} from "../../../model/stringIndexArray";
+import {Chat} from "../../../model/messenger/chat";
+import {setIsGlobalUserConfigurationModalOpen} from "../../../redux/messenger-controls/messengerControlsActions";
 
 
 const EditGlobalUsersModal: React.FC<TProps> = (props) => {
@@ -19,7 +22,7 @@ const EditGlobalUsersModal: React.FC<TProps> = (props) => {
         <Dialog open={true} maxWidth="md" fullWidth>
             <AppBar classes={{root: style.dialog__app_bar}}>
                 <Toolbar>
-                    <Button variant="contained">
+                    <Button variant="contained" onClick={() => props.setIsGlobalUserConfigurationModalOpen(true)}>
                         Add Ghost user
                     </Button>
                     <Typography variant="h4" component="div" flex={1} mx={3} align={"center"}>
@@ -54,14 +57,20 @@ const EditGlobalUsersModal: React.FC<TProps> = (props) => {
                 <div className={style.list_container}>
                     {props.globalUsers.map(globalUser =>
                         <div key={globalUser.userId} className={style.list_element_container}>
+
                             <div className={style.list_element_column}>
-                                <h2 className={style.list_id}>{globalUser.userId}</h2>
+                                <h2 className={style.list_id}
+                                    onClick={() => props.setIsGlobalUserConfigurationModalOpen(true, globalUser)}>{globalUser.userId}</h2>
                             </div>
+
                             <div className={style.list_element_column}>
-                                {
-                                    stringIndexArrayToArray(globalUser.titles).map(title =>
-                                    <h2>{title}</h2>
-                                )}
+                                <ul>
+                                    {stringIndexArrayToEntryArray<string>(globalUser.titles).map(entry =>
+                                        <li>
+                                            <h2 key={entry.key}>{generateUsernameToChatTitleRatio(entry, props.chats)}</h2>
+                                        </li>
+                                    )}
+                                </ul>
                             </div>
                         </div>
                     )}
@@ -71,25 +80,24 @@ const EditGlobalUsersModal: React.FC<TProps> = (props) => {
     )
 }
 
-function mapTitlesToJSX(titles: StringIndexArray<string>) {
-    const elements = [];
-    for (let i in titles) {
+function generateUsernameToChatTitleRatio(entry: StringIndexArrayEntry<string>, chats: StringIndexArray<Chat>) {
+    const chat = chats[entry.key];
 
+    if (chat) {
+        return `${chat.title} / ${entry.value}`
     }
-    return (
-        <div>
 
-        </div>
-    )
+    return `${entry.key} / ${entry.value}`
 }
 
-
 const mapStateToProps = (state: AppState) => ({
-    globalUsers: stringIndexArrayToArray(state.messenger.globalUsers)
+    globalUsers: stringIndexArrayToArray(state.messenger.globalUsers),
+    chats: state.messenger.chats
 })
 
 const mapDispatchToProps = {
     setIsEditGlobalUsersModalOpened,
+    setIsGlobalUserConfigurationModalOpen
 }
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

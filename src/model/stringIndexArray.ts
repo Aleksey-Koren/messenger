@@ -9,16 +9,16 @@ export interface StringIndexArrayEntry<T> {
 
 export function stringIndexArrayToArray<T>(indexArray: StringIndexArray<T>): Array<T> {
     const result = new Array<T>();
-    for(let i in indexArray) {
+    for (let i in indexArray) {
         result.push(indexArray[i]);
     }
     return result;
 }
 
 export function stringIndexArrayToEntryArray<T>(indexArray: StringIndexArray<T>): Array<StringIndexArrayEntry<T>> {
-
     const result = new Array<StringIndexArrayEntry<T>>();
-    for(let i in indexArray) {
+
+    for (let i in indexArray) {
         result.push({key: i, value: indexArray[i]});
     }
     return result;
@@ -28,7 +28,7 @@ export function stringIndexArrayToEntrySet<T>(indexArray: StringIndexArray<T>): 
 
     const result = new Set<StringIndexArrayEntry<T>>();
 
-    for(let i in indexArray) {
+    for (let i in indexArray) {
         result.add({key: i, value: indexArray[i]});
     }
     return result;

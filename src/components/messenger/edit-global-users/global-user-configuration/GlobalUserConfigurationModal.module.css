@@ -1,0 +1,39 @@
+.dialog__title {
+    text-align: center;
+}
+
+.id_input_container {
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 2px deepskyblue dashed;
+}
+
+.id_input {
+    width: 80%;
+    font-size: 18px;
+}
+
+.id_input_label{
+    width: 80%;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.keys_list_container {
+    height: 200px;
+    border-bottom: 2px deepskyblue dashed;
+}
+
+.add_key_container {
+    height: 50px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.add_key_button{
+    font-size: 18px;
+    width: 100px;
+}
