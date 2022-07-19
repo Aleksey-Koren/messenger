@@ -7,9 +7,8 @@ import EditTitleModal from "../menu/edit-room-title/EditRoomTitleModal";
 import EditUserTitleModal from "../edit-user-title/EditUserTitleModal";
 import React from "react";
 import {AppState, useAppSelector} from "../../../index";
-import {createNewRoomTF} from "../../../redux/messenger-controls/messengerControlsActions";
-import {setUserTitle} from "../../../redux/messenger/messengerActions";
 import {connect, ConnectedProps} from "react-redux";
+import EditGlobalUsersModal from "../edit-global-users/EditGlobalUsersModal";
 
 
 
@@ -24,6 +23,7 @@ function MessengerModalWindows(props:TProps) {
             {props.isCreateNewRoomModalOpened && <CreateNewRoomModal/>}
             {props.isEditRoomTitleModalOpen && <EditTitleModal/>}
             {props.isEditUserTitleModalOpen && <EditUserTitleModal/>}
+            {props.isEditGlobalUsersModalOpened && <EditGlobalUsersModal/>}
         </>
     )
 }
@@ -36,6 +36,7 @@ const mapStateToProps = (state: AppState) => ({
     isCreateNewRoomModalOpened: state.messengerControls.isCreateNewRoomModalOpened,
     isEditRoomTitleModalOpen: state.messengerMenu.isEditRoomTitleModalOpen,
     isEditUserTitleModalOpen: state.messengerControls.isEditUserTitleModalOpen,
+    isEditGlobalUsersModalOpened: state.messengerMenu.isEditGlobalUsersModalOpened
 })
 
 
