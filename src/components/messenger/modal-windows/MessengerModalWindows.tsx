@@ -6,10 +6,13 @@ import CreateNewRoomModal from "../new-public/CreateNewRoomModal";
 import EditTitleModal from "../menu/edit-room-title/EditRoomTitleModal";
 import EditUserTitleModal from "../edit-user-title/EditUserTitleModal";
 import React from "react";
-import {AppState, useAppSelector} from "../../../index";
+import {AppState} from "../../../index";
 import {connect, ConnectedProps} from "react-redux";
-import EditGlobalUsersModal from "../edit-global-users/EditGlobalUsersModal";
+import GlobalUsersListModal from "../edit-global-users/GlobalUsersListModal";
+import EditGlobalUserModal from "../edit-global-users/global-user-configuration/GlobalUserConfigurationModal";
 import GlobalUserConfigurationModal from "../edit-global-users/global-user-configuration/GlobalUserConfigurationModal";
+
+
 
 
 function MessengerModalWindows(props: TProps) {
@@ -23,7 +26,7 @@ function MessengerModalWindows(props: TProps) {
             {props.isCreateNewRoomModalOpened && <CreateNewRoomModal/>}
             {props.isEditRoomTitleModalOpen && <EditTitleModal/>}
             {props.isEditUserTitleModalOpen && <EditUserTitleModal/>}
-            {props.isEditGlobalUsersModalOpened && <EditGlobalUsersModal/>}
+            {props.isEditGlobalUsersModalOpened && <GlobalUsersListModal/>}
             {props.isGlobalUserConfigurationModalOpen && <GlobalUserConfigurationModal/>}
         </>
     )

@@ -18,7 +18,10 @@ import {Chat} from "../../model/messenger/chat";
 import {Action} from "redux";
 import {ThunkDispatch} from "redux-thunk";
 import {MessageType} from "../../model/messenger/messageType";
-import {setIsEditUserTitleModalOpen} from "../messenger-controls/messengerControlsActions";
+import {
+    setIsEditUserTitleModalOpen,
+    setIsGlobalUserConfigurationModalOpen
+} from "../messenger-controls/messengerControlsActions";
 import Notification from "../../Notification";
 import {StringIndexArray} from "../../model/stringIndexArray";
 import {CustomerService} from "../../service/messenger/customerService";
@@ -250,20 +253,6 @@ export function openChatTF(chatId: string) {
         }).then(messages => {
             dispatch(setMessages(messages.filter(message => message.type !== MessageType.who)))
         })
-
-        // ChatService.processChatParticipants(dispatch, chatId, globalUsers, currentUser.id)
-        //     .then(() => {
-        //
-        //         MessageApi.getMessages({
-        //             receiver: currentUser.id,
-        //             chat: chatId,
-        //             page: 0,
-        //             size: 20,
-        //             before: getState().messenger.lastMessagesFetch!
-        //         }).then(messages => {
-        //             MessageProcessingService.processMessages(dispatch, getState, messages);
-        //         })
-        //     });
     }
 }
 
@@ -303,8 +292,32 @@ export function updateUserTitle(title: string) {
     }
 }
 
-// export function openChatTF(chat: Chat) {
-//     return (dispatch: ThunkDispatch<AppState, void, Action>) => {
-//         dispatch(setCurrentChat(chat.id!));
-//     }
-// }
+export function addPkToGlobalUserTF(userToEdit: GlobalUser, pkToAdd: string) {
+    return (dispatch: ThunkDispatch<AppState, any, Action>, getState: () => AppState) => {
+
+        const state = getState();
+        const globalUsers = {...state.messenger.globalUsers};
+        if (globalUsers[userToEdit.userId].certificates.indexOf(pkToAdd) === -1) {
+            globalUsers[userToEdit.userId].certificates.unshift(pkToAdd);
+            dispatch(setGlobalUsers(globalUsers));
+        }
+    }
+}
+
+export function addGhostUserTF(id: string) {
+    return (dispatch: ThunkDispatch<AppState, any, Action>, getState: () => AppState) => {
+        const globalUsers = {...getState().messenger.globalUsers};
+        if(!globalUsers[id]) {
+
+            const newUser = {
+                userId: id,
+                certificates: [],
+                titles: {}
+            }
+            globalUsers[id] = newUser
+
+            dispatch(setGlobalUsers(globalUsers));
+            dispatch(setIsGlobalUserConfigurationModalOpen(true, newUser));
+        }
+    }
+}

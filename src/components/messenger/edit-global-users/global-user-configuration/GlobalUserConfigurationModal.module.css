@@ -5,7 +5,7 @@
 .id_input_container {
     height: 50px;
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
     border-bottom: 2px deepskyblue dashed;
 }

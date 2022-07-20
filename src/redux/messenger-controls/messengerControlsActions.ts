@@ -3,7 +3,7 @@ import {
     GlobalUserConfigurationState,
     SET_IS_CREATE_PRIVATE_MODAL_OPENED,
     SET_IS_CREATE_ROOM_MODAL_OPENED,
-    SET_IS_EDIT_USER_TITLE_MODAL_OPEN, SET_IS_GLOBAL_USER_CONFIGURATION_MODAL_OPEN
+    SET_IS_EDIT_USER_TITLE_MODAL_OPEN, SET_IS_GLOBAL_USER_CONFIGURATION_MODAL_OPEN,
 } from "./messengerControlsTypes";
 import {AppState} from "../../index";
 import {ThunkDispatch} from "redux-thunk";

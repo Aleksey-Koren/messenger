@@ -1,10 +1,10 @@
 import {AppState} from "../../../index";
 import {setIsEditGlobalUsersModalOpened} from "../../../redux/messenger-menu/messengerMenuActions";
 import {connect, ConnectedProps} from "react-redux";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Button, Dialog, IconButton, Toolbar, Typography} from "@mui/material";
 import AppBar from "@mui/material/AppBar/AppBar";
-import style from "./EditGlobalUsers.module.css";
+import style from "./GlobalUsersList.module.css";
 import CloseIcon from "@mui/icons-material/Close";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import {
@@ -16,17 +16,20 @@ import {
 import {Chat} from "../../../model/messenger/chat";
 import {setIsGlobalUserConfigurationModalOpen} from "../../../redux/messenger-controls/messengerControlsActions";
 import {GlobalUser} from "../../../model/local-storage/localStorageTypes";
+import {GlobalUsersSearchService} from "../../../service/local-data/globalUsersSearchService";
+import {setGlobalUsers} from "../../../redux/messenger/messengerActions";
 
-interface ISearchParams {
+export interface ISearchParams {
     id?: string
     title?: string
 }
 
-const EditGlobalUsersModal: React.FC<TProps> = (props) => {
+const GlobalUsersListModal: React.FC<TProps> = (props) => {
 
     const [usersToRender, setUsersToRender] = useState<GlobalUser[]>(props.globalUsers);
     const [searchParams, setSearchParams] = useState<ISearchParams>({id: '', title: ''});
-    console.log("searchparams --- " + JSON.stringify(searchParams));
+
+    useEffect(() => setUsersToRender(props.globalUsers), [props.globalUsers])
 
     return (
         <Dialog open={true} maxWidth="md" fullWidth>
@@ -65,7 +68,7 @@ const EditGlobalUsersModal: React.FC<TProps> = (props) => {
                 </div>
                 <div className={style.search_element_container}>
                     <button className={style.search_element_button}
-
+                            onClick={() => setUsersToRender(GlobalUsersSearchService.filterGlobalUsers(searchParams, props.globalUsers))}
                     >
                         Search
                     </button>
@@ -73,19 +76,21 @@ const EditGlobalUsersModal: React.FC<TProps> = (props) => {
             </div>
             <PerfectScrollbar>
                 <div className={style.list_container}>
+                    {usersToRender.length === 0 && <h4 style={{textAlign: 'center'}}>No users found</h4>}
                     {usersToRender.map(globalUser =>
                         <div key={globalUser.userId} className={style.list_element_container}>
 
                             <div className={style.list_element_column}>
                                 <h2 className={style.list_id}
+                                    key={globalUser.userId}
                                     onClick={() => props.setIsGlobalUserConfigurationModalOpen(true, globalUser)}>{globalUser.userId}</h2>
                             </div>
 
                             <div className={style.list_element_column}>
                                 <ul>
                                     {stringIndexArrayToEntryArray<string>(globalUser.titles).map(entry =>
-                                        <li>
-                                            <h2 key={entry.key}>{generateUsernameToChatTitleRatio(entry, props.chats)}</h2>
+                                        <li key={entry.key}>
+                                            <h2>{generateUsernameToChatTitleRatio(entry, props.chats)}</h2>
                                         </li>
                                     )}
                                 </ul>
@@ -122,4 +127,4 @@ const connector = connect(mapStateToProps, mapDispatchToProps);
 
 type TProps = ConnectedProps<typeof connector>;
 
-export default connector(EditGlobalUsersModal);
+export default connector(GlobalUsersListModal);
