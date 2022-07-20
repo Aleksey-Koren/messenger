@@ -1,8 +1,8 @@
-import {User} from "../model/messenger/user";
-import {GlobalUser, LocalStorageData, StateData} from "../model/local-storage/localStorageTypes";
+import {User} from "../../model/messenger/user";
+import {GlobalUser, LocalStorageData, StateData} from "../../model/local-storage/localStorageTypes";
 import {Builder} from "builder-pattern";
-import {CryptService} from "./cryptService";
-import {StringIndexArray} from "../model/stringIndexArray";
+import {CryptService} from "../cryptService";
+import {StringIndexArray} from "../../model/stringIndexArray";
 
 export class LocalStorageService {
 

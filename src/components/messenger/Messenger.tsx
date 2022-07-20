@@ -20,7 +20,7 @@ import {
 import MessengerModalWindows from "./modal-windows/MessengerModalWindows";
 import {Box, Button, Typography} from "@mui/material";
 import PerfectScrollbar from 'react-perfect-scrollbar'
-import {LocalStorageService} from "../../service/localStorageService";
+import {LocalStorageService} from "../../service/local-data/localStorageService";
 import {SchedulerService} from "../../service/schedulerService";
 import {Chat} from "../../model/messenger/chat";
 import {StringIndexArray} from "../../model/stringIndexArray";

@@ -7,10 +7,6 @@ export interface GlobalUser {
     titles: StringIndexArray<string>
 }
 
-// export interface GlobalUsers {
-//     users: StringIndexArray<GlobalUser>
-// }
-
 export interface LocalStorageUser {
     id: string,
     publicKey: string,

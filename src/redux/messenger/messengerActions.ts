@@ -26,7 +26,7 @@ import {MessageProcessingService} from "../../service/messenger/messageProcessin
 import {ChatService} from "../../service/messenger/chatService";
 import {Builder} from "builder-pattern";
 import {GlobalUser} from "../../model/local-storage/localStorageTypes";
-import {LocalStorageService} from "../../service/localStorageService";
+import {LocalStorageService} from "../../service/local-data/localStorageService";
 
 export function setUser(user: User): IPlainDataAction<IMessengerStateOpt> {
 

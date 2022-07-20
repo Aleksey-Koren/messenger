@@ -1,7 +1,7 @@
 import {Action, Dispatch} from "redux";
 
 import {fetchMessagesTF, setLastMessagesFetch} from "../redux/messenger/messengerActions";
-import {LocalStorageService} from "./localStorageService";
+import {LocalStorageService} from "./local-data/localStorageService";
 import {MessageApi} from "../api/messageApi";
 import {MessageType} from "../model/messenger/messageType";
 import {Message} from "../model/messenger/message";

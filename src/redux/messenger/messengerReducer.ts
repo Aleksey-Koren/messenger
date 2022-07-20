@@ -12,7 +12,7 @@ import {User} from "../../model/messenger/user";
 import {CryptService} from "../../service/cryptService";
 import {LOGOUT} from "../authorization/authorizationTypes";
 import {SchedulerService} from "../../service/schedulerService";
-import {LocalStorageService} from "../../service/localStorageService";
+import {LocalStorageService} from "../../service/local-data/localStorageService";
 import {StringIndexArray} from "../../model/stringIndexArray";
 import {GlobalUser} from "../../model/local-storage/localStorageTypes";
 
