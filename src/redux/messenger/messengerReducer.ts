@@ -46,22 +46,12 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
             }
             LocalStorageService.userToStorage(user);
 
-            const touchedGlobalUsers = touchGlobalUsers(state.globalUsers, {[user.id]: user});
-
-            if(touchedGlobalUsers.isGlobalUsersChanged) {
                 return {
                     ...state,
                     user: user,
-                    users: {...state.users, [user.id!]: user},
-                    globalUsers: touchedGlobalUsers.globalUsers
+                    users: {...state.users, [user.id]: user},
+                    globalUsers: touchGlobalUsers(state.globalUsers, {[user.id]: user})
                 }
-            } else {
-                return {
-                    ...state,
-                    user: user,
-                    users: {...state.users, [user.id!]: user}
-                }
-            }
         }
 
         case SET_CURRENT_CHAT: {
@@ -81,19 +71,11 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
         }
 
         case SET_USERS:
-            const a = touchGlobalUsers(state.globalUsers, action.payload.users);
-            if(a.isGlobalUsersChanged) {
                 return {
                     ...state,
                     users: action.payload.users,
-                    globalUsers: a.globalUsers
+                    globalUsers: touchGlobalUsers(state.globalUsers, action.payload.users)
                 }
-            } else {
-                return {
-                    ...state,
-                    users: action.payload.users
-                }
-            }
 
         case SET_CHATS:
             return {...state, chats: action.payload.chats}
@@ -148,8 +130,8 @@ function touchGlobalUsers(globalUsers: StringIndexArray<GlobalUser>, usersCache:
 
     if (isGlobalUsersChanged) {
         LocalStorageService.globalUsersToStorage(globalUsersToChange);
-        return {globalUsers: globalUsersToChange, isGlobalUsersChanged: isGlobalUsersChanged}
+        return globalUsersToChange
     } else {
-        return {globalUsers: globalUsers, isGlobalUsersChanged: isGlobalUsersChanged};
+        return globalUsers
     }
 }
