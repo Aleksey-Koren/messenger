@@ -17,7 +17,6 @@ import {Chat} from "../../../model/messenger/chat";
 import {setIsGlobalUserConfigurationModalOpen} from "../../../redux/messenger-controls/messengerControlsActions";
 import {GlobalUser} from "../../../model/local-storage/localStorageTypes";
 import {GlobalUsersSearchService} from "../../../service/local-data/globalUsersSearchService";
-import {setGlobalUsers} from "../../../redux/messenger/messengerActions";
 
 export interface ISearchParams {
     id?: string
@@ -26,10 +25,15 @@ export interface ISearchParams {
 
 const GlobalUsersListModal: React.FC<TProps> = (props) => {
 
-    const [usersToRender, setUsersToRender] = useState<GlobalUser[]>(props.globalUsers);
+    const globalUsersArray = stringIndexArrayToArray(props.globalUsers);
+
+    const [usersToRender, setUsersToRender] = useState<GlobalUser[]>(globalUsersArray);
     const [searchParams, setSearchParams] = useState<ISearchParams>({id: '', title: ''});
 
-    useEffect(() => setUsersToRender(props.globalUsers), [props.globalUsers])
+    useEffect(() => {
+        setUsersToRender(GlobalUsersSearchService.filterGlobalUsers(searchParams, globalUsersArray));
+        console.log('USE EFFECT');
+    }, [props.globalUsers])
 
     return (
         <Dialog open={true} maxWidth="md" fullWidth>
@@ -68,7 +72,7 @@ const GlobalUsersListModal: React.FC<TProps> = (props) => {
                 </div>
                 <div className={style.search_element_container}>
                     <button className={style.search_element_button}
-                            onClick={() => setUsersToRender(GlobalUsersSearchService.filterGlobalUsers(searchParams, props.globalUsers))}
+                            onClick={() => setUsersToRender(GlobalUsersSearchService.filterGlobalUsers(searchParams, globalUsersArray))}
                     >
                         Search
                     </button>
@@ -114,7 +118,7 @@ function generateUsernameToChatTitleRatio(entry: StringIndexArrayEntry<string>, 
 }
 
 const mapStateToProps = (state: AppState) => ({
-    globalUsers: stringIndexArrayToArray(state.messenger.globalUsers),
+    globalUsers: state.messenger.globalUsers,
     chats: state.messenger.chats
 })
 

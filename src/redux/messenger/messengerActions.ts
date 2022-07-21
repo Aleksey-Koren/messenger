@@ -281,8 +281,6 @@ export function updateUserTitle(title: string) {
             } as Message);
         }
 
-        console.log("Messages --- " + JSON.stringify(messages));
-
         return MessageApi.updateUserTitle(messages, getState().messenger.globalUsers)
             .then((response) => {
                 dispatch(setIsEditUserTitleModalOpen(false));

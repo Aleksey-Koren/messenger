@@ -101,18 +101,23 @@ export class MessageProcessingService {
 
         if (isChatsUpdated) {
             dispatch(setChats(chats));
+            console.log('SET CHATS !!!')
         }
         if (isGlobalUsersUpdated) {
             dispatch(setGlobalUsers(globalUsers));
+            console.log('SET GLOBAL USERS !!!')
         }
         if (isMessagesUpdated) {
             dispatch(setMessages(appendMessages(existing, incoming)));
+            console.log('SET MESSAGES !!!')
         }
         if (isCurrentUserUpdated) {
             dispatch(setUser(currentUser));
+            console.log('SET USER !!!')
         }
         if (isUsersUpdated) {
             dispatch(setUsers(users, currentChat!));
+            console.log('SET USERS !!!')
         }
     }
 }
