@@ -42,9 +42,6 @@ function processTechnicalMessages(dispatch: ThunkDispatch<AppState, void, Action
     const currentDate = new Date();
     const user = LocalStorageService.retrieveUserFromLocalStorage()!;
 
-    console.log('LAST MESSAGES FETCH --- ' + lastMessagesFetch)
-    console.log('CURRENT DATE --- ' + currentDate)
-
     const iamMessages = MessageApi.getMessages({
         receiver: user.id,
         type: MessageType.iam,

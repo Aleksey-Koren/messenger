@@ -3,6 +3,7 @@ import {connect, ConnectedProps} from "react-redux";
 import React from "react";
 import ReportIcon from '@mui/icons-material/Report';
 import style from './ConfirmModal.module.css';
+import {setIsConfirmModalOpen} from "../../redux/messenger-controls/messengerControlsActions";
 
 interface IOwnProps {
     confirmFunction: () => void,
@@ -13,7 +14,7 @@ interface IOwnProps {
 const ConfirmModal: React.FC<Props> = (props) => {
 
     return (
-        <Dialog open={false}>
+        <Dialog open={true}>
             <DialogTitle className={style.dialog__title}>
                 <ReportIcon fontSize={'medium'} className={style.dialog__title_icon}/>
                 Are you sure?
@@ -24,11 +25,13 @@ const ConfirmModal: React.FC<Props> = (props) => {
             </DialogContent>
 
             <DialogActions className={style.dialog__actions}>
-                <Button onClick={() => {
-                }} className={style.dialog__disagree_button}>
+                <Button onClick={() => props.setIsConfirmModalOpen(false)} className={style.dialog__disagree_button}>
                     No
                 </Button>
-                <Button className={style.dialog__agree_button} onClick={() => props.confirmFunction()}>
+                <Button className={style.dialog__agree_button} onClick={() => {
+                    props.confirmFunction();
+                    props.setIsConfirmModalOpen(false);
+                }}>
                     Yes
                 </Button>
             </DialogActions>
@@ -42,7 +45,7 @@ const mapStateToProps = (state: any, ownProps: IOwnProps) => ({
 })
 
 const mapDispatchToProps = {
-
+    setIsConfirmModalOpen
 }
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

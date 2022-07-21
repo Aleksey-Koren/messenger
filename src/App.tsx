@@ -8,17 +8,27 @@ import {validate} from 'uuid';
 import Notification from './Notification';
 import nacl from "tweetnacl";
 import {CryptService} from "./service/cryptService";
+import {store} from "./index";
 
-yup.addMethod(yup.string, "uuid", function (errorMessage) {
-    return this.test(`test-card-type`, errorMessage, function (value) {
+// yup.addMethod(yup.string, "uuid", function (errorMessage) {
+//     return this.test(`test-card-type`, errorMessage, function (value) {
+//         const {path, createError} = this;
+//
+//         return (
+//             validate(value as string) ||
+//             createError({path, message: errorMessage})
+//         );
+//     });
+// });
+
+yup.addMethod(yup.mixed, "isGlobalUserNotExists", function (errorMessage) {
+    return this.test('test-global-user-existing', errorMessage, function (value) {
         const {path, createError} = this;
+        const globalUser = store.getState().messenger.globalUsers[value!];
 
-        return (
-            validate(value as string) ||
-            createError({path, message: errorMessage})
-        );
-    });
-});
+        return (!globalUser || createError({path, message: errorMessage}));
+    })
+})
 
 function foo() {
     const nonce = new Uint8Array(24);
@@ -48,8 +58,6 @@ function App() {
             mode: 'dark',
         }
     });
-
-    foo()
 
     return (
         <ThemeProvider theme={theme}>

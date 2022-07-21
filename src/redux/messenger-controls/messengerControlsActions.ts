@@ -1,11 +1,11 @@
 import {IPlainDataAction} from "../redux-types";
 import {
-    GlobalUserConfigurationState,
+    GlobalUserConfigurationState, SET_IS_CONFIRM_MODAL_OPEN,
     SET_IS_CREATE_PRIVATE_MODAL_OPENED,
     SET_IS_CREATE_ROOM_MODAL_OPENED,
     SET_IS_EDIT_USER_TITLE_MODAL_OPEN, SET_IS_GLOBAL_USER_CONFIGURATION_MODAL_OPEN,
 } from "./messengerControlsTypes";
-import {AppState} from "../../index";
+import {AppDispatch, AppState} from "../../index";
 import {ThunkDispatch} from "redux-thunk";
 import {Action} from "redux";
 import {MessageApi} from "../../api/messageApi";
@@ -46,6 +46,25 @@ export function setIsGlobalUserConfigurationModalOpen(isOpen: boolean, globalUse
             isGlobalUserConfigurationModalOpen: isOpen,
             globalUserToEdit: globalUserToEdit
         }
+    }
+}
+
+export function setIsConfirmModalOpen(isOpen: boolean): IPlainDataAction<boolean> {
+    return {
+        type: SET_IS_CONFIRM_MODAL_OPEN,
+        payload: isOpen
+    }
+}
+
+export function removeGlobalUserPublicKeyTF(publicKey: string, globalUser: GlobalUser) {
+    return (dispatch: AppDispatch, getState: () => AppState) => {
+
+        const globalUsers = {...getState().messenger.globalUsers};
+        const globalUserToEdit = globalUsers[globalUser.userId];
+
+        globalUserToEdit.certificates = globalUserToEdit.certificates.filter(certificate => certificate !== publicKey);
+
+        dispatch(setGlobalUsers(globalUsers));
     }
 }
 
