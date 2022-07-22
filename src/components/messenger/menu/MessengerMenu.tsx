@@ -1,4 +1,4 @@
-import {IconButton, Menu, MenuItem} from "@mui/material";
+import {Divider, IconButton, Menu, MenuItem} from "@mui/material";
 import React, {useState} from "react";
 import EditIcon from '@mui/icons-material/Edit';
 import Groups from '@mui/icons-material/Groups';
@@ -41,24 +41,34 @@ function MessengerMenu(props: TProps) {
             >
 
                 <div>
-                    {props.chatSelected && <MenuItem>
-                        <EditUserTitleButton/>
-                    </MenuItem>}
+                    {props.chatSelected &&
+                    <>
+                        <MenuItem>
+                            <EditUserTitleButton/>
+                        </MenuItem>
+                        <MenuItem>
+                            <IconedButton onClick={() => onMenuItemClick(props.setIsEditRoomTitleModalOpen)}
+                                          icon={<EditIcon style={{marginRight: '10px'}} fontSize={"medium"}/>}
+                                          text={"Rename chat"}/>
+                        </MenuItem>
+                        <MenuItem>
+                            <IconedButton onClick={() => onMenuItemClick(props.setIsMembersModalOpened)}
+                                          icon={<Groups style={{marginRight: '10px'}} fontSize={"medium"}/>}
+                                          text={"Members"}/>
+                        </MenuItem>
+                        <MenuItem>
+                            <IconedButton onClick={() => onMenuItemClick(props.setIsMembersModalOpened)}
+                                          icon={<ExitToAppIcon style={{marginRight: '10px'}} fontSize={'medium'}/>}
+                                          text={"Leave chat"}/>
+                        </MenuItem>
+                        <Divider/>
+                    </>
+                    }
                     <MenuItem>
                         <IconedButton onClick={() => onMenuItemClick(props.setIsEditGlobalUsersModalOpened)}
                                       icon={<Groups style={{marginRight: '10px'}} fontSize={"medium"}/>}
                                       text={"Edit Global Users"}/>
                     </MenuItem>
-                    {props.chatSelected && <MenuItem>
-                        <IconedButton onClick={() => onMenuItemClick(props.setIsEditRoomTitleModalOpen)}
-                                      icon={<EditIcon style={{marginRight: '10px'}} fontSize={"medium"}/>}
-                                      text={"Rename Room"}/>
-                    </MenuItem>}
-                    {props.chatSelected && <MenuItem>
-                        <IconedButton onClick={() => onMenuItemClick(props.setIsMembersModalOpened)}
-                                      icon={<Groups style={{marginRight: '10px'}} fontSize={"medium"}/>}
-                                      text={"Members"}/>
-                    </MenuItem>}
                     <MenuItem>
                         <CreateNewPublicButton/>
                     </MenuItem>

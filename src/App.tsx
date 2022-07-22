@@ -30,27 +30,29 @@ yup.addMethod(yup.mixed, "isGlobalUserNotExists", function (errorMessage) {
     })
 })
 
-function foo() {
-    const nonce = new Uint8Array(24);
-    crypto.getRandomValues(nonce);
-    console.log('BASE 64 NONCE: ' + CryptService.uint8ToBase64(nonce))
-
-    const test = nacl.box(
-        CryptService.plainStringToUint8('Watermelon'),
-        nonce,
-        CryptService.base64ToUint8('+098JajpdkXzxgcl2Klcjx6eV2UjQ+hEMSgxViw4M1k='),
-        CryptService.base64ToUint8('+n8uWodDQhje4ncsGKP0cBTC9f/0KWz10NfkVzlzgRk=')
-    );
-
-    console.log('BASE 64 ENCRYPTED STRING: ' + CryptService.uint8ToBase64(test));
-
-}
-
-function generateKey() {
-    const boxKeyPair = nacl.box.keyPair();
-    console.log("FRONTEND BASE 64 PUBLIC KEY: " + CryptService.uint8ToBase64(boxKeyPair.publicKey));
-    console.log("FRONTEND BASE 64 PRIVATE KEY: " + CryptService.uint8ToBase64(boxKeyPair.secretKey));
-}
+// function foo() {
+//     const nonce = new Uint8Array(24);
+//     crypto.getRandomValues(nonce);
+//
+//     const pair = nacl.box.keyPair();
+//
+//     const test = nacl.box(
+//         CryptService.plainStringToUint8('Watermelon!!!HEY'),
+//         nonce,
+//         pair.secretKey,
+//         pair.publicKey
+//     );
+//
+//
+//     const opened = nacl.box.open(test, nonce, pair.secretKey, pair.publicKey);
+//     console.log(CryptService.uint8ToPlainString(opened!));
+// }
+//
+// function generateKey() {
+//     const boxKeyPair = nacl.box.keyPair();
+//     console.log("FRONTEND BASE 64 PUBLIC KEY: " + CryptService.uint8ToBase64(boxKeyPair.publicKey));
+//     console.log("FRONTEND BASE 64 PRIVATE KEY: " + CryptService.uint8ToBase64(boxKeyPair.secretKey));
+// }
 
 function App() {
     const theme = createTheme({
