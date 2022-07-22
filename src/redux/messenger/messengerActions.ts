@@ -30,6 +30,7 @@ import {ChatService} from "../../service/messenger/chatService";
 import {Builder} from "builder-pattern";
 import {GlobalUser} from "../../model/local-storage/localStorageTypes";
 import {LocalStorageService} from "../../service/local-data/localStorageService";
+import {CustomerApi} from "../../api/customerApi";
 
 export function setUser(user: User): IPlainDataAction<IMessengerStateOpt> {
 
@@ -229,8 +230,8 @@ export function fetchMessengerStateTF(loggedUserId: string) {
                         }, {} as StringIndexArray<Chat>);
 
                         dispatch(setGlobalUsers(globalUsers));
-                        dispatch(openChatTF(currentChat.id));
                         dispatch(setChats(stringIndexArrayChats));
+                        dispatch(openChatTF(currentChat.id));
                     })
             })
     }
@@ -321,5 +322,11 @@ export function addGhostUserTF(id: string) {
             dispatch(setGlobalUsers(globalUsers));
             dispatch(setIsGlobalUserConfigurationModalOpen(true, newUser));
         }
+    }
+}
+
+export function leaveChatTF(chatId: string) {
+    return (dispatch: ThunkDispatch<AppState, any, Action>, getState: () => AppState) => {
+
     }
 }
