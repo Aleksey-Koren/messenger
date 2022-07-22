@@ -18,7 +18,10 @@ import {Chat} from "../../model/messenger/chat";
 import {Action} from "redux";
 import {ThunkDispatch} from "redux-thunk";
 import {MessageType} from "../../model/messenger/messageType";
-import {setIsEditUserTitleModalOpen} from "../messenger-controls/messengerControlsActions";
+import {
+    setIsEditUserTitleModalOpen,
+    setIsGlobalUserConfigurationModalOpen
+} from "../messenger-controls/messengerControlsActions";
 import Notification from "../../Notification";
 import {StringIndexArray} from "../../model/stringIndexArray";
 import {CustomerService} from "../../service/messenger/customerService";
@@ -26,7 +29,7 @@ import {MessageProcessingService} from "../../service/messenger/messageProcessin
 import {ChatService} from "../../service/messenger/chatService";
 import {Builder} from "builder-pattern";
 import {GlobalUser} from "../../model/local-storage/localStorageTypes";
-import {LocalStorageService} from "../../service/localStorageService";
+import {LocalStorageService} from "../../service/local-data/localStorageService";
 
 export function setUser(user: User): IPlainDataAction<IMessengerStateOpt> {
 
@@ -238,6 +241,10 @@ export function openChatTF(chatId: string) {
     return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
         const currentUser = getState().messenger.user!;
         const globalUsers = {...getState().messenger.globalUsers}
+        const chats = {...getState().messenger.chats};
+        chats[chatId].lastSeenAt = new Date();
+        chats[chatId].isUnreadMessagesExist = false;
+        dispatch(setChats(chats))
 
         dispatch(setCurrentChat(chatId));
 
@@ -250,20 +257,6 @@ export function openChatTF(chatId: string) {
         }).then(messages => {
             dispatch(setMessages(messages.filter(message => message.type !== MessageType.who)))
         })
-
-        // ChatService.processChatParticipants(dispatch, chatId, globalUsers, currentUser.id)
-        //     .then(() => {
-        //
-        //         MessageApi.getMessages({
-        //             receiver: currentUser.id,
-        //             chat: chatId,
-        //             page: 0,
-        //             size: 20,
-        //             before: getState().messenger.lastMessagesFetch!
-        //         }).then(messages => {
-        //             MessageProcessingService.processMessages(dispatch, getState, messages);
-        //         })
-        //     });
     }
 }
 
@@ -292,8 +285,6 @@ export function updateUserTitle(title: string) {
             } as Message);
         }
 
-        console.log("Messages --- " + JSON.stringify(messages));
-
         return MessageApi.updateUserTitle(messages, getState().messenger.globalUsers)
             .then((response) => {
                 dispatch(setIsEditUserTitleModalOpen(false));
@@ -303,8 +294,32 @@ export function updateUserTitle(title: string) {
     }
 }
 
-// export function openChatTF(chat: Chat) {
-//     return (dispatch: ThunkDispatch<AppState, void, Action>) => {
-//         dispatch(setCurrentChat(chat.id!));
-//     }
-// }
+export function addPkToGlobalUserTF(userToEdit: GlobalUser, pkToAdd: string) {
+    return (dispatch: ThunkDispatch<AppState, any, Action>, getState: () => AppState) => {
+
+        const state = getState();
+        const globalUsers = {...state.messenger.globalUsers};
+        if (globalUsers[userToEdit.userId].certificates.indexOf(pkToAdd) === -1) {
+            globalUsers[userToEdit.userId].certificates.unshift(pkToAdd);
+            dispatch(setGlobalUsers(globalUsers));
+        }
+    }
+}
+
+export function addGhostUserTF(id: string) {
+    return (dispatch: ThunkDispatch<AppState, any, Action>, getState: () => AppState) => {
+        const globalUsers = {...getState().messenger.globalUsers};
+        if (!globalUsers[id]) {
+
+            const newUser = {
+                userId: id,
+                certificates: [],
+                titles: {}
+            }
+            globalUsers[id] = newUser
+
+            dispatch(setGlobalUsers(globalUsers));
+            dispatch(setIsGlobalUserConfigurationModalOpen(true, newUser));
+        }
+    }
+}

@@ -1,4 +1,5 @@
 import {
+    SET_IS_EDIT_GLOBAL_USERS_MODAL_OPENED,
     SET_IS_EDIT_ROOM_TITLE_MODAL_OPEN,
     SET_IS_MEMBERS_MODAL_OPEN,
     TMessengerMenuAction,
@@ -7,7 +8,8 @@ import {
 
 const initialState: TMessengerMenuState = {
     isMembersModalOpen: false,
-    isEditRoomTitleModalOpen: false
+    isEditRoomTitleModalOpen: false,
+    isEditGlobalUsersModalOpened: false
 }
 
 export function messengerMenuReducer(state: TMessengerMenuState = initialState, action: TMessengerMenuAction) {
@@ -18,6 +20,9 @@ export function messengerMenuReducer(state: TMessengerMenuState = initialState, 
 
         case SET_IS_EDIT_ROOM_TITLE_MODAL_OPEN:
             return {...initialState, isEditRoomTitleModalOpen: action.payload}
+
+        case SET_IS_EDIT_GLOBAL_USERS_MODAL_OPENED:
+            return {...initialState, isEditGlobalUsersModalOpened: action.payload}
 
         default:
             return state;

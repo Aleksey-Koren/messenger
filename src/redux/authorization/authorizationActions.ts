@@ -10,7 +10,7 @@ import {AppDispatch, AppState} from "../../index";
 import {CustomerApi} from "../../api/customerApi";
 import {AuthorizationService} from "../../service/authorizationService";
 import {fetchMessengerStateTF, setUser} from "../messenger/messengerActions";
-import {LocalStorageService} from "../../service/localStorageService";
+import {LocalStorageService} from "../../service/local-data/localStorageService";
 import Notification from '../../Notification';
 import {Builder} from "builder-pattern";
 import {Customer} from "../../model/messenger/customer";

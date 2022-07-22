@@ -1,8 +1,9 @@
-import {User} from "../model/messenger/user";
-import {GlobalUser, LocalStorageData, StateData} from "../model/local-storage/localStorageTypes";
+import {User} from "../../model/messenger/user";
+import {GlobalUser, LocalStorageData, StateData} from "../../model/local-storage/localStorageTypes";
 import {Builder} from "builder-pattern";
-import {CryptService} from "./cryptService";
-import {StringIndexArray} from "../model/stringIndexArray";
+import {CryptService} from "../cryptService";
+import {StringIndexArray} from "../../model/stringIndexArray";
+import {Chat} from "../../model/messenger/chat";
 
 export class LocalStorageService {
 
@@ -56,9 +57,36 @@ export class LocalStorageService {
 
         if (lastMessagesFetch) {
             return new Date(lastMessagesFetch)
-        } else {
-            return null;
         }
+
+        return null;
+    }
+
+    static chatsLastSeenToStorage(chats: StringIndexArray<Chat>) {
+        const chatsLastSeen: StringIndexArray<Date> = {};
+
+        for (let chatId in chats) {
+            chatsLastSeen[chatId] = chats[chatId].lastSeenAt
+        }
+
+        localStorage.setItem('chatsLastSeen', JSON.stringify(chatsLastSeen));
+    }
+
+    static updateChatLastSeenInStorage(chatId: string, lastSeenAt: Date) {
+        const chatsLastSeen = JSON.parse(localStorage.getItem('chatsLastSeen')!) as StringIndexArray<Date>;
+        chatsLastSeen[chatId] = lastSeenAt;
+
+        localStorage.setItem('chatsLastSeen', JSON.stringify(chatsLastSeen));
+    }
+
+    static chatsLastSeenFromLocalStorage(): StringIndexArray<Date> | null {
+        const chatsLastSeen = localStorage.getItem('chatsLastSeen');
+
+        if (chatsLastSeen) {
+            return JSON.parse(chatsLastSeen) as StringIndexArray<Date>
+        }
+
+        return null;
     }
 
 

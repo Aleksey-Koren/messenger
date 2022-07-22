@@ -20,7 +20,7 @@ import {
 import MessengerModalWindows from "./modal-windows/MessengerModalWindows";
 import {Box, Button, Typography} from "@mui/material";
 import PerfectScrollbar from 'react-perfect-scrollbar'
-import {LocalStorageService} from "../../service/localStorageService";
+import {LocalStorageService} from "../../service/local-data/localStorageService";
 import {SchedulerService} from "../../service/schedulerService";
 import {Chat} from "../../model/messenger/chat";
 import {StringIndexArray} from "../../model/stringIndexArray";
@@ -112,7 +112,7 @@ function renderChats(chats: StringIndexArray<Chat>, openChatTF: (chatId: string)
             <div
                 className={chat.id === currentChat ? style.chat_selected : style.chat_unselected}>&nbsp;</div>
             <Typography color={'primary'}>
-                {chat.title}
+                {chat.title} {chat.isUnreadMessagesExist && <span style={{color: "red", fontWeight: "bold", fontSize: "24px"}}>*</span>}
                 {/*<span className={style.unread_count}>0</span>*/}
             </Typography>
         </ListItemButton>);

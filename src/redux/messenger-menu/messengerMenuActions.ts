@@ -1,13 +1,16 @@
 import {IPlainDataAction} from "../redux-types";
 import {MessageApi} from "../../api/messageApi";
 import {User} from "../../model/messenger/user";
-import {SET_IS_EDIT_ROOM_TITLE_MODAL_OPEN, SET_IS_MEMBERS_MODAL_OPEN} from "./messengerMenuTypes";
+import {
+    SET_IS_EDIT_GLOBAL_USERS_MODAL_OPENED,
+    SET_IS_EDIT_ROOM_TITLE_MODAL_OPEN,
+    SET_IS_MEMBERS_MODAL_OPEN
+} from "./messengerMenuTypes";
 import {MessageType} from "../../model/messenger/messageType";
 import {Message} from "../../model/messenger/message";
 import {ThunkDispatch} from "redux-thunk";
 import {AppState} from "../../index";
 import {Action} from "redux";
-import {CustomerApi} from "../../api/customerApi";
 import {setChats, setCurrentChat, setUsers} from "../messenger/messengerActions";
 import {ChatApi} from "../../api/chatApi";
 import {CryptService} from "../../service/cryptService";
@@ -18,6 +21,22 @@ export function setIsMembersModalOpened(isOpened: boolean): IPlainDataAction<boo
 
     return {
         type: SET_IS_MEMBERS_MODAL_OPEN,
+        payload: isOpened
+    }
+}
+
+export function setIsEditRoomTitleModalOpen(isOpen: boolean): IPlainDataAction<boolean> {
+
+    return {
+        type: SET_IS_EDIT_ROOM_TITLE_MODAL_OPEN,
+        payload: isOpen
+    }
+}
+
+export function setIsEditGlobalUsersModalOpened(isOpened: boolean): IPlainDataAction<boolean> {
+
+    return {
+        type: SET_IS_EDIT_GLOBAL_USERS_MODAL_OPENED,
         payload: isOpened
     }
 }
@@ -64,13 +83,5 @@ export function leaveChatTF(me: User, chatId: string) {
                 dispatch(setCurrentChat(null));
             }
         })
-    }
-}
-
-export function setIsEditRoomTitleModalOpen(isOpen: boolean): IPlainDataAction<boolean> {
-
-    return {
-        type: SET_IS_EDIT_ROOM_TITLE_MODAL_OPEN,
-        payload: isOpen
     }
 }

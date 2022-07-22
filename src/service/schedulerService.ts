@@ -1,7 +1,7 @@
 import {Action, Dispatch} from "redux";
 
 import {fetchMessagesTF, setLastMessagesFetch} from "../redux/messenger/messengerActions";
-import {LocalStorageService} from "./localStorageService";
+import {LocalStorageService} from "./local-data/localStorageService";
 import {MessageApi} from "../api/messageApi";
 import {MessageType} from "../model/messenger/messageType";
 import {Message} from "../model/messenger/message";
@@ -41,9 +41,6 @@ function processTechnicalMessages(dispatch: ThunkDispatch<AppState, void, Action
     const lastMessagesFetch = LocalStorageService.lastMessagesFetchFromLocalStorage() || new Date();
     const currentDate = new Date();
     const user = LocalStorageService.retrieveUserFromLocalStorage()!;
-
-    console.log('LAST MESSAGES FETCH --- ' + lastMessagesFetch)
-    console.log('CURRENT DATE --- ' + currentDate)
 
     const iamMessages = MessageApi.getMessages({
         receiver: user.id,

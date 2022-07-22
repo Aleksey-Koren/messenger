@@ -2,27 +2,35 @@ import {Button, Dialog, DialogActions, DialogContent, DialogTitle} from "@mui/ma
 import {connect, ConnectedProps} from "react-redux";
 import React from "react";
 import ReportIcon from '@mui/icons-material/Report';
-import style from './ConfirmModal.module.css'
+import style from './ConfirmModal.module.css';
+import {setIsConfirmModalOpen} from "../../redux/messenger-controls/messengerControlsActions";
+
+interface IOwnProps {
+    confirmFunction: () => void,
+    text: string
+}
+
 
 const ConfirmModal: React.FC<Props> = (props) => {
 
     return (
-        <Dialog open={false}>
+        <Dialog open={true}>
             <DialogTitle className={style.dialog__title}>
                 <ReportIcon fontSize={'medium'} className={style.dialog__title_icon}/>
                 Are you sure?
             </DialogTitle>
 
             <DialogContent className={style.dialog__content}>
-                <span className={style.dialog__content_text}>Your question could be here</span>
+                <span className={style.dialog__content_text}>{props.text}</span>
             </DialogContent>
 
             <DialogActions className={style.dialog__actions}>
-                <Button onClick={() => {
-                }} className={style.dialog__disagree_button}>
+                <Button onClick={() => props.setIsConfirmModalOpen(false)} className={style.dialog__disagree_button}>
                     No
                 </Button>
                 <Button className={style.dialog__agree_button} onClick={() => {
+                    props.confirmFunction();
+                    props.setIsConfirmModalOpen(false);
                 }}>
                     Yes
                 </Button>
@@ -31,9 +39,14 @@ const ConfirmModal: React.FC<Props> = (props) => {
     );
 }
 
-const mapStateToProps = (state: any) => ({})
+const mapStateToProps = (state: any, ownProps: IOwnProps) => ({
+    confirmFunction: ownProps.confirmFunction,
+    text: ownProps.text
+})
 
-const mapDispatchToProps = {}
+const mapDispatchToProps = {
+    setIsConfirmModalOpen
+}
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 

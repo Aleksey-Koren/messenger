@@ -12,7 +12,7 @@ import {User} from "../../model/messenger/user";
 import {CryptService} from "../../service/cryptService";
 import {LOGOUT} from "../authorization/authorizationTypes";
 import {SchedulerService} from "../../service/schedulerService";
-import {LocalStorageService} from "../../service/localStorageService";
+import {LocalStorageService} from "../../service/local-data/localStorageService";
 import {StringIndexArray} from "../../model/stringIndexArray";
 import {GlobalUser} from "../../model/local-storage/localStorageTypes";
 
@@ -45,12 +45,13 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
                 return state;
             }
             LocalStorageService.userToStorage(user);
+
             return {
                 ...state,
                 user: user,
-                users: {...state.users, [user.id!]: user},
-                globalUsers: touchGlobalUsers(state.globalUsers, {[user.id]: user}, null)
-            };
+                users: {...state.users, [user.id]: user},
+                globalUsers: touchGlobalUsers(state.globalUsers, {[user.id]: user})
+            }
         }
 
         case SET_CURRENT_CHAT: {
@@ -73,10 +74,11 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
             return {
                 ...state,
                 users: action.payload.users,
-                globalUsers: touchGlobalUsers({...state.globalUsers}, action.payload.users, action.payload.currentChat!)
+                globalUsers: touchGlobalUsers(state.globalUsers, action.payload.users)
             }
 
         case SET_CHATS:
+            LocalStorageService.chatsLastSeenToStorage(action.payload.chats);
             return {...state, chats: action.payload.chats}
 
         case SET_GLOBAL_USERS:
@@ -86,11 +88,11 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
         case LOGOUT:
             localStorage.clear();
             SchedulerService.stopScheduler();
-            return initialState;
+            return {...initialState, globalUsers: {}};
 
         case SET_LAST_MESSAGES_FETCH:
             LocalStorageService.lastMessagesFetchToStorage(action.payload.lastMessagesFetch!)
-            
+
             return {...state, lastMessagesFetch: action.payload.lastMessagesFetch};
 
         default:
@@ -98,7 +100,10 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
     }
 }
 
-function touchGlobalUsers(globalUsers: StringIndexArray<GlobalUser>, usersCache: StringIndexArray<User>, currentChat: string | null) {
+
+function touchGlobalUsers(globalUsers: StringIndexArray<GlobalUser>, usersCache: StringIndexArray<User>) {
+    const globalUsersToChange = {...globalUsers};
+    let isGlobalUsersChanged = false;
     for (let key in usersCache) {
         const user = usersCache[key];
         let cert;
@@ -108,23 +113,27 @@ function touchGlobalUsers(globalUsers: StringIndexArray<GlobalUser>, usersCache:
             console.error("fail to convert public key into string")
             cert = '';
         }
-        if (!globalUsers[key]) {
-            globalUsers[key] = {
+        if (!globalUsersToChange[key]) {
+            globalUsersToChange[key] = {
                 userId: key,
                 certificates: [],
                 titles: {}
             };
+            isGlobalUsersChanged = true;
         }
 
-        const globalUser = globalUsers[key];
-        // if (currentChat) {
-        //     globalUser.titles[currentChat] = user.title!;
-        // }
+        const globalUser = globalUsersToChange[key];
+
         if (cert && globalUser.certificates.indexOf(cert) === -1) {
-            globalUser.certificates.unshift(cert)
+            globalUser.certificates.unshift(cert);
+            isGlobalUsersChanged = true;
         }
     }
-    LocalStorageService.globalUsersToStorage(globalUsers);
 
-    return globalUsers;
+    if (isGlobalUsersChanged) {
+        LocalStorageService.globalUsersToStorage(globalUsersToChange);
+        return globalUsersToChange
+    } else {
+        return globalUsers
+    }
 }

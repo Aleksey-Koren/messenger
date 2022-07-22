@@ -29,7 +29,6 @@
 }
 
 .dialog__actions {
-    height: 20px !important;
     display: flex !important;
     justify-content: space-around !important;
     background: #312d2d;
