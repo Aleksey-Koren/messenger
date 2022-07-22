@@ -6,13 +6,15 @@ import {MessageApi} from "../../api/messageApi";
 import {MessageType} from "../../model/messenger/messageType";
 import {CustomerService} from "./customerService";
 import {setUsers} from "../../redux/messenger/messengerActions";
-import {AppDispatch, AppState} from "../../index";
+import {AppDispatch} from "../../index";
 import {StringIndexArray} from "../../model/stringIndexArray";
 import {GlobalUser} from "../../model/local-storage/localStorageTypes";
+import {LocalStorageService} from "../local-data/localStorageService";
 
 export class ChatService {
 
     static async tryDecryptChatsTitles(chats: MessageDto[], globalUsers: StringIndexArray<GlobalUser>) {
+        const chatsLastSeen = LocalStorageService.chatsLastSeenFromLocalStorage() || {};
 
         return await Promise.all(chats.map<Promise<Chat>>(async chatDto => {
             const sender = globalUsers[chatDto.sender];
@@ -22,7 +24,7 @@ export class ChatService {
                     id: chat.chat!,
                     title: chat.data!,
                     confirmed: false, //TODO: FLAG DECRYPTED / NON-DECRYPTED??
-                    isUnreadMessagesExist: false,
+                    isUnreadMessagesExist: chatsLastSeen[chat.chat] ? chatsLastSeen[chat.chat] < new Date(chatDto.created!) : false,
                     lastSeenAt: new Date()
                 }
             }
@@ -56,17 +58,17 @@ export class ChatService {
                 dispatch(setUsers(users, chatId));
             });
 
-            // .then((chatParticipants) => {
-            //
-            //     MessageApi.getMessages({
-            //         receiver: currentUserId,
-            //         chat: chatId,
-            //         type: MessageType.iam,
-            //     }).then(knownParticipants => {
-            //             const users = CustomerService.processUnknownChatParticipants(chatParticipants, knownParticipants, chatId, currentUserId);
-            //             CustomerService.updateChatParticipantsCertificates(globalUsers, chatParticipants, dispatch);
-            //             dispatch(setUsers(users, chatId));
-            //         })
-            // });
+        // .then((chatParticipants) => {
+        //
+        //     MessageApi.getMessages({
+        //         receiver: currentUserId,
+        //         chat: chatId,
+        //         type: MessageType.iam,
+        //     }).then(knownParticipants => {
+        //             const users = CustomerService.processUnknownChatParticipants(chatParticipants, knownParticipants, chatId, currentUserId);
+        //             CustomerService.updateChatParticipantsCertificates(globalUsers, chatParticipants, dispatch);
+        //             dispatch(setUsers(users, chatId));
+        //         })
+        // });
     }
 }

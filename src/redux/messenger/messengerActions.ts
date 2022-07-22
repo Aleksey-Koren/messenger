@@ -241,6 +241,10 @@ export function openChatTF(chatId: string) {
     return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
         const currentUser = getState().messenger.user!;
         const globalUsers = {...getState().messenger.globalUsers}
+        const chats = {...getState().messenger.chats};
+        chats[chatId].lastSeenAt = new Date();
+        chats[chatId].isUnreadMessagesExist = false;
+        dispatch(setChats(chats))
 
         dispatch(setCurrentChat(chatId));
 
@@ -305,7 +309,7 @@ export function addPkToGlobalUserTF(userToEdit: GlobalUser, pkToAdd: string) {
 export function addGhostUserTF(id: string) {
     return (dispatch: ThunkDispatch<AppState, any, Action>, getState: () => AppState) => {
         const globalUsers = {...getState().messenger.globalUsers};
-        if(!globalUsers[id]) {
+        if (!globalUsers[id]) {
 
             const newUser = {
                 userId: id,

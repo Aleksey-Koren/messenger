@@ -46,12 +46,12 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
             }
             LocalStorageService.userToStorage(user);
 
-                return {
-                    ...state,
-                    user: user,
-                    users: {...state.users, [user.id]: user},
-                    globalUsers: touchGlobalUsers(state.globalUsers, {[user.id]: user})
-                }
+            return {
+                ...state,
+                user: user,
+                users: {...state.users, [user.id]: user},
+                globalUsers: touchGlobalUsers(state.globalUsers, {[user.id]: user})
+            }
         }
 
         case SET_CURRENT_CHAT: {
@@ -71,13 +71,14 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
         }
 
         case SET_USERS:
-                return {
-                    ...state,
-                    users: action.payload.users,
-                    globalUsers: touchGlobalUsers(state.globalUsers, action.payload.users)
-                }
+            return {
+                ...state,
+                users: action.payload.users,
+                globalUsers: touchGlobalUsers(state.globalUsers, action.payload.users)
+            }
 
         case SET_CHATS:
+            LocalStorageService.chatsLastSeenToStorage(action.payload.chats);
             return {...state, chats: action.payload.chats}
 
         case SET_GLOBAL_USERS:
@@ -98,6 +99,7 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
             return state;
     }
 }
+
 
 function touchGlobalUsers(globalUsers: StringIndexArray<GlobalUser>, usersCache: StringIndexArray<User>) {
     const globalUsersToChange = {...globalUsers};

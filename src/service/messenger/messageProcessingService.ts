@@ -32,6 +32,8 @@ export class MessageProcessingService {
         let isMessagesUpdated = false;
         let isCurrentUserUpdated = false;
         let isUsersUpdated = false;
+        let isOpenChatNeeded = false;
+        let newChatId: string;
         const incoming: Message[] = [];
 
         newMessages.forEach(message => {
@@ -42,7 +44,7 @@ export class MessageProcessingService {
                             id: message.chat,
                             title: message.data!,
                             confirmed: false,
-                            isUnreadMessagesExist: false,
+                            isUnreadMessagesExist: true,
                             lastSeenAt: new Date()
                         }
                         isChatsUpdated = true;
@@ -54,7 +56,8 @@ export class MessageProcessingService {
                     if (currentChat == null) {
                         //case when user just create account (current chat null)
                         //and was invited in chat
-                        dispatch(openChatTF(message.chat));
+                        isOpenChatNeeded = true;
+                        newChatId = message.chat;
                     }
 
                     if (message.chat === currentChat) {
@@ -118,6 +121,9 @@ export class MessageProcessingService {
         if (isUsersUpdated) {
             dispatch(setUsers(users, currentChat!));
             console.log('SET USERS !!!')
+        }
+        if (isOpenChatNeeded) {
+            dispatch(openChatTF(newChatId!));
         }
     }
 }
