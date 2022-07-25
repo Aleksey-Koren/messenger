@@ -1,7 +1,9 @@
 import {store} from "../index";
 import nacl from "tweetnacl";
+import {pki, md, util, mgf, pss, cipher} from "node-forge";
 import naclUtil from "tweetnacl-util";
 import {fromByteArray, toByteArray} from "base64-js";
+
 
 export class CryptService {
 
@@ -72,3 +74,55 @@ export class CryptService {
         );
     }
 }
+
+var rsa = pki.rsa;
+
+var data = "let pss = forge.pss.create({\n" +
+    "      md: forge.md.sha512.create(),\n" +
+    "      mgf: forge.mgf.mgf1.create(forge.md.sha512.create()),\n" +
+    "      saltLength: 20\n" +
+    "    });\n" +
+    "    let md = forge.md.sha512.create();\n" +
+    "    md.update(exampleString, \"utf8\");\n" +
+    "    let signature = forge.util.encode64(keypair[\"privateKey\"].sign(md, pss));\n" +
+    "\n" +
+    "    // VERIFY the String\n" +
+    "    pss = forge.pss.create({\n" +
+    "      md: forge.md.sha512.create(),\n" +
+    "      mgf: forge.mgf.mgf1.create(forge.md.sha512.create()),\n" +
+    "      saltLength: 20\n" +
+    "    });\n" +
+    "    md = forge.md.sha512.create();\n" +
+    "    md.update(exampleString, \"utf8\");\n" +
+    "    let verified = keypair[\"publicKey\"].verify(\n" +
+    "      md.digest().getBytes(),\n" +
+    "      forge.util.decode64(signature),\n" +
+    "      pss\n" +
+    "    );\n" +
+    "\n" +
+    "    logger.info(\"is signature ok?: %s\", verified);\n" +
+    "  } catch (error) {\n" +
+    "    logger.error(error.message);";
+
+
+var buffer = util.createBuffer(data, 'utf8');
+var bytes = buffer.getBytes();
+console.log(bytes);
+var keypair = rsa.generateKeyPair({bits: 2048});
+
+console.log(keypair);
+//cipher.createCipher("AES-ECB", keypair.privateKey.);
+
+var enc = keypair.publicKey.encrypt(bytes);
+console.log("encoded: " + util.encode64(enc));
+
+var forgeMd = md.sha1.create();
+forgeMd.update(data, 'utf8');
+var signature = keypair.privateKey.sign(forgeMd);
+console.log("signature: " + util.encode64(signature));
+// verify data with a public key
+// (defaults to RSASSA PKCS#1 v1.5)
+var verified = keypair.publicKey.verify(forgeMd.digest().bytes(), signature);
+
+console.log("verified: " + verified);
+console.log("decrypted: " + keypair.privateKey.decrypt(enc))
