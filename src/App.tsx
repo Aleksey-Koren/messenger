@@ -5,7 +5,10 @@ import {createTheme, ThemeProvider} from "@mui/material";
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import * as yup from "yup";
 import Notification from './Notification';
+import nacl from "tweetnacl";
+import {CryptService, data} from "./service/cryptService";
 import {store} from "./index";
+import {CustomerApi} from "./api/customerApi";
 
 // yup.addMethod(yup.string, "uuid", function (errorMessage) {
 //     return this.test(`test-card-type`, errorMessage, function (value) {
@@ -27,29 +30,9 @@ yup.addMethod(yup.mixed, "isGlobalUserNotExists", function (errorMessage) {
     })
 })
 
-// function foo() {
-//     const nonce = new Uint8Array(24);
-//     crypto.getRandomValues(nonce);
-//
-//     const pair = nacl.box.keyPair();
-//
-//     const test = nacl.box(
-//         CryptService.plainStringToUint8('Watermelon!!!HEY'),
-//         nonce,
-//         pair.secretKey,
-//         pair.publicKey
-//     );
-//
-//
-//     const opened = nacl.box.open(test, nonce, pair.secretKey, pair.publicKey);
-//     console.log(CryptService.uint8ToPlainString(opened!));
-// }
-//
-// function generateKey() {
-//     const boxKeyPair = nacl.box.keyPair();
-//     console.log("FRONTEND BASE 64 PUBLIC KEY: " + CryptService.uint8ToBase64(boxKeyPair.publicKey));
-//     console.log("FRONTEND BASE 64 PRIVATE KEY: " + CryptService.uint8ToBase64(boxKeyPair.secretKey));
-// }
+function foo() {
+    CustomerApi.getServerUser().then(s => console.log(JSON.stringify(s)));
+}
 
 function App() {
     const theme = createTheme({
