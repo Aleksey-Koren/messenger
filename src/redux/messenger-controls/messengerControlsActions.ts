@@ -103,25 +103,6 @@ export function createNewRoomTF(title: string, userTitle: string) {
                 dispatch(setIsNewPrivateModalOpened(false));
                 dispatch(setIsMembersModalOpened(true));
 
-
-                // const message = messages[0];
-                // const newChat: Chat = Builder<Chat>()
-                //     .id(message.chat)
-                //     .title(title)
-                //     .isUnreadMessagesExist(false)
-                //     .lastSeenAt(new Date())
-                //     .build()
-                // const state = getState();
-                // const chats = {...state.messenger.chats};
-                // const globalUsers = {...state.messenger.globalUsers};
-                // chats[newChat.id] = newChat;
-                // globalUsers[user.id].titles[newChat.id] = userTitle;
-                // dispatch(setChats(chats));
-                // dispatch(setGlobalUsers(globalUsers));
-                // dispatch(openChatTF(newChat.id));
-
-                // dispatch(setIsNewPrivateModalOpened(false));
-                // dispatch(setIsMembersModalOpened(true));
             }).catch(err => {
             console.error(err)
             Notification.add({message: 'Something went wrong.', error: err, severity: 'error'});

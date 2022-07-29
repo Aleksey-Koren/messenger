@@ -4,10 +4,7 @@ import Messenger from "./components/messenger/Messenger";
 import {createTheme, ThemeProvider} from "@mui/material";
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import * as yup from "yup";
-import {validate} from 'uuid';
 import Notification from './Notification';
-import nacl from "tweetnacl";
-import {CryptService} from "./service/cryptService";
 import {store} from "./index";
 
 // yup.addMethod(yup.string, "uuid", function (errorMessage) {
