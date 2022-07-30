@@ -3,7 +3,6 @@ import {axiosApi} from "../http/axios";
 import {MessageDto} from "../dto/messageDto";
 import {MessageMapper} from "../mapper/messageMapper";
 import {MessageType} from "../model/messenger/messageType";
-import {User} from "../model/messenger/user";
 import {StringIndexArray} from "../model/stringIndexArray";
 import {GlobalUser} from "../model/local-storage/localStorageTypes";
 

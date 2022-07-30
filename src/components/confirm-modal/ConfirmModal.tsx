@@ -7,7 +7,8 @@ import {setIsConfirmModalOpen} from "../../redux/messenger-controls/messengerCon
 
 interface IOwnProps {
     confirmFunction: () => void,
-    text: string
+    text: string,
+    closeFunction: () => void
 }
 
 
@@ -25,12 +26,12 @@ const ConfirmModal: React.FC<Props> = (props) => {
             </DialogContent>
 
             <DialogActions className={style.dialog__actions}>
-                <Button onClick={() => props.setIsConfirmModalOpen(false)} className={style.dialog__disagree_button}>
+                <Button onClick={() => props.closeFunction()} className={style.dialog__disagree_button}>
                     No
                 </Button>
                 <Button className={style.dialog__agree_button} onClick={() => {
                     props.confirmFunction();
-                    props.setIsConfirmModalOpen(false);
+                    props.closeFunction();
                 }}>
                     Yes
                 </Button>
@@ -41,14 +42,11 @@ const ConfirmModal: React.FC<Props> = (props) => {
 
 const mapStateToProps = (state: any, ownProps: IOwnProps) => ({
     confirmFunction: ownProps.confirmFunction,
-    text: ownProps.text
+    text: ownProps.text,
+    closeFunction: ownProps.closeFunction
 })
 
-const mapDispatchToProps = {
-    setIsConfirmModalOpen
-}
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
+const connector = connect(mapStateToProps);
 
 type Props = ConnectedProps<typeof connector>;
 

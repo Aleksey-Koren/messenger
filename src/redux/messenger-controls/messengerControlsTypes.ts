@@ -6,6 +6,7 @@ export interface IMessengerControlsState {
     isCreateNewRoomModalOpened: boolean;
     isEditUserTitleModalOpen: boolean;
     isConfirmModalOpen: boolean;
+    isLeaveChatConfirmModalOpened: boolean;
     globalUserConfigurationState: GlobalUserConfigurationState;
 }
 
@@ -22,3 +23,4 @@ export const SET_IS_CREATE_ROOM_MODAL_OPENED = 'SET_IS_CREATE_ROOM_MODAL_OPENED'
 export const SET_IS_EDIT_USER_TITLE_MODAL_OPEN = 'SET_IS_EDIT_USER_TITLE_MODAL_OPEN';
 export const SET_IS_GLOBAL_USER_CONFIGURATION_MODAL_OPEN = 'SET_IS_GLOBAL_USER_CONFIGURATION_MODAL_OPEN';
 export const SET_IS_CONFIRM_MODAL_OPEN = 'SET_IS_CONFIRM_MODAL_OPEN';
+export const SET_IS_LEAVE_CHAT_CONFIRM_MODAL_OPENED = 'SET_IS_LEAVE_CHAT_CONFIRM_MODAL_OPENED';

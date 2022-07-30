@@ -45,4 +45,9 @@ export class CustomerApi {
             return out;
         });
     }
+
+    static getServerUser(): Promise<User> {
+        return axiosApi.get<CustomerDto>('customers/server')
+            .then(response => CustomerMapper.toEntity(response.data))
+    }
 }

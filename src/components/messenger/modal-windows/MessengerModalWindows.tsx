@@ -9,8 +9,12 @@ import React from "react";
 import {AppState} from "../../../index";
 import {connect, ConnectedProps} from "react-redux";
 import GlobalUsersListModal from "../edit-global-users/GlobalUsersListModal";
-import EditGlobalUserModal from "../edit-global-users/global-user-configuration/GlobalUserConfigurationModal";
 import GlobalUserConfigurationModal from "../edit-global-users/global-user-configuration/GlobalUserConfigurationModal";
+import ConfirmModal from "../../confirm-modal/ConfirmModal";
+import {
+    leaveChatTF,
+    setIsLeaveChatConfirmModalOpened
+} from "../../../redux/messenger-controls/messengerControlsActions";
 
 
 
@@ -28,6 +32,11 @@ function MessengerModalWindows(props: TProps) {
             {props.isEditUserTitleModalOpen && <EditUserTitleModal/>}
             {props.isEditGlobalUsersModalOpened && <GlobalUsersListModal/>}
             {props.isGlobalUserConfigurationModalOpen && <GlobalUserConfigurationModal/>}
+            {props.isLeaveChatConfirmModalOpened && <ConfirmModal
+                confirmFunction={() => props.leaveChatTF()}
+                text={"Are you sure that you want to leave chat?"}
+                closeFunction={() => props.setIsLeaveChatConfirmModalOpened(false)}
+            />}
         </>
     )
 }
@@ -41,11 +50,17 @@ const mapStateToProps = (state: AppState) => ({
     isEditRoomTitleModalOpen: state.messengerMenu.isEditRoomTitleModalOpen,
     isEditUserTitleModalOpen: state.messengerControls.isEditUserTitleModalOpen,
     isEditGlobalUsersModalOpened: state.messengerMenu.isEditGlobalUsersModalOpened,
-    isGlobalUserConfigurationModalOpen: state.messengerControls.globalUserConfigurationState.isGlobalUserConfigurationModalOpen
+    isGlobalUserConfigurationModalOpen: state.messengerControls.globalUserConfigurationState.isGlobalUserConfigurationModalOpen,
+    isLeaveChatConfirmModalOpened: state.messengerControls.isLeaveChatConfirmModalOpened
 })
 
+const mapDispatchToProps = {
+    setIsLeaveChatConfirmModalOpened,
+    leaveChatTF
+}
 
-const connector = connect(mapStateToProps);
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
 
 type TProps = ConnectedProps<typeof connector>;
 

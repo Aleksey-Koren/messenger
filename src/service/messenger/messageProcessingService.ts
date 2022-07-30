@@ -104,23 +104,18 @@ export class MessageProcessingService {
 
         if (isChatsUpdated) {
             dispatch(setChats(chats));
-            console.log('SET CHATS !!!')
         }
         if (isGlobalUsersUpdated) {
             dispatch(setGlobalUsers(globalUsers));
-            console.log('SET GLOBAL USERS !!!')
         }
         if (isMessagesUpdated) {
             dispatch(setMessages(appendMessages(existing, incoming)));
-            console.log('SET MESSAGES !!!')
         }
         if (isCurrentUserUpdated) {
             dispatch(setUser(currentUser));
-            console.log('SET USER !!!')
         }
         if (isUsersUpdated) {
             dispatch(setUsers(users, currentChat!));
-            console.log('SET USERS !!!')
         }
         if (isOpenChatNeeded) {
             dispatch(openChatTF(newChatId!));
@@ -138,21 +133,3 @@ function appendMessages(existing: Message[], incoming: Message[]) {
         return !map[message.id!];
     }))
 }
-
-// function processUnreadMessages(dispatch: ThunkDispatch<AppState, void, Action>,
-//                                getState: () => AppState) {
-//     const state = getState();
-//
-//     const chatsLastSeenAt = {...state.messenger.chatsLastSeenAt};
-//     chatsLastSeenAt[state.messenger.currentChat!] = new Date();
-//     dispatch(setChatsLastSeenAt(chatsLastSeenAt));
-//
-//     const chats = {...state.messenger.chats};
-//     const messages = state.messenger.messages;
-//     for(const chatId in chats) {
-//         const lastSeenAt = chatsLastSeenAt[chatId];
-//         chats[chatId].unreadMessages = messages[chatId].filter(message => message.created! > lastSeenAt).length;
-//     }
-//
-//     dispatch(setChats(chats));
-// }

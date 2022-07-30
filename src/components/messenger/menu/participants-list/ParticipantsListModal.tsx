@@ -21,14 +21,14 @@ import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import {AppState, useAppDispatch} from "../../../../index";
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import {
-    addUserToRoomTF, leaveChatTF,
-    setIsMembersModalOpened
+    addUserToRoomTF, setIsMembersModalOpened
 } from "../../../../redux/messenger-menu/messengerMenuActions";
 import {Form, Formik} from "formik";
 import * as yup from "yup";
 import {User} from "../../../../model/messenger/user";
 import {CustomerApi} from "../../../../api/customerApi";
 import Notification from '../../../../Notification'
+import {leaveChatTF} from "../../../../redux/messenger-controls/messengerControlsActions";
 
 const validationSchema = yup.object().shape({
     id: yup.string().required('User ID cannot be empty').uuid("Not a valid UUID")
@@ -134,7 +134,11 @@ const ParticipantsListModal: React.FC<Props> = (props) => {
                 <Button onClick={() => setDeleteConfirm(false)}>
                     No
                 </Button>
-                <Button onClick={() => props.leaveChatTF(props.user!, props.currentChat!)}>
+                <Button onClick={() => {
+                    props.leaveChatTF();
+                    setDeleteConfirm(false);
+                    props.setIsMembersModalOpened(false);
+                }}>
                     Yes
                 </Button>
             </DialogActions>
@@ -150,7 +154,10 @@ const mapStateToProps = (state: AppState) => ({
 })
 
 const mapDispatchToProps = {
-    addUserToRoomTF, leaveChatTF
+    addUserToRoomTF,
+    leaveChatTF,
+    setIsMembersModalOpened
+
 }
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

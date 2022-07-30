@@ -1,7 +1,9 @@
 import {store} from "../index";
 import nacl from "tweetnacl";
+import {pki, md, util, mgf, pss, cipher} from "node-forge";
+import forge from "node-forge";
 import naclUtil from "tweetnacl-util";
-import {fromByteArray, toByteArray} from "base64-js";
+
 
 export class CryptService {
 
@@ -72,3 +74,59 @@ export class CryptService {
         );
     }
 }
+
+// var buffer = util.createBuffer(data, 'utf8');
+// var bytes = buffer.getBytes();
+// // console.log('PRINT BYTES' + bytes);
+//
+// var rsa = pki.rsa;
+// var keypair = rsa.generateKeyPair({bits: 2048});
+//
+// //-------------------------------------- SYMMETRIC DATA ENCRYPTION-----------------------
+// // generate a random key and IV
+// // Note: a key size of 16 bytes will use AES-128, 24 => AES-192, 32 => AES-256
+// var key = forge.random.getBytesSync(16);
+// var iv = forge.random.getBytesSync(16);
+//
+//
+// // encrypt some bytes using CBC mode
+// // (other modes include: ECB, CFB, OFB, CTR, and GCM)
+// // Note: CBC and ECB modes use PKCS#7 padding as default
+// var ciph = forge.cipher.createCipher('AES-CBC', key);
+// ciph.start({iv: iv});
+// ciph.update(forge.util.createBuffer(bytes));
+// ciph.finish();
+// var encrypted = ciph.output;
+// // outputs encrypted hex
+// console.log('AES encrypted  ' + util.encode64(encrypted.data));
+//
+//
+// //---------------------------- ASYMMETRIC ENCRYPTION OF SYMMETRIC KEY ---------------------------------
+// var enc = keypair.publicKey.encrypt(key);
+// console.log("encrypted: " + enc);
+//
+// //---------------------------- SIGNING OF SYMMETRIC KEY WITH ASYMMETRIC PRIVATE KEY---------------------------------
+// var forgeMd = md.sha1.create();
+// forgeMd.update(key, 'utf8');
+// var signature = keypair.privateKey.sign(forgeMd);
+// console.log("signature: " + signature);
+// // verify data with a public key
+// // (defaults to RSASSA PKCS#1 v1.5)
+//
+// //--------------------------- VERIFYING AND DECRYPTION OF SYMMETRIC KEY WITH ASYMMETRIC PUBLIC KEY -----------------------
+// var verified = keypair.publicKey.verify(forgeMd.digest().bytes(), signature);
+// var decryptedKey = keypair.privateKey.decrypt(enc);
+//
+// console.log("verified: " + verified);
+// console.log("decrypted: " + decryptedKey);
+//
+// //-------------------------- SYMMETRIC DATA DECRYPTION ----------------------------------------------------
+//
+// var decipher = forge.cipher.createDecipher('AES-CBC', decryptedKey);
+// decipher.start({iv: iv});
+// decipher.update(util.createBuffer(util.decode64(util.encode64(encrypted.data))));
+// var result = decipher.finish(); // check 'result' for true/false
+// console.log('decrypt result --- ' + result)
+// // outputs decrypted hex
+// console.log('OUTPUT!!!!' + decipher.output.toString());
+

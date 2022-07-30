@@ -16,6 +16,7 @@ import EditUserTitleButton from "../edit-user-title/EditUserTitleButton";
 import IconedButton from "../../button/IconedButton";
 import {connect, ConnectedProps} from "react-redux";
 import {logout} from "../../../redux/authorization/authorizationActions";
+import {setIsLeaveChatConfirmModalOpened} from "../../../redux/messenger-controls/messengerControlsActions";
 
 
 function MessengerMenu(props: TProps) {
@@ -57,7 +58,7 @@ function MessengerMenu(props: TProps) {
                                           text={"Members"}/>
                         </MenuItem>
                         <MenuItem>
-                            <IconedButton onClick={() => onMenuItemClick(props.setIsMembersModalOpened)}
+                            <IconedButton onClick={() => onMenuItemClick(props.setIsLeaveChatConfirmModalOpened)}
                                           icon={<ExitToAppIcon style={{marginRight: '10px'}} fontSize={'medium'}/>}
                                           text={"Leave chat"}/>
                         </MenuItem>
@@ -107,6 +108,7 @@ const mapDispatchToProps = {
     setIsEditGlobalUsersModalOpened,
     setIsEditRoomTitleModalOpen,
     setIsMembersModalOpened,
+    setIsLeaveChatConfirmModalOpened,
     logout
 }
 
