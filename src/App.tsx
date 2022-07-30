@@ -6,7 +6,7 @@ import 'react-perfect-scrollbar/dist/css/styles.css';
 import * as yup from "yup";
 import Notification from './Notification';
 import nacl from "tweetnacl";
-import {CryptService, data} from "./service/cryptService";
+import {CryptService} from "./service/cryptService";
 import {store} from "./index";
 import {CustomerApi} from "./api/customerApi";
 

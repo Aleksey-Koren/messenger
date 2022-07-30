@@ -324,9 +324,3 @@ export function addGhostUserTF(id: string) {
         }
     }
 }
-
-export function leaveChatTF(chatId: string) {
-    return (dispatch: ThunkDispatch<AppState, any, Action>, getState: () => AppState) => {
-
-    }
-}

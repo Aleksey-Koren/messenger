@@ -1,9 +1,12 @@
 import {IPlainDataAction} from "../redux-types";
 import {
-    GlobalUserConfigurationState, SET_IS_CONFIRM_MODAL_OPEN,
+    GlobalUserConfigurationState,
+    SET_IS_CONFIRM_MODAL_OPEN,
     SET_IS_CREATE_PRIVATE_MODAL_OPENED,
     SET_IS_CREATE_ROOM_MODAL_OPENED,
-    SET_IS_EDIT_USER_TITLE_MODAL_OPEN, SET_IS_GLOBAL_USER_CONFIGURATION_MODAL_OPEN,
+    SET_IS_EDIT_USER_TITLE_MODAL_OPEN,
+    SET_IS_GLOBAL_USER_CONFIGURATION_MODAL_OPEN,
+    SET_IS_LEAVE_CHAT_CONFIRM_MODAL_OPENED,
 } from "./messengerControlsTypes";
 import {AppDispatch, AppState} from "../../index";
 import {ThunkDispatch} from "redux-thunk";
@@ -17,6 +20,10 @@ import Notification from '../../Notification';
 import {Chat} from "../../model/messenger/chat";
 import {Builder} from "builder-pattern";
 import {GlobalUser} from "../../model/local-storage/localStorageTypes";
+import {CustomerApi} from "../../api/customerApi";
+import {ChatApi} from "../../api/chatApi";
+import {ChatService} from "../../service/messenger/chatService";
+import {StringIndexArray} from "../../model/stringIndexArray";
 
 export function setIsNewPrivateModalOpened(isOpened: boolean): IPlainDataAction<boolean> {
     return {
@@ -56,6 +63,13 @@ export function setIsConfirmModalOpen(isOpen: boolean): IPlainDataAction<boolean
     }
 }
 
+export function setIsLeaveChatConfirmModalOpened(isOpened: boolean): IPlainDataAction<boolean> {
+    return {
+        type: SET_IS_LEAVE_CHAT_CONFIRM_MODAL_OPENED,
+        payload: isOpened,
+    }
+}
+
 export function removeGlobalUserPublicKeyTF(publicKey: string, globalUser: GlobalUser) {
     return (dispatch: AppDispatch, getState: () => AppState) => {
 
@@ -67,6 +81,8 @@ export function removeGlobalUserPublicKeyTF(publicKey: string, globalUser: Globa
         dispatch(setGlobalUsers(globalUsers));
     }
 }
+
+
 
 export function createNewRoomTF(title: string, userTitle: string) {
 
@@ -107,5 +123,46 @@ export function createNewRoomTF(title: string, userTitle: string) {
             console.error(err)
             Notification.add({message: 'Something went wrong.', error: err, severity: 'error'});
         })
+    }
+}
+
+export function leaveChatTF() {
+    return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
+        CustomerApi.getServerUser()
+            .then(serverUser => {
+                const state = getState();
+                MessageApi.sendMessages([{
+                    type: MessageType.server,
+                    sender: state.messenger.user!.id,
+                    receiver: serverUser.id,
+                    data: 'LEAVE_CHAT',
+                    chat: state.messenger.currentChat!,
+                    decrypted: false
+                }], state.messenger.globalUsers)
+                    .then(() => {
+                        return ChatApi.getChats(state.messenger.user!.id)
+                            .then(helloMessages => {
+                                ChatService.tryDecryptChatsTitles(helloMessages, state.messenger.globalUsers)
+                                    .then(chats => {
+                                        if(chats.length !== 0) {
+                                            //todo sorting doesn't gives an effect... we need something else
+                                            chats = chats.sort((a, b) => -(a.lastSeenAt.valueOf() - b.lastSeenAt.valueOf()));
+                                            const currentChat = chats[0];
+
+                                            const stringIndexArrayChats = chats.reduce((prev, next) => {
+                                                prev[next.id] = next;
+                                                return prev;
+                                            }, {} as StringIndexArray<Chat>);
+
+                                            dispatch(setChats(stringIndexArrayChats));
+                                            dispatch(openChatTF(currentChat.id));
+                                        } else {
+                                            dispatch(setChats({}));
+                                            dispatch(setCurrentChat(null));
+                                        }
+                                    })
+                            })
+                    })
+            })
     }
 }

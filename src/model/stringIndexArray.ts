@@ -33,3 +33,4 @@ export function stringIndexArrayToEntrySet<T>(indexArray: StringIndexArray<T>): 
     }
     return result;
 }
+

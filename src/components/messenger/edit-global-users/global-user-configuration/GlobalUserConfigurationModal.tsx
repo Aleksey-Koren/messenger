@@ -134,8 +134,9 @@ const GlobalUserConfigurationModal: React.FC<TProps> = (props) => {
 
             {props.isConfirmModalOpen
                 && <ConfirmModal
-                    confirmFunction={() => props.removeGlobalUserPublicKeyTF(publicKeyToDelete!, props.globalUserToEdit!)}
-                    text={"Are you sure that you want to delete public key?"}/>
+                confirmFunction={() => props.removeGlobalUserPublicKeyTF(publicKeyToDelete!, props.globalUserToEdit!)}
+                text={"Are you sure that you want to delete public key?"}
+                closeFunction={() => props.setIsConfirmModalOpen(false)}/>
             }
         </Dialog>
     );
@@ -152,7 +153,7 @@ const mapDispatchToProps = {
     addPkToGlobalUserTF,
     addGhostUserTF,
     setIsConfirmModalOpen,
-    removeGlobalUserPublicKeyTF
+    removeGlobalUserPublicKeyTF,
 }
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

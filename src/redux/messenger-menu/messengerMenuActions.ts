@@ -66,7 +66,7 @@ export function leaveChatTF(me: User, chatId: string) {
     return (dispatch: ThunkDispatch<AppState, any, Action>, getState: () => AppState) => {
         const encrypted = CryptService.encrypt(
             CryptService.plainStringToUint8(me.id), me.privateKey!, undefined, me.privateKey!
-        )
+        );
         ChatApi.quitFromChat(chatId, me.id, {
             nonce: CryptService.uint8ToBase64(encrypted.nonce),
             data: CryptService.uint8ToBase64(encrypted.data)

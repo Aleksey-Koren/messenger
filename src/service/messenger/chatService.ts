@@ -25,7 +25,7 @@ export class ChatService {
                     title: chat.data!,
                     confirmed: false, //TODO: FLAG DECRYPTED / NON-DECRYPTED??
                     isUnreadMessagesExist: chatsLastSeen[chat.chat] ? chatsLastSeen[chat.chat] < new Date(chatDto.created!) : false,
-                    lastSeenAt: new Date()
+                    lastSeenAt: chatsLastSeen[chat.chat] ? chatsLastSeen[chat.chat] : new Date()
                 }
             }
             return {

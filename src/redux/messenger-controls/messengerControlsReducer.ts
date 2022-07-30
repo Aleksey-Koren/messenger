@@ -3,7 +3,7 @@ import {
     SET_IS_CREATE_PRIVATE_MODAL_OPENED,
     SET_IS_CREATE_ROOM_MODAL_OPENED,
     SET_IS_EDIT_USER_TITLE_MODAL_OPEN,
-    SET_IS_GLOBAL_USER_CONFIGURATION_MODAL_OPEN,
+    SET_IS_GLOBAL_USER_CONFIGURATION_MODAL_OPEN, SET_IS_LEAVE_CHAT_CONFIRM_MODAL_OPENED,
     TMessengerControlsAction,
     TMessengerControlsState
 } from "./messengerControlsTypes";
@@ -14,7 +14,8 @@ const initialState: TMessengerControlsState = {
     isCreateNewPrivateModalOpened: false,
     isCreateNewRoomModalOpened: false,
     isEditUserTitleModalOpen: false,
-    isConfirmModalOpen: false
+    isConfirmModalOpen: false,
+    isLeaveChatConfirmModalOpened: false
 }
 
 export function messengerControlsReducer(state: TMessengerControlsState = initialState, action: TMessengerControlsAction) {
@@ -41,6 +42,10 @@ export function messengerControlsReducer(state: TMessengerControlsState = initia
         case SET_IS_CONFIRM_MODAL_OPEN:
             castedAction = action as IPlainDataAction<boolean>;
             return {...state, isConfirmModalOpen: castedAction.payload}
+
+        case SET_IS_LEAVE_CHAT_CONFIRM_MODAL_OPENED:
+            castedAction = action as IPlainDataAction<boolean>;
+            return {...state, isLeaveChatConfirmModalOpened: castedAction.payload}
 
         default:
             return state
