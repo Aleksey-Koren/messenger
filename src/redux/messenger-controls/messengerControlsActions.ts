@@ -147,6 +147,9 @@ export function leaveChatTF() {
                                         if(chats.length !== 0) {
                                             //todo sorting doesn't gives an effect... we need something else
                                             chats = chats.sort((a, b) => -(a.lastSeenAt.valueOf() - b.lastSeenAt.valueOf()));
+
+                                            chats.forEach(s => console.log('CHAT TITLE: ' + s.title + ' ' + s.lastSeenAt.toString()));
+
                                             const currentChat = chats[0];
 
                                             const stringIndexArrayChats = chats.reduce((prev, next) => {

@@ -5,10 +5,7 @@ import {createTheme, ThemeProvider} from "@mui/material";
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import * as yup from "yup";
 import Notification from './Notification';
-import nacl from "tweetnacl";
-import {CryptService} from "./service/cryptService";
 import {store} from "./index";
-import {CustomerApi} from "./api/customerApi";
 
 // yup.addMethod(yup.string, "uuid", function (errorMessage) {
 //     return this.test(`test-card-type`, errorMessage, function (value) {
@@ -29,10 +26,6 @@ yup.addMethod(yup.mixed, "isGlobalUserNotExists", function (errorMessage) {
         return (!globalUser || createError({path, message: errorMessage}));
     })
 })
-
-function foo() {
-    CustomerApi.getServerUser().then(s => console.log(JSON.stringify(s)));
-}
 
 function App() {
     const theme = createTheme({
