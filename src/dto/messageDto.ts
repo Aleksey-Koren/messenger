@@ -7,6 +7,7 @@ export interface MessageDto {
     type: MessageType;
     chat: string | null;
     data?: string;
+    attachments?: string
     nonce?: string;
     created?: string;
 }

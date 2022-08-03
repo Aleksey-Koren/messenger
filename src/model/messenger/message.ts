@@ -9,5 +9,6 @@ export interface Message {
     data?: string;
     nonce?: Uint8Array;
     created?: Date;
+    attachments?: Uint8Array[];
     decrypted: boolean
 }

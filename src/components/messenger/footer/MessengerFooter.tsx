@@ -27,8 +27,8 @@ export interface IFormikValues {
 
 function MessengerFooter(props: MessengerFooterProps) {
     const dispatch = useDispatch();
-    function send(text:string) {
-        return dispatch(sendMessage(text, MessageType.whisper, () => props.scroll(false)));
+    async function send(text:string, attachments: FileList) {
+        await dispatch(sendMessage(text, MessageType.whisper, () => props.scroll(false), attachments));
     }
 
     const validationSchema = Yup.object().shape({
@@ -44,8 +44,8 @@ function MessengerFooter(props: MessengerFooterProps) {
         },
         validationSchema: validationSchema,
         onSubmit: (values) => {
-            //@ts-ignore
-            send(values.message).then(e => {
+
+            send(values.message, values.attachments.attachments!).then(() => {
                 formik.setFieldValue('message', '', false);
             });
         },
@@ -69,7 +69,7 @@ function MessengerFooter(props: MessengerFooterProps) {
             </div>
             {attachmentsState.fileNames.length !== 0 &&
             <div style={{display: "flex", flexDirection: "column", marginRight: "10px", color: "white", maxHeight: "110"}}>
-                {attachmentsState.fileNames.map(filename => <span style={{fontSize: "10px"}}>{filename}</span>)}
+                {attachmentsState.fileNames.map(filename => <span key={filename} style={{fontSize: "10px"}}>{filename}</span>)}
             </div>
             }
             <PerfectScrollbar style={{height: 110, flex: 1}}>

@@ -1,6 +1,7 @@
 import React from "react";
 import {FieldHelperProps, FieldInputProps, FieldMetaProps, FormikErrors, FormikState, FormikTouched} from "formik";
 import {IFormikValues} from "../../components/messenger/footer/MessengerFooter";
+import {FileService} from "../fileService";
 
 export interface IAttachmentValidation {
     isValid: boolean,
@@ -76,4 +77,16 @@ export class AttachmentsService {
         setAttachmentsState(attachments);
         formik.values.attachments = attachments;
     }
+
+    static prepareByteArrays(fileList: FileList) {
+        const promises: Promise<Uint8Array>[] = []
+        for (let i = 0; i < fileList.length; i++ ) {
+            promises.push(FileService.readBytesAndMarkMimeType(fileList.item(i)!));
+        }
+        return Promise.all(promises);
+    }
+}
+
+function areReady(readers: FileReader[]): boolean {
+    return readers.every(s => s.readyState === 2);
 }

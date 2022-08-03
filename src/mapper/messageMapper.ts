@@ -53,6 +53,13 @@ export class MessageMapper {
             dto.data = CryptService.uint8ToBase64(data.data);
             dto.nonce = CryptService.uint8ToBase64(data.nonce);
         }
+
+        if (message.attachments) {
+            const files: string[] = [];
+            for(let attachment of message.attachments) {
+
+            }
+        }
         return dto;
     }
 }
