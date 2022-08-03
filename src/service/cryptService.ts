@@ -1,7 +1,5 @@
 import {store} from "../index";
 import nacl from "tweetnacl";
-import {pki, md, util, mgf, pss, cipher} from "node-forge";
-import forge from "node-forge";
 import naclUtil from "tweetnacl-util";
 
 
@@ -21,6 +19,10 @@ export class CryptService {
             publicKeyToEncrypt,
             privateKey!
         );
+
+        if(data === null) {
+            throw new Error('Encryption function has returned null. Something went wrong');
+        }
 
         return {
             nonce: nonce,
