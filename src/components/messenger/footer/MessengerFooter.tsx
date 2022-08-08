@@ -11,7 +11,7 @@ import {sendMessage} from "../../../redux/messenger/messengerActions";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import {MessageType} from "../../../model/messenger/messageType";
 import AttachFileIcon from '@mui/icons-material/AttachFile';
-import {AttachmentsService, IAttachmentsState} from "../../../service/messenger/attachmentsService";
+import {AttachmentsServiceUpload, IAttachmentsState} from "../../../service/messenger/attachmentsServiceUpload";
 
 
 interface MessengerFooterProps {
@@ -27,9 +27,12 @@ export interface IFormikValues {
 
 function MessengerFooter(props: MessengerFooterProps) {
     const dispatch = useDispatch();
+
     async function send(text:string, attachments: FileList) {
         await dispatch(sendMessage(text, MessageType.whisper, () => props.scroll(false), attachments));
     }
+
+    const [attachmentsState, setAttachmentsState] = useState<IAttachmentsState>({attachments: null, fileNames: []})
 
     const validationSchema = Yup.object().shape({
         message: Yup.string().required("Can't be empty"),
@@ -44,14 +47,13 @@ function MessengerFooter(props: MessengerFooterProps) {
         },
         validationSchema: validationSchema,
         onSubmit: (values) => {
-
             send(values.message, values.attachments.attachments!).then(() => {
                 formik.setFieldValue('message', '', false);
+                formik.setFieldValue('attachments', {attachments: null, fileNames: []})
+                setAttachmentsState({attachments: null, fileNames: []});
             });
         },
     });
-
-    const [attachmentsState, setAttachmentsState] = useState<IAttachmentsState>({attachments: null, fileNames: []})
 
     useEffect(() => {
         formik.setFieldValue('currentChat', props.currentChat, false);
@@ -63,7 +65,7 @@ function MessengerFooter(props: MessengerFooterProps) {
                 <label style={{color: "white"}}>
                     <AttachFileIcon style={{color: "white"}}/>
                     <input type={"file"} style={{display: "none"}} accept="image/*" multiple
-                    onChange={e => AttachmentsService.processUploading(e, attachmentsState, setAttachmentsState, formik)}
+                    onChange={e => AttachmentsServiceUpload.processUploading(e, attachmentsState, setAttachmentsState, formik)}
                     />
                 </label>
             </div>
@@ -101,7 +103,7 @@ function MessengerFooter(props: MessengerFooterProps) {
 
             {<Fab className={style.send_icon} size={"large"} disabled={!props.currentChat}
                   onClick={() => {
-                      formik.submitForm()
+                      formik.submitForm().then();
                   }}
             >
                 <SendIcon/>

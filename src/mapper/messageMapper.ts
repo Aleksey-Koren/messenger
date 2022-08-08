@@ -1,12 +1,9 @@
 import {Message} from "../model/messenger/message";
 import {MessageDto} from "../dto/messageDto";
 import {CryptService} from "../service/cryptService";
-import {User} from "../model/messenger/user";
-import {store} from "../index";
 import {MessageService} from "../service/messenger/messageService";
 import {CustomerApi} from "../api/customerApi";
 import {GlobalUser} from "../model/local-storage/localStorageTypes";
-import {Customer} from "../model/messenger/customer";
 
 export class MessageMapper {
 
@@ -19,6 +16,7 @@ export class MessageMapper {
             type: dto.type,
             created: new Date(dto.created!),
             data: dto.data,
+            attachmentsPath: !!dto.attachments ? dto.attachments?.split(";") : undefined,
             nonce: dto.nonce ? CryptService.base64ToUint8(dto.nonce!) : undefined,
             decrypted: false
         };

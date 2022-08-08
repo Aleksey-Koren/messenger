@@ -13,46 +13,7 @@ export interface IAttachmentsState {
     fileNames: string []
 }
 
-export class AttachmentsService {
-
-    static validateAttachments(files: FileList | null): IAttachmentValidation {
-        if(!files) {
-            return {
-                isValid: true
-            }
-        }
-
-        if(files.length > 6) {
-            return {
-                isValid: false,
-                description: 'You can upload not more than 10 files'
-            }
-        }
-
-        let totalMemory = 0;
-        for(let i = 0; i < files.length; i++) {
-            totalMemory += files.item(i)!.size;
-        }
-
-        if(totalMemory > 10000000) {
-            return {
-                isValid: false,
-                description: 'You can upload not more than 10 MB of attachments'
-            }
-        }
-
-        return {
-            isValid: true
-        }
-    }
-
-    static retrieveFilenames(files: FileList) {
-        const filenames = []
-        for(let i = 0; i < files.length; i++) {
-            filenames.push(files.item(i)!.name);
-        }
-        return filenames;
-    }
+export class AttachmentsServiceUpload {
 
     static processUploading(e: React.ChangeEvent<HTMLInputElement>,
                             attachmentsState: IAttachmentsState,
@@ -62,13 +23,11 @@ export class AttachmentsService {
         const files = e.target.files;
         let attachments;
         if (files) {
-            const validation = AttachmentsService.validateAttachments(files);
+            const validation = validateAttachments(files);
             if(validation.isValid) {
-                console.log('setAttachments: ');
-                attachments = {attachments: files, fileNames: AttachmentsService.retrieveFilenames(files)}
+                attachments = {attachments: files, fileNames: retrieveFilenames(files)}
             } else {
-                // toDo modal window with error description needed
-                console.log('Validation error: ' + validation.description);
+                // toDo modal window with error description is needed
                 attachments = {attachments: null, fileNames: []}
             }
         } else {
@@ -87,6 +46,41 @@ export class AttachmentsService {
     }
 }
 
-function areReady(readers: FileReader[]): boolean {
-    return readers.every(s => s.readyState === 2);
+function retrieveFilenames(files: FileList) {
+    const filenames = []
+    for(let i = 0; i < files.length; i++) {
+        filenames.push(files.item(i)!.name);
+    }
+    return filenames;
+}
+
+function validateAttachments(files: FileList | null): IAttachmentValidation {
+    if(!files) {
+        return {
+            isValid: true
+        }
+    }
+
+    if(files.length > 6) {
+        return {
+            isValid: false,
+            description: 'You can upload not more than 6 files'
+        }
+    }
+
+    let totalMemory = 0;
+    for(let i = 0; i < files.length; i++) {
+        totalMemory += files.item(i)!.size;
+    }
+
+    if(totalMemory > 10000000) {
+        return {
+            isValid: false,
+            description: 'You can upload not more than 10 MB of attachments'
+        }
+    }
+
+    return {
+        isValid: true
+    }
 }

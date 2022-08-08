@@ -31,7 +31,7 @@ import {Builder} from "builder-pattern";
 import {GlobalUser} from "../../model/local-storage/localStorageTypes";
 import {LocalStorageService} from "../../service/local-data/localStorageService";
 import {CustomerApi} from "../../api/customerApi";
-import {AttachmentsService} from "../../service/messenger/attachmentsService";
+import {AttachmentsServiceUpload} from "../../service/messenger/attachmentsServiceUpload";
 
 export function setUser(user: User): IPlainDataAction<IMessengerStateOpt> {
 
@@ -138,7 +138,7 @@ export function sendMessage(messageText: string, messageType: MessageType, callb
         const globalUsers = getState().messenger.globalUsers;
         const users = getState().messenger.users;
         const messagesToSend: Message[] = []
-        const attachArrays = !!attachments ? await AttachmentsService.prepareByteArrays(attachments) : null;
+        const attachArrays = !!attachments ? await AttachmentsServiceUpload.prepareByteArrays(attachments) : null;
 
         for (let id in users) {
             const member = users[id];
@@ -167,7 +167,7 @@ export function sendMessage(messageText: string, messageType: MessageType, callb
                 callback();
                 return response;
             })
-            .catch((e) => Notification.add({severity: 'error', message: 'Message not sent', error: e}));
+            .catch((e) => Notification.add({severity: 'error', message: 'Message is not sent', error: e}));
     }
 }
 

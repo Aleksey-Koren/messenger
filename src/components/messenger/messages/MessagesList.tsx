@@ -13,17 +13,7 @@ import {
     setIsNewRoomModalOpened
 } from "../../../redux/messenger-controls/messengerControlsActions";
 import {Message} from "../../../model/messenger/message";
-
-/*
-const createEditIcon = (message: Message, userId:string) => (
-
-    userId === message.sender &&
-    <IconButton className={style.message_edit_button} onClick={() => {
-    }}>
-        <BorderColorIcon fontSize={"small"}/>
-    </IconButton>
-);*/
-
+import AttachmentsBlock from "../attachments/AttachmentsBlock";
 
 
 function mergeMessages(messages?:Message[]):Message[][] {
@@ -76,6 +66,10 @@ const MessagesList: React.FC<Props> = (props) => {
                                                 <TimeSince time={first.created}/>
                                             </Typography>
                                         </ListItemText>
+
+                                        {!!first.attachmentsPath &&
+                                            <AttachmentsBlock messageId={first.id!}/>
+                                        }
 
                                         <ListItemText>
                                             {message.map(text => <Typography color={""} className={style.message}>{text.data}</Typography>)}
