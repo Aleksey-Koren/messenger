@@ -52,6 +52,8 @@ const MessagesList: React.FC<Props> = (props) => {
             <List id={'list'}>
                 {/* This place should start a loop for room messages and create ListItem for each message */}
                 {message.map(message => {
+                    console.log("MESSAGE INTO MAP")
+                    console.log(message);
                     const first = message[0];
                     return (
                     <ListItem key={first.id} style={{display: 'flex', flexDirection: (first.sender === userId ? 'row-reverse' : 'row'), /* my messages - right, others - left*/}}>
@@ -67,7 +69,7 @@ const MessagesList: React.FC<Props> = (props) => {
                                             </Typography>
                                         </ListItemText>
 
-                                        {!!first.attachmentsFilenames &&
+                                        {first.attachmentsFilenames &&
                                             <AttachmentsBlock message={first}/>
                                         }
 

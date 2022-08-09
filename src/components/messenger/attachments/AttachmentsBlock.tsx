@@ -18,18 +18,26 @@ export interface IAttachmentsBlockState {
 
 const AttachmentsBlock: React.FC<TProps> =  (props) => {
 
+    console.log("IN ATTACHMENTS BLOCK!!!");
+
     const [state, setState] = useState<IAttachmentsBlockState>({isPending: true, files: []});
 
     props.fetchAttachmentsTF(props.message, setState);
 
     return <>
         <div style={{display: "flex", flexDirection: "column"}}>
-            {state.isPending && props.message.attachmentsFilenames!.map(() => <LoadingSpinner/>)}
-            {!state.isPending && state.files.map(file => <Attachment file={file}/>)}
+            {state.isPending &&
+            <div style={{display: "flex", flexDirection: "column"}}>
+                {props.message.attachmentsFilenames!.map(() => <LoadingSpinner/>)}
+            </div>
+            }
+            {!state.isPending &&
+            <div style={{display: "flex", flexDirection: "column"}}>
+                {state.files.map(file => <Attachment file={file}/>)}
+            </div>
+           }
         </div>
     </>
-
-
 }
 
 const mapStateTpProps = (state: AppState, ownProps: IOwnProps) =>  ({

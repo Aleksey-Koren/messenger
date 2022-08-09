@@ -1,4 +1,4 @@
-import {MimeType} from "../redux/attachments/attachmentsTypes";
+import {MimeType, TArrayWithMimeType} from "../redux/attachments/attachmentsTypes";
 
 export class FileService {
 
@@ -20,9 +20,13 @@ export class FileService {
         })
     }
 
-    static identifyMimeTypeAndUnmarkArray(array: Uint8Array): {mimeType: MimeType, unmarkedArray: Uint8Array} {
+    static identifyMimeTypeAndUnmarkArray(array: Uint8Array): TArrayWithMimeType {
         const mimeType = identifyMimeType(array);
-
+        const unmarkedArray = array.slice(1);
+        return {
+            mimeType: mimeType,
+            unmarkedArray: unmarkedArray
+        }
     }
 }
 
@@ -38,5 +42,6 @@ function identifyMimeType(array: Uint8Array) {
         case MimeType.IMAGE: return MimeType.IMAGE;
         case MimeType.VIDEO: return MimeType.VIDEO;
         case MimeType.AUDIO: return MimeType.AUDIO;
+        default: return MimeType.UNKNOWN;
     }
 }

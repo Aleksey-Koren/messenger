@@ -5,16 +5,20 @@ import {IAttachmentsBlockState} from "../../components/messenger/attachments/Att
 import {AttachmentApi} from "../../api/attachmentApi";
 import React from "react";
 import {Message} from "../../model/messenger/message";
-
-export const x = 5;
+import {AttachmentMapper} from "../../mapper/attachmentMapper";
+import {TAttachmentFile} from "./attachmentsTypes";
 
 export function fetchAttachmentsTF(message: Message,
-                                   attachmentBlockState: React.Dispatch<React.SetStateAction<IAttachmentsBlockState>>) {
+                                   setComponentState: React.Dispatch<React.SetStateAction<IAttachmentsBlockState>>) {
     return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
         AttachmentApi.getAttachments(message.id!)
-            .then(files => {
-
+            .then(filesAsStrings => {
+                const attachmentFiles: TAttachmentFile[] =
+                    filesAsStrings.map(string => AttachmentMapper.toAttachmentFile(string, message.sender, message.nonce!));
+                    setComponentState({
+                        isPending: false,
+                        files: attachmentFiles
+                    })
             })
     }
-
 }
