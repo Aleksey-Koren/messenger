@@ -8,6 +8,8 @@ interface IOwnProps {
 
 const AttachmentsBlock: React.FC<TProps> =  (props) => {
 
+
+
     return <></>
 }
 

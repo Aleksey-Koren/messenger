@@ -13,6 +13,11 @@ export interface IPaginationState {
     totalItems: number;
 }
 
+export interface IDefaultStateFieldOpt {
+    isLoading?: boolean;
+    isError?: boolean;
+}
+
 export interface IDefaultStateField {
     isLoading: boolean;
     isError: boolean;
