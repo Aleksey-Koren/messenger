@@ -1,24 +1,43 @@
 import {connect, ConnectedProps} from "react-redux";
 import {AppState} from "../../../index";
-import React from "react";
+import React, {useState} from "react";
+import {TAttachmentFile} from "../../../redux/attachments/attachmentsTypes";
+import LoadingSpinner from "./LoadingSpinner";
+import Attachment from "./Attachment";
+import {fetchAttachmentsTF} from "../../../redux/attachments/attachmentsActions";
+import {Message} from "../../../model/messenger/message";
 
 interface IOwnProps {
-    messageId: string
+    message: Message
+}
+
+export interface IAttachmentsBlockState {
+    isPending: boolean;
+    files: TAttachmentFile[]
 }
 
 const AttachmentsBlock: React.FC<TProps> =  (props) => {
 
+    const [state, setState] = useState<IAttachmentsBlockState>({isPending: true, files: []});
+
+    props.fetchAttachmentsTF(props.message, setState);
+
+    return <>
+        <div style={{display: "flex", flexDirection: "column"}}>
+            {state.isPending && props.message.attachmentsFilenames!.map(() => <LoadingSpinner/>)}
+            {!state.isPending && state.files.map(file => <Attachment file={file}/>)}
+        </div>
+    </>
 
 
-    return <></>
 }
 
 const mapStateTpProps = (state: AppState, ownProps: IOwnProps) =>  ({
-    messageId: ownProps.messageId
+    message: ownProps.message
 })
 
 const mapDispatchToProps = {
-
+    fetchAttachmentsTF
 }
 
 const connector = connect(mapStateTpProps, mapDispatchToProps);

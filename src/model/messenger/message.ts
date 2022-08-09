@@ -10,6 +10,6 @@ export interface Message {
     nonce?: Uint8Array;
     created?: Date;
     attachments?: Uint8Array[];
-    attachmentsPath?: string[];
+    attachmentsFilenames?: string[];
     decrypted: boolean
 }

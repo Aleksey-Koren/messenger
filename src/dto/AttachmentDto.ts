@@ -1,5 +1,5 @@
 
 export class AttachmentDto {
 
-    files: string | null = null;
+    files: string[] | null = null;
 }

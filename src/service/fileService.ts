@@ -1,3 +1,4 @@
+import {MimeType} from "../redux/attachments/attachmentsTypes";
 
 export class FileService {
 
@@ -18,6 +19,11 @@ export class FileService {
             reader.readAsArrayBuffer(file);
         })
     }
+
+    static identifyMimeTypeAndUnmarkArray(array: Uint8Array): {mimeType: MimeType, unmarkedArray: Uint8Array} {
+        const mimeType = identifyMimeType(array);
+
+    }
 }
 
 function addByteMarker(input: Uint8Array, marker: number): Uint8Array {
@@ -25,4 +31,12 @@ function addByteMarker(input: Uint8Array, marker: number): Uint8Array {
     result.set([marker], 0);
     result.set(input, 1);
     return result;
+}
+
+function identifyMimeType(array: Uint8Array) {
+    switch (array[0]) {
+        case MimeType.IMAGE: return MimeType.IMAGE;
+        case MimeType.VIDEO: return MimeType.VIDEO;
+        case MimeType.AUDIO: return MimeType.AUDIO;
+    }
 }

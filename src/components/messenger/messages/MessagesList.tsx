@@ -67,8 +67,8 @@ const MessagesList: React.FC<Props> = (props) => {
                                             </Typography>
                                         </ListItemText>
 
-                                        {!!first.attachmentsPath &&
-                                            <AttachmentsBlock messageId={first.id!}/>
+                                        {!!first.attachmentsFilenames &&
+                                            <AttachmentsBlock message={first}/>
                                         }
 
                                         <ListItemText>

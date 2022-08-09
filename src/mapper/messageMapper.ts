@@ -16,7 +16,7 @@ export class MessageMapper {
             type: dto.type,
             created: new Date(dto.created!),
             data: dto.data,
-            attachmentsPath: !!dto.attachments ? dto.attachments?.split(";") : undefined,
+            attachmentsFilenames: !!dto.attachments ? dto.attachments?.split(";") : undefined,
             nonce: dto.nonce ? CryptService.base64ToUint8(dto.nonce!) : undefined,
             decrypted: false
         };
