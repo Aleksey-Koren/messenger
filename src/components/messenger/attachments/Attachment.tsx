@@ -12,7 +12,8 @@ const Attachment: React.FC<TProps> = (props) => {
     const url = URL.createObjectURL(props.file.data!);
     
     return <>
-        <img src={url} height={200} width={200} alt={"Can not be displayed"}/>
+        <img style={{margin: "5px"}}
+            src={url} height={200} width={200} alt={"Can not be displayed"}/>
     </>
 }
 

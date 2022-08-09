@@ -12,9 +12,9 @@ export function fetchAttachmentsTF(message: Message,
                                    setComponentState: React.Dispatch<React.SetStateAction<IAttachmentsBlockState>>) {
     return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
         AttachmentApi.getAttachments(message.id!)
-            .then(filesAsStrings => {
+            .then(dto => {
                 const attachmentFiles: TAttachmentFile[] =
-                    filesAsStrings.map(string => AttachmentMapper.toAttachmentFile(string, message.sender, message.nonce!));
+                    dto.files!.map(string => AttachmentMapper.toAttachmentFile(string, message.sender, message.nonce!));
                     setComponentState({
                         isPending: false,
                         files: attachmentFiles

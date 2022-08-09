@@ -32,7 +32,7 @@ const AttachmentsBlock: React.FC<TProps> =  (props) => {
             </div>
             }
             {!state.isPending &&
-            <div style={{display: "flex", flexDirection: "column"}}>
+            <div style={{display: "flex"}}>
                 {state.files.map(file => <Attachment file={file}/>)}
             </div>
            }

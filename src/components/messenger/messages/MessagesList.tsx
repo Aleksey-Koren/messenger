@@ -55,6 +55,8 @@ const MessagesList: React.FC<Props> = (props) => {
                     console.log("MESSAGE INTO MAP")
                     console.log(message);
                     const first = message[0];
+                    console.log("FIRST")
+                    console.log(first);
                     return (
                     <ListItem key={first.id} style={{display: 'flex', flexDirection: (first.sender === userId ? 'row-reverse' : 'row'), /* my messages - right, others - left*/}}>
                                 {first.type === MessageType.whisper &&
@@ -69,12 +71,19 @@ const MessagesList: React.FC<Props> = (props) => {
                                             </Typography>
                                         </ListItemText>
 
-                                        {first.attachmentsFilenames &&
-                                            <AttachmentsBlock message={first}/>
-                                        }
+                                        {/*{first.attachmentsFilenames &&*/}
+                                        {/*    <AttachmentsBlock message={first}/>*/}
+                                        {/*}*/}
 
                                         <ListItemText>
-                                            {message.map(text => <Typography color={""} className={style.message}>{text.data}</Typography>)}
+                                            {message.map(text =>
+                                                <>
+                                                    {text.attachmentsFilenames &&
+                                                    <AttachmentsBlock message={text}/>
+                                                    }
+                                                    <Typography color={""}
+                                                                className={style.message}>{text.data}</Typography>
+                                                </>)}
                                         </ListItemText>
                                     </Paper>
                                 }
