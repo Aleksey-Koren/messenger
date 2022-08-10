@@ -15,6 +15,7 @@ export function fetchAttachmentsTF(message: Message,
             .then(dto => {
                 const attachmentFiles: TAttachmentFile[] =
                     dto.files!.map(string => AttachmentMapper.toAttachmentFile(string, message.sender, message.nonce!));
+
                     setComponentState({
                         isPending: false,
                         files: attachmentFiles

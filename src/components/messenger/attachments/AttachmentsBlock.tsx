@@ -18,8 +18,6 @@ export interface IAttachmentsBlockState {
 
 const AttachmentsBlock: React.FC<TProps> =  (props) => {
 
-    console.log("IN ATTACHMENTS BLOCK!!!");
-
     const [state, setState] = useState<IAttachmentsBlockState>({isPending: true, files: []});
 
     props.fetchAttachmentsTF(props.message, setState);
