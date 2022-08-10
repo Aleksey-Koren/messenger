@@ -31,6 +31,7 @@ import {Builder} from "builder-pattern";
 import {GlobalUser} from "../../model/local-storage/localStorageTypes";
 import {LocalStorageService} from "../../service/local-data/localStorageService";
 import {CustomerApi} from "../../api/customerApi";
+import {AttachmentsServiceUpload} from "../../service/messenger/attachmentsServiceUpload";
 
 export function setUser(user: User): IPlainDataAction<IMessengerStateOpt> {
 
@@ -130,19 +131,21 @@ export function sendMessageNewVersion(messageText: string,
     }
 }
 
-export function sendMessage(messageText: string, messageType: MessageType, callback: () => void) {
-    return (dispatch: AppDispatch, getState: () => AppState) => {
+export function sendMessage(messageText: string, messageType: MessageType, callback: () => void, attachments?: FileList) {
+    return async (dispatch: AppDispatch, getState: () => AppState) => {
         const currentChat = getState().messenger.currentChat;
         const user = getState().messenger.user;
         const globalUsers = getState().messenger.globalUsers;
         const users = getState().messenger.users;
         const messagesToSend: Message[] = []
+        const attachArrays = !!attachments ? await AttachmentsServiceUpload.prepareByteArrays(attachments) : null;
 
         for (let id in users) {
             const member = users[id];
             const message = {
                 chat: currentChat!,
                 data: messageText,
+                attachments: attachArrays,
                 type: messageType,
                 sender: user?.id!,
                 receiver: member.id!
@@ -164,7 +167,7 @@ export function sendMessage(messageText: string, messageType: MessageType, callb
                 callback();
                 return response;
             })
-            .catch((e) => Notification.add({severity: 'error', message: 'Message not sent', error: e}));
+            .catch((e) => Notification.add({severity: 'error', message: 'Message is not sent', error: e}));
     }
 }
 
