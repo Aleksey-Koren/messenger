@@ -1,8 +1,3 @@
-import {IDefaultStateFieldOpt} from "../redux-types";
-
-export interface IAttachmentsStateOpt extends IDefaultStateFieldOpt {
-
-}
 
 export enum MimeType {
     IMAGE = 1,

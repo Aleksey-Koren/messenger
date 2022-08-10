@@ -64,7 +64,7 @@ function MessengerFooter(props: MessengerFooterProps) {
             <div style={{display: "flex", flexDirection: "column", minHeight: '90%', marginRight: "10px"}}>
                 <label style={{color: "white"}}>
                     <AttachFileIcon style={{color: "white"}}/>
-                    <input type={"file"} style={{display: "none"}} accept="image/*" multiple
+                    <input type={"file"} style={{display: "none"}} accept="image/*,video/*" multiple
                     onChange={e => AttachmentsServiceUpload.processUploading(e, attachmentsState, setAttachmentsState, formik)}
                     />
                 </label>

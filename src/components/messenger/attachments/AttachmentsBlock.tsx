@@ -1,11 +1,12 @@
 import {connect, ConnectedProps} from "react-redux";
 import {AppState} from "../../../index";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {TAttachmentFile} from "../../../redux/attachments/attachmentsTypes";
 import LoadingSpinner from "./LoadingSpinner";
 import Attachment from "./Attachment";
-import {fetchAttachmentsTF} from "../../../redux/attachments/attachmentsActions";
 import {Message} from "../../../model/messenger/message";
+import {AttachmentServiceDownload} from "../../../service/messenger/AttachmentServiceDownload";
+import {fetchAttachmentsTF} from "../../../redux/attachments/attachmentsActions";
 
 interface IOwnProps {
     message: Message
@@ -16,11 +17,16 @@ export interface IAttachmentsBlockState {
     files: TAttachmentFile[]
 }
 
-const AttachmentsBlock: React.FC<TProps> =  (props) => {
+const AttachmentsBlock: React.FC<TProps> = (props) => {
 
     const [state, setState] = useState<IAttachmentsBlockState>({isPending: true, files: []});
 
-    props.fetchAttachmentsTF(props.message, setState);
+    useEffect(() => {
+        AttachmentServiceDownload.fetchAttachments(props.message, setState);
+    },[])
+
+    // AttachmentServiceDownload.fetchAttachments(props.message, setState);
+    // props.fetchAttachmentsTF(props.message, setState);
 
     return <>
         <div style={{display: "flex", flexDirection: "column"}}>
@@ -33,12 +39,12 @@ const AttachmentsBlock: React.FC<TProps> =  (props) => {
             <div style={{display: "flex"}}>
                 {state.files.map(file => <Attachment file={file}/>)}
             </div>
-           }
+            }
         </div>
     </>
 }
 
-const mapStateTpProps = (state: AppState, ownProps: IOwnProps) =>  ({
+const mapStateTpProps = (state: AppState, ownProps: IOwnProps) => ({
     message: ownProps.message
 })
 

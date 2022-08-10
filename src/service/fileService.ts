@@ -6,9 +6,12 @@ export class FileService {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.onload = e => {
+                console.log('MIME TYPE: ' + file.type);
                 const arr = new Uint8Array(e.target!.result as ArrayBuffer);
                 if(file.type.match(/^image\//)) {
                     resolve(addByteMarker(arr, 1));
+                } else if (file.type.match(/^video\//)){
+                    resolve(addByteMarker(arr, 2));
                 } else {
                     throw new Error('Unknown MIME type');
                 }

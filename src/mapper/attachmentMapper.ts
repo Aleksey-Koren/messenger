@@ -5,8 +5,8 @@ import {FileService} from "../service/fileService";
 
 export class AttachmentMapper {
 
-    static toAttachmentFile(fileAsString: string, senderId: string, nonce: Uint8Array): TAttachmentFile {
-        const cryptFile = CryptService.base64ToUint8(fileAsString);
+    static toAttachmentFile(array: ArrayBuffer, senderId: string, nonce: Uint8Array): TAttachmentFile {
+        const cryptFile = new Uint8Array(array);
         const state = store.getState();
         const senderPublicKeys = state.messenger.globalUsers[senderId]?.certificates;
         const privateKey = state.messenger.user?.privateKey;

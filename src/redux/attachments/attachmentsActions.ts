@@ -9,17 +9,17 @@ import {AttachmentMapper} from "../../mapper/attachmentMapper";
 import {TAttachmentFile} from "./attachmentsTypes";
 
 export function fetchAttachmentsTF(message: Message,
-                                   setComponentState: React.Dispatch<React.SetStateAction<IAttachmentsBlockState>>) {
-    return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
-        AttachmentApi.getAttachments(message.id!)
+                                 setComponentState: React.Dispatch<React.SetStateAction<IAttachmentsBlockState>>) {
+    return () => {
+        AttachmentApi.getAttachments(message.id!, message.attachmentsFilenames!)
             .then(dto => {
                 const attachmentFiles: TAttachmentFile[] =
-                    dto.files!.map(string => AttachmentMapper.toAttachmentFile(string, message.sender, message.nonce!));
+                    dto.map(arrayBuffer => AttachmentMapper.toAttachmentFile(arrayBuffer, message.sender, message.nonce!));
 
-                    setComponentState({
-                        isPending: false,
-                        files: attachmentFiles
-                    })
+                setComponentState({
+                    isPending: false,
+                    files: attachmentFiles
+                })
             })
     }
 }

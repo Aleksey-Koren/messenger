@@ -2,6 +2,7 @@ import React from "react";
 import {FieldHelperProps, FieldInputProps, FieldMetaProps, FormikErrors, FormikState, FormikTouched} from "formik";
 import {IFormikValues} from "../../components/messenger/footer/MessengerFooter";
 import {FileService} from "../fileService";
+import Notification from "../../Notification";
 
 export interface IAttachmentValidation {
     isValid: boolean,
@@ -27,8 +28,8 @@ export class AttachmentsServiceUpload {
             if(validation.isValid) {
                 attachments = {attachments: files, fileNames: retrieveFilenames(files)}
             } else {
-                // toDo modal window with error description is needed
                 attachments = {attachments: null, fileNames: []}
+                Notification.add({message: validation.description, severity: "error"});
             }
         } else {
             attachments = {attachments: null, fileNames: []}

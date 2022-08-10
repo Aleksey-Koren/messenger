@@ -67,9 +67,11 @@ const MessagesList: React.FC<Props> = (props) => {
                                             </Typography>
                                         </ListItemText>
 
-                                        {/*{first.attachmentsFilenames &&*/}
-                                        {/*    <AttachmentsBlock message={first}/>*/}
-                                        {/*}*/}
+                                        {/*<video height={"300"} width={"300"} controls>*/}
+                                        {/*    <source src={'video.mp4'} type={"video/mp4"}/>*/}
+                                        {/*    </video>*/}
+
+
 
                                         <ListItemText>
                                             {message.map(text =>
