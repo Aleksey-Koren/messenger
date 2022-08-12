@@ -11,6 +11,7 @@ import {sendMessage} from "../../../redux/messenger/messengerActions";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import {MessageType} from "../../../model/messenger/messageType";
 import AttachFileIcon from '@mui/icons-material/AttachFile';
+import MicIcon from '@mui/icons-material/Mic';
 import {AttachmentsServiceUpload, IAttachmentsState} from "../../../service/messenger/attachmentsServiceUpload";
 
 
@@ -62,12 +63,18 @@ function MessengerFooter(props: MessengerFooterProps) {
     return (
         <div style={{display: "flex", height: 110, paddingBottom: 10, flexDirection: "row", alignItems: "center", borderTop: '1px solid#90caf9'}}>
             <div style={{display: "flex", flexDirection: "column", minHeight: '90%', marginRight: "10px"}}>
-                <label style={{color: "white"}}>
+                <label>
                     <AttachFileIcon style={{color: "white"}}/>
                     <input type={"file"} style={{display: "none"}} accept="image/*,video/*" multiple
                     onChange={e => AttachmentsServiceUpload.processUploading(e, attachmentsState, setAttachmentsState, formik)}
                     />
                 </label>
+                    <MicIcon id={"mic"} style={{color: "white"}}
+                             onMouseDown={() => document.getElementById("mic")!.style.color = "red"}
+                             onMouseUp={() => document.getElementById("mic")!.style.color = "white"}
+                             onMouseLeave={() => document.getElementById("mic")!.style.color = "white"}
+                    >
+                    </MicIcon>
             </div>
             {attachmentsState.fileNames.length !== 0 &&
             <div style={{display: "flex", flexDirection: "column", marginRight: "10px", color: "white", maxHeight: "110"}}>

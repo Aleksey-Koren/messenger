@@ -25,9 +25,6 @@ const AttachmentsBlock: React.FC<TProps> = (props) => {
         AttachmentServiceDownload.fetchAttachments(props.message, setState);
     },[])
 
-    // AttachmentServiceDownload.fetchAttachments(props.message, setState);
-    // props.fetchAttachmentsTF(props.message, setState);
-
     return <>
         <div style={{display: "flex", flexDirection: "column"}}>
             {state.isPending &&
@@ -48,11 +45,7 @@ const mapStateTpProps = (state: AppState, ownProps: IOwnProps) => ({
     message: ownProps.message
 })
 
-const mapDispatchToProps = {
-    fetchAttachmentsTF
-}
-
-const connector = connect(mapStateTpProps, mapDispatchToProps);
+const connector = connect(mapStateTpProps);
 
 type TProps = ConnectedProps<typeof connector>;
 
