@@ -5,7 +5,7 @@ import {TAttachmentFile} from "../../../redux/attachments/attachmentsTypes";
 import LoadingSpinner from "./LoadingSpinner";
 import Attachment from "./Attachment";
 import {Message} from "../../../model/messenger/message";
-import {AttachmentServiceDownload} from "../../../service/messenger/AttachmentServiceDownload";
+import {AttachmentServiceDownload} from "../../../service/messenger/attachments/attachmentServiceDownload";
 import {fetchAttachmentsTF} from "../../../redux/attachments/attachmentsActions";
 
 interface IOwnProps {

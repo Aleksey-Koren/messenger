@@ -18,10 +18,13 @@ import {store} from "./index";
 //     });
 // });
 
-async function foo() {
+function foo() {
 
-
-    URL.createObjectURL(new Blob([new Uint8Array()]));
+    navigator.permissions.query({name: 'microphone' as PermissionName})
+        .then(permissionStatusPromise => {
+            console.log("KKK")
+            console.log(permissionStatusPromise)
+        });
 }
 
 yup.addMethod(yup.mixed, "isGlobalUserNotExists", function (errorMessage) {
@@ -34,7 +37,7 @@ yup.addMethod(yup.mixed, "isGlobalUserNotExists", function (errorMessage) {
 })
 
 function App() {
-    foo().then();
+    foo();
     const theme = createTheme({
         palette: {
             mode: 'dark',

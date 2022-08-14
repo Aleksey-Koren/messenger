@@ -1,8 +1,8 @@
 import React from "react";
 import {FieldHelperProps, FieldInputProps, FieldMetaProps, FormikErrors, FormikState, FormikTouched} from "formik";
-import {IFormikValues} from "../../components/messenger/footer/MessengerFooter";
-import {FileService} from "../fileService";
-import Notification from "../../Notification";
+import {IFormikValues} from "../../../components/messenger/footer/MessengerFooter";
+import {FileService} from "../../fileService";
+import Notification from "../../../Notification";
 
 export interface IAttachmentValidation {
     isValid: boolean,

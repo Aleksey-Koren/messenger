@@ -1,9 +1,9 @@
-import {Message} from "../../model/messenger/message";
+import {Message} from "../../../model/messenger/message";
 import React from "react";
-import {IAttachmentsBlockState} from "../../components/messenger/attachments/AttachmentsBlock";
-import {AttachmentApi} from "../../api/attachmentApi";
-import {TAttachmentFile} from "../../redux/attachments/attachmentsTypes";
-import {AttachmentMapper} from "../../mapper/attachmentMapper";
+import {IAttachmentsBlockState} from "../../../components/messenger/attachments/AttachmentsBlock";
+import {AttachmentApi} from "../../../api/attachmentApi";
+import {TAttachmentFile} from "../../../redux/attachments/attachmentsTypes";
+import {AttachmentMapper} from "../../../mapper/attachmentMapper";
 
 export class AttachmentServiceDownload {
 
