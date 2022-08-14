@@ -74,20 +74,12 @@ const MessengerFooter: React.FC<TProps> = (props) => {
                 </label>
 
                 {props.audioRecorder !== null &&
-                    <>
                         <MicIcon id={"mic"} style={{color: "white"}}
                                  onMouseDown={() => VoiceMessagesService.startRecording(props.audioRecorder!)}
                                  onMouseUp={() => VoiceMessagesService.stopRecording(props.audioRecorder!)}
                                  onMouseLeave={() => VoiceMessagesService.stopRecording(props.audioRecorder!)}
-                        >
-                        </MicIcon>
-                        <div>
-
-                        </div>
-                    </>
-
+                        />
                 }
-
             </div>
             {attachmentsState.fileNames.length !== 0 &&
             <div style={{display: "flex", flexDirection: "column", marginRight: "10px", color: "white", maxHeight: "110"}}>
@@ -135,7 +127,6 @@ const MessengerFooter: React.FC<TProps> = (props) => {
 const mapStateToProps = (state: AppState, ownProps: MessengerFooterProps) => ({
     scroll: ownProps.scroll,
     currentChat: ownProps.currentChat,
-    audioStream: state.voiceMessages.audioStream,
     audioRecorder: state.voiceMessages.audioRecorder,
     isRecording: state.voiceMessages.isRecording
 })

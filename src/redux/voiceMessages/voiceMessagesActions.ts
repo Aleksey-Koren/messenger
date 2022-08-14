@@ -1,10 +1,4 @@
-import {
-    IVoiceMessagesStateOpt,
-    SET_AUDIO_RECORDER,
-    SET_AUDIO_STREAM,
-    SET_CHUNKS,
-    SET_IS_RECORDING
-} from "./voiceMessagesTypes";
+import {IVoiceMessagesStateOpt, SET_AUDIO_RECORDER, SET_CHUNKS, SET_IS_RECORDING} from "./voiceMessagesTypes";
 import {IPlainDataAction} from "../redux-types";
 import {AppDispatch, AppState, store} from "../../index";
 import {Message} from "../../model/messenger/message";
@@ -22,15 +16,7 @@ export function setIsRecording(isRecording: boolean): IPlainDataAction<IVoiceMes
     }
 }
 
-export function setAudioStream(audioStream: MediaStream): IPlainDataAction<IVoiceMessagesStateOpt> {
-    return {
-        type: SET_AUDIO_STREAM,
-        payload: {
-            audioStream
-        }
-    }
-
-}export function setAudioRecorder(audioRecorder: MediaRecorder): IPlainDataAction<IVoiceMessagesStateOpt> {
+export function setAudioRecorder(audioRecorder: MediaRecorder): IPlainDataAction<IVoiceMessagesStateOpt> {
     return {
         type: SET_AUDIO_RECORDER,
         payload: {
@@ -60,7 +46,7 @@ export function addChunkTF(chunk: ArrayBuffer) {
 export function prepareAudioRecorderTF() {
     return (dispatch: AppDispatch, getState: () => AppState) => {
         const state = getState();
-        if(!state.voiceMessages.audioStream) {
+        if(!state.voiceMessages.audioRecorder) {
             navigator.mediaDevices.getUserMedia({audio: true, video: false})
                 .then(mediaStream => {
                     const recorder = new MediaRecorder(mediaStream);
@@ -80,7 +66,6 @@ export function prepareAudioRecorderTF() {
                             .then(arrayBuffer => sendVoiceMessage(new Uint8Array(arrayBuffer)));
                     }
 
-                    dispatch(setAudioStream(mediaStream));
                     dispatch(setAudioRecorder(recorder));
                 });
         }

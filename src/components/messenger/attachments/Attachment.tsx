@@ -10,7 +10,6 @@ interface IOwnProps {
 const Attachment: React.FC<TProps> = (props) => {
 
     const url = URL.createObjectURL(props.file.data!);
-    console.log("URL: " + url);
 
     if (props.file.mimeType === MimeType.IMAGE) {
         return <>
@@ -23,22 +22,21 @@ const Attachment: React.FC<TProps> = (props) => {
                 <source src={url} type={"video/mp4"}/>
                 </video>
         </>
+    } else if (props.file.mimeType === MimeType.AUDIO) {
+        return <>
+            <audio controls src={url} style={{margin: "5px"}}/>
+        </>
     } else {
-        return <></>
+        //todo we need to implement more convenient component. But not simple <span>
+        return <span>Undefined attachment type</span>
     }
-    
-
 }
 
 const mapStateToProps = (state: AppState, ownProps: IOwnProps) => ({
     file: ownProps.file
 })
 
-const mapDispatchToProps = {
-
-}
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
+const connector = connect(mapStateToProps);
 
 type TProps = ConnectedProps<typeof connector>;
 
