@@ -9,9 +9,9 @@ export class FileService {
                 console.log('MIME TYPE: ' + file.type);
                 const arr = new Uint8Array(e.target!.result as ArrayBuffer);
                 if(file.type.match(/^image\//)) {
-                    resolve(addByteMarker(arr, 1));
+                    resolve(this.addByteMarker(arr, 1));
                 } else if (file.type.match(/^video\//)){
-                    resolve(addByteMarker(arr, 2));
+                    resolve(this.addByteMarker(arr, 2));
                 } else {
                     throw new Error('Unknown MIME type');
                 }
@@ -31,13 +31,13 @@ export class FileService {
             unmarkedArray: unmarkedArray
         }
     }
-}
 
-function addByteMarker(input: Uint8Array, marker: number): Uint8Array {
-    const result = new Uint8Array(input.length + 1);
-    result.set([marker], 0);
-    result.set(input, 1);
-    return result;
+    static addByteMarker(input: Uint8Array, marker: number): Uint8Array {
+        const result = new Uint8Array(input.length + 1);
+        result.set([marker], 0);
+        result.set(input, 1);
+        return result;
+    }
 }
 
 function identifyMimeType(array: Uint8Array) {

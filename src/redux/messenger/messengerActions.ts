@@ -1,8 +1,9 @@
 import {
     IMessengerStateOpt,
     SET_CHATS,
-    SET_CURRENT_CHAT, SET_LAST_MESSAGES_FETCH,
+    SET_CURRENT_CHAT,
     SET_GLOBAL_USERS,
+    SET_LAST_MESSAGES_FETCH,
     SET_MESSAGES,
     SET_USER,
     SET_USER_TITLE,
@@ -10,7 +11,7 @@ import {
 } from "./messengerTypes";
 import {IPlainDataAction} from "../redux-types";
 import {User} from "../../model/messenger/user";
-import {AppDispatch, AppState} from "../../index";
+import {AppDispatch, AppState, store} from "../../index";
 import {ChatApi} from "../../api/chatApi";
 import {MessageApi} from "../../api/messageApi";
 import {Message} from "../../model/messenger/message";
@@ -29,9 +30,7 @@ import {MessageProcessingService} from "../../service/messenger/messageProcessin
 import {ChatService} from "../../service/messenger/chatService";
 import {Builder} from "builder-pattern";
 import {GlobalUser} from "../../model/local-storage/localStorageTypes";
-import {LocalStorageService} from "../../service/local-data/localStorageService";
-import {CustomerApi} from "../../api/customerApi";
-import {AttachmentsServiceUpload} from "../../service/messenger/attachmentsServiceUpload";
+import {AttachmentsServiceUpload} from "../../service/messenger/attachments/attachmentsServiceUpload";
 
 export function setUser(user: User): IPlainDataAction<IMessengerStateOpt> {
 

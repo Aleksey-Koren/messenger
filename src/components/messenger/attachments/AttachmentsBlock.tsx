@@ -5,7 +5,7 @@ import {TAttachmentFile} from "../../../redux/attachments/attachmentsTypes";
 import LoadingSpinner from "./LoadingSpinner";
 import Attachment from "./Attachment";
 import {Message} from "../../../model/messenger/message";
-import {AttachmentServiceDownload} from "../../../service/messenger/AttachmentServiceDownload";
+import {AttachmentServiceDownload} from "../../../service/messenger/attachments/attachmentServiceDownload";
 import {fetchAttachmentsTF} from "../../../redux/attachments/attachmentsActions";
 
 interface IOwnProps {
@@ -24,9 +24,6 @@ const AttachmentsBlock: React.FC<TProps> = (props) => {
     useEffect(() => {
         AttachmentServiceDownload.fetchAttachments(props.message, setState);
     },[])
-
-    // AttachmentServiceDownload.fetchAttachments(props.message, setState);
-    // props.fetchAttachmentsTF(props.message, setState);
 
     return <>
         <div style={{display: "flex", flexDirection: "column"}}>
@@ -48,11 +45,7 @@ const mapStateTpProps = (state: AppState, ownProps: IOwnProps) => ({
     message: ownProps.message
 })
 
-const mapDispatchToProps = {
-    fetchAttachmentsTF
-}
-
-const connector = connect(mapStateTpProps, mapDispatchToProps);
+const connector = connect(mapStateTpProps);
 
 type TProps = ConnectedProps<typeof connector>;
 

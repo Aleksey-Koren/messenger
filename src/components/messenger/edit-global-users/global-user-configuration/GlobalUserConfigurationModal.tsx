@@ -31,7 +31,7 @@ const validationSchema = yup.object().shape({
     userId: yup.string()
         .required('User ID cannot be empty')
         .uuid("Not a valid UUID")
-        .test('test-global-user-existing', 'User already exists', function (value) {
+        .test('test.ts-global-user-existing', 'User already exists', function (value) {
             return !store.getState().messenger.globalUsers[value!];
         })
 });

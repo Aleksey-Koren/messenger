@@ -1,17 +1,20 @@
-import {useDispatch} from "react-redux";
+import {connect, ConnectedProps, useDispatch} from "react-redux";
 import * as Yup from "yup";
 import SendIcon from "@mui/icons-material/Send";
 import TextField from "@mui/material/TextField/TextField";
 import Fab from "@mui/material/Fab/Fab";
 import {useFormik} from "formik";
-
 import style from "../Messenger.module.css";
 import React, {useEffect, useState} from "react";
 import {sendMessage} from "../../../redux/messenger/messengerActions";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import {MessageType} from "../../../model/messenger/messageType";
 import AttachFileIcon from '@mui/icons-material/AttachFile';
-import {AttachmentsServiceUpload, IAttachmentsState} from "../../../service/messenger/attachmentsServiceUpload";
+import MicIcon from '@mui/icons-material/Mic';
+import {AttachmentsServiceUpload, IAttachmentsState} from "../../../service/messenger/attachments/attachmentsServiceUpload";
+import {VoiceMessagesService} from "../../../service/messenger/voiceMessagesService";
+import {AppState} from "../../../index";
+import {prepareAudioRecorderTF} from "../../../redux/voiceMessages/voiceMessagesActions";
 
 
 interface MessengerFooterProps {
@@ -25,17 +28,22 @@ export interface IFormikValues {
     currentChat: string | null | undefined
 }
 
-function MessengerFooter(props: MessengerFooterProps) {
-    const dispatch = useDispatch();
+const MessengerFooter: React.FC<TProps> = (props) => {
 
-    async function send(text:string, attachments: FileList) {
-        await dispatch(sendMessage(text, MessageType.whisper, () => props.scroll(false), attachments));
+    function send(text:string, attachments: FileList) {
+        if(!(text === '' && attachments.length === 0)) {
+            props.sendMessage(text, MessageType.whisper, () => props.scroll(false), attachments);
+            formik.setFieldValue('message', '', false);
+            formik.setFieldValue('attachments', {attachments: null, fileNames: []})
+            setAttachmentsState({attachments: null, fileNames: []});
+        }
     }
 
-    const [attachmentsState, setAttachmentsState] = useState<IAttachmentsState>({attachments: null, fileNames: []})
+    const [attachmentsState, setAttachmentsState] = useState<IAttachmentsState>({attachments: null, fileNames: []});
+    props.prepareAudioStreamTF();
+
 
     const validationSchema = Yup.object().shape({
-        message: Yup.string().required("Can't be empty"),
         currentChat: Yup.string().required("No active chat selected")
     });
 
@@ -47,11 +55,7 @@ function MessengerFooter(props: MessengerFooterProps) {
         },
         validationSchema: validationSchema,
         onSubmit: (values) => {
-            send(values.message, values.attachments.attachments!).then(() => {
-                formik.setFieldValue('message', '', false);
-                formik.setFieldValue('attachments', {attachments: null, fileNames: []})
-                setAttachmentsState({attachments: null, fileNames: []});
-            });
+            send(values.message, values.attachments.attachments!)
         },
     });
 
@@ -62,12 +66,20 @@ function MessengerFooter(props: MessengerFooterProps) {
     return (
         <div style={{display: "flex", height: 110, paddingBottom: 10, flexDirection: "row", alignItems: "center", borderTop: '1px solid#90caf9'}}>
             <div style={{display: "flex", flexDirection: "column", minHeight: '90%', marginRight: "10px"}}>
-                <label style={{color: "white"}}>
+                <label>
                     <AttachFileIcon style={{color: "white"}}/>
                     <input type={"file"} style={{display: "none"}} accept="image/*,video/*" multiple
                     onChange={e => AttachmentsServiceUpload.processUploading(e, attachmentsState, setAttachmentsState, formik)}
                     />
                 </label>
+
+                {props.audioRecorder !== null &&
+                        <MicIcon id={"mic"} style={{color: "white"}}
+                                 onMouseDown={() => VoiceMessagesService.startRecording(props.audioRecorder!)}
+                                 onMouseUp={() => VoiceMessagesService.stopRecording(props.audioRecorder!)}
+                                 onMouseLeave={() => VoiceMessagesService.stopRecording(props.audioRecorder!)}
+                        />
+                }
             </div>
             {attachmentsState.fileNames.length !== 0 &&
             <div style={{display: "flex", flexDirection: "column", marginRight: "10px", color: "white", maxHeight: "110"}}>
@@ -112,4 +124,20 @@ function MessengerFooter(props: MessengerFooterProps) {
     );
 }
 
-export default MessengerFooter;
+const mapStateToProps = (state: AppState, ownProps: MessengerFooterProps) => ({
+    scroll: ownProps.scroll,
+    currentChat: ownProps.currentChat,
+    audioRecorder: state.voiceMessages.audioRecorder,
+    isRecording: state.voiceMessages.isRecording
+})
+
+const mapDispatchToProps = {
+    sendMessage,
+    prepareAudioStreamTF: prepareAudioRecorderTF
+}
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
+
+type TProps = ConnectedProps<typeof connector>
+
+export default connector(MessengerFooter);

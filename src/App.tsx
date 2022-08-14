@@ -8,7 +8,7 @@ import Notification from './Notification';
 import {store} from "./index";
 
 // yup.addMethod(yup.string, "uuid", function (errorMessage) {
-//     return this.test(`test-card-type`, errorMessage, function (value) {
+//     return this.test.ts(`test.ts-card-type`, errorMessage, function (value) {
 //         const {path, createError} = this;
 //
 //         return (
@@ -18,14 +18,17 @@ import {store} from "./index";
 //     });
 // });
 
-async function foo() {
+function foo() {
 
-
-    URL.createObjectURL(new Blob([new Uint8Array()]));
+    navigator.permissions.query({name: 'microphone' as PermissionName})
+        .then(permissionStatusPromise => {
+            console.log("KKK")
+            console.log(permissionStatusPromise)
+        });
 }
 
 yup.addMethod(yup.mixed, "isGlobalUserNotExists", function (errorMessage) {
-    return this.test('test-global-user-existing', errorMessage, function (value) {
+    return this.test('test.ts-global-user-existing', errorMessage, function (value) {
         const {path, createError} = this;
         const globalUser = store.getState().messenger.globalUsers[value!];
 
@@ -34,7 +37,7 @@ yup.addMethod(yup.mixed, "isGlobalUserNotExists", function (errorMessage) {
 })
 
 function App() {
-    foo().then();
+    foo();
     const theme = createTheme({
         palette: {
             mode: 'dark',
