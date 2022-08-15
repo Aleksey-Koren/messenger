@@ -3,12 +3,12 @@ import {connect, ConnectedProps} from "react-redux";
 import React from "react";
 
 interface IOwnProps {
-    delta: number
+    duration: number
 }
 
 const TimerString: React.FC<TProps> = (props) => {
-    const minutes = Math.floor(props.delta / 60);
-    const seconds = props.delta % 60;
+    const minutes = Math.floor(props.duration / 60);
+    const seconds = props.duration % 60;
     return <>
         <span style={{color: "white"}}>
             {`${minutes < 10 ? "0" + minutes : minutes} : ${seconds < 10 ? "0" + seconds : seconds}`}
@@ -17,7 +17,7 @@ const TimerString: React.FC<TProps> = (props) => {
 }
 
 const mapStateToProps = (state: AppState, ownProps: IOwnProps) => ({
-    delta: ownProps.delta
+    duration: ownProps.duration
 })
 
 const connector = connect(mapStateToProps);

@@ -1,7 +1,7 @@
 import {
     IVoiceMessagesState,
     SET_AUDIO_RECORDER,
-    SET_CHUNKS,
+    SET_DURATION,
     SET_IS_RECORDING,
     TVoiceMessengerAction
 } from "./voiceMessagesTypes";
@@ -10,6 +10,9 @@ const initialState: IVoiceMessagesState = {
     isRecording: false,
     audioRecorder: null,
     chunks: [],
+    timerId: null,
+    start: null,
+    duration: null,
 }
 
 export function voiceMessagesReducer(state: IVoiceMessagesState = initialState, action: TVoiceMessengerAction): IVoiceMessagesState {
@@ -22,9 +25,8 @@ export function voiceMessagesReducer(state: IVoiceMessagesState = initialState, 
         case SET_AUDIO_RECORDER:
             return {...state, audioRecorder: action.payload.audioRecorder}
 
-        case SET_CHUNKS:
-            return {...state, chunks: action.payload.chunks}
-
+        case SET_DURATION:
+            return {...state, duration: action.payload.duration}
 
         default: return state;
     }

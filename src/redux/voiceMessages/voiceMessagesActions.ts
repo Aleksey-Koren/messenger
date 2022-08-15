@@ -1,4 +1,4 @@
-import {IVoiceMessagesStateOpt, SET_AUDIO_RECORDER, SET_CHUNKS, SET_IS_RECORDING} from "./voiceMessagesTypes";
+import {IVoiceMessagesStateOpt, SET_AUDIO_RECORDER, SET_DURATION, SET_IS_RECORDING} from "./voiceMessagesTypes";
 import {IPlainDataAction} from "../redux-types";
 import {AppDispatch, AppState, store} from "../../index";
 import {Message} from "../../model/messenger/message";
@@ -25,21 +25,12 @@ export function setAudioRecorder(audioRecorder: MediaRecorder): IPlainDataAction
     }
 }
 
-export function setChunks(chunks: ArrayBuffer[]): IPlainDataAction<IVoiceMessagesStateOpt> {
+export function setDuration(duration: number): IPlainDataAction<IVoiceMessagesStateOpt> {
     return {
-        type: SET_CHUNKS,
-        payload : {
-            chunks
+        type: SET_DURATION,
+        payload: {
+            duration
         }
-    }
-}
-
-export function addChunkTF(chunk: ArrayBuffer) {
-    return (dispatch: AppDispatch, getState: () => AppState) => {
-        const state = getState();
-        const chunksSerialized = {...state.voiceMessages.chunks}
-        chunksSerialized.push(chunk);
-        dispatch(setChunks(chunksSerialized));
     }
 }
 
@@ -50,14 +41,21 @@ export function prepareAudioRecorderTF() {
             navigator.mediaDevices.getUserMedia({audio: true, video: false})
                 .then(mediaStream => {
                     const recorder = new MediaRecorder(mediaStream);
-
+                    let intervalId: NodeJS.Timer;
                     recorder.onstart = () => {
                         document.getElementById("mic")!.style.color = "red";
+                        const start = Date.now();
+                        intervalId = setInterval(function() {
+                            const currentDelta = Math.floor((Date.now() - start) / 1000);
+                            dispatch(setDuration(currentDelta));
+                        }, 1000);
                         dispatch(setIsRecording(true));
                     }
 
                     recorder.onstop = () => {
                         document.getElementById("mic")!.style.color = "white";
+                        clearInterval(intervalId);
+                        dispatch(setDuration(0));
                         dispatch(setIsRecording(false));
                     }
 

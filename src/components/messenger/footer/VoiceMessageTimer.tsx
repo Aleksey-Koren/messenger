@@ -6,46 +6,30 @@ import {AppState} from "../../../index";
 import {VoiceMessagesService} from "../../../service/messenger/voiceMessagesService";
 import Notification from "../../../Notification";
 
-interface IState {
-    start: number;
-    duration: number;
-    interval: NodeJS.Timer | null;
-}
-
 const VoiceMessageTimer: React.FC<TProps> = (props) => {
 
-    const [state, setState] = useState<IState>({start: Date.now(), duration: 15, interval: null});
-    const [delta, setDelta] = useState<number>(0);
-
-
-    useEffect(() => {
-        const interval = setInterval(function() {
-            const currentDelta = Math.floor((Date.now() - state.start) / 1000);
-            setDelta(currentDelta);
-            console.log("INTERVAL!!!!!!!!!!!!!!!!")
-        }, 1000);
-        setState({...state, interval: interval});
-    }, [])
-
-
-    if(delta > state.duration && props.isRecording) {
+    const maxDuration = 30; //todo value should be taken from properties;
+    if(props.duration > maxDuration) {
         VoiceMessagesService.stopRecording(props.recorder);
-        clearInterval(state.interval!);
         Notification.add({
-            message: `Max voice message duration is ${state.duration} seconds :-(   But you can send several one by one :-)`,
+            message: `Max voice message duration is ${maxDuration} seconds :-(   But you can send several one by one :-)`,
             severity: "info"
         });
     }
 
     return <>
-        <Timer style={{color: "white"}}/>
-        <TimerString delta={delta}/>
+        {props.duration % 2 === 0
+            ? <Timer style={{color: "white"}}/>
+            : <Timer style={{color: "red"}}/>
+        }
+        <TimerString duration={props.duration}/>
     </>
 }
 
 const mapStateToProps = (state: AppState) => ({
     recorder: state.voiceMessages.audioRecorder!,
-    isRecording: state.voiceMessages.isRecording
+    isRecording: state.voiceMessages.isRecording,
+    duration: state.voiceMessages.duration!
 })
 
 const connector = connect(mapStateToProps);
