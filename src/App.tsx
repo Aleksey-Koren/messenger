@@ -19,12 +19,12 @@ import {store} from "./index";
 // });
 
 function foo() {
-
-    navigator.permissions.query({name: 'microphone' as PermissionName})
-        .then(permissionStatusPromise => {
-            console.log("KKK")
-            console.log(permissionStatusPromise)
-        });
+    //
+    // navigator.permissions.query({name: 'microphone' as PermissionName})
+    //     .then(permissionStatusPromise => {
+    //         console.log("KKK")
+    //         console.log(permissionStatusPromise)
+    //     });
 }
 
 yup.addMethod(yup.mixed, "isGlobalUserNotExists", function (errorMessage) {

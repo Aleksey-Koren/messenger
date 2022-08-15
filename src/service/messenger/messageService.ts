@@ -81,6 +81,10 @@ export class MessageService {
             store.dispatch(setGlobalUsers(globalUsers));
         })
     }
+
+    static isMessageNotEmpty(text:string, attachments: FileList) {
+        return (text !== '' || attachments.length > 0);
+    }
 }
 
 function decryptMessageData(message: Message, publicKeyToVerify: string, privateKeyToDecrypt?: Uint8Array) {

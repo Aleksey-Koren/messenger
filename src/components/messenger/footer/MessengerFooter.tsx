@@ -15,6 +15,8 @@ import {AttachmentsServiceUpload, IAttachmentsState} from "../../../service/mess
 import {VoiceMessagesService} from "../../../service/messenger/voiceMessagesService";
 import {AppState} from "../../../index";
 import {prepareAudioRecorderTF} from "../../../redux/voiceMessages/voiceMessagesActions";
+import {MessageService} from "../../../service/messenger/messageService";
+import VoiceMessage from "./VoiceMessage";
 
 
 interface MessengerFooterProps {
@@ -31,7 +33,7 @@ export interface IFormikValues {
 const MessengerFooter: React.FC<TProps> = (props) => {
 
     function send(text:string, attachments: FileList) {
-        if(!(text === '' && attachments.length === 0)) {
+        if(MessageService.isMessageNotEmpty(text, attachments)) {
             props.sendMessage(text, MessageType.whisper, () => props.scroll(false), attachments);
             formik.setFieldValue('message', '', false);
             formik.setFieldValue('attachments', {attachments: null, fileNames: []})
@@ -74,11 +76,7 @@ const MessengerFooter: React.FC<TProps> = (props) => {
                 </label>
 
                 {props.audioRecorder !== null &&
-                        <MicIcon id={"mic"} style={{color: "white"}}
-                                 onMouseDown={() => VoiceMessagesService.startRecording(props.audioRecorder!)}
-                                 onMouseUp={() => VoiceMessagesService.stopRecording(props.audioRecorder!)}
-                                 onMouseLeave={() => VoiceMessagesService.stopRecording(props.audioRecorder!)}
-                        />
+                    <VoiceMessage audioRecorder={props.audioRecorder} isRecording={props.isRecording}/>
                 }
             </div>
             {attachmentsState.fileNames.length !== 0 &&
