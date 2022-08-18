@@ -85,6 +85,10 @@ export class MessageService {
     static isMessageNotEmpty(text:string, attachments: FileList) {
         return (text !== '' || attachments.length > 0);
     }
+
+    static reverseMessages(messages: Message[]) {
+        return messages.reverse();
+    }
 }
 
 function decryptMessageData(message: Message, publicKeyToVerify: string, privateKeyToDecrypt?: Uint8Array) {

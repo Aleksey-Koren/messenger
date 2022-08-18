@@ -31,6 +31,7 @@ import {ChatService} from "../../service/messenger/chatService";
 import {Builder} from "builder-pattern";
 import {GlobalUser} from "../../model/local-storage/localStorageTypes";
 import {AttachmentsServiceUpload} from "../../service/messenger/attachments/attachmentsServiceUpload";
+import {MessageService} from "../../service/messenger/messageService";
 
 export function setUser(user: User): IPlainDataAction<IMessengerStateOpt> {
 
@@ -258,7 +259,9 @@ export function openChatTF(chatId: string) {
             size: 20,
             before: getState().messenger.lastMessagesFetch!
         }).then(messages => {
-            dispatch(setMessages(messages.filter(message => message.type !== MessageType.who)))
+            messages = messages.filter(message => message.type !== MessageType.who);
+            messages = MessageService.reverseMessages(messages);
+            dispatch(setMessages(messages));
         })
     }
 }

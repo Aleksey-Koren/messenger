@@ -14,9 +14,11 @@ import {
 } from "../../../redux/messenger-controls/messengerControlsActions";
 import {Message} from "../../../model/messenger/message";
 import AttachmentsBlock from "../attachments/AttachmentsBlock";
+import {SchedulerService} from "../../../service/schedulerService";
 
 
 function mergeMessages(messages?:Message[]):Message[][] {
+
     if(!messages) {
         return [];
     }
