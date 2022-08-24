@@ -3,7 +3,7 @@ import style from "../Messenger.module.css";
 import ListItem from "@mui/material/ListItem/ListItem";
 import ListItemText from "@mui/material/ListItemText/ListItemText";
 import {AppState} from "../../../index";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {connect, ConnectedProps} from "react-redux";
 import {MessageType} from "../../../model/messenger/messageType";
 import PerfectScrollbar from "react-perfect-scrollbar";
@@ -15,6 +15,8 @@ import {
 import {Message} from "../../../model/messenger/message";
 import AttachmentsBlock from "../attachments/AttachmentsBlock";
 import {SchedulerService} from "../../../service/schedulerService";
+import InfiniteScroll from "react-infinite-scroll-component";
+import {fetchNextPageTF} from "../../../redux/messenger/messengerActions";
 
 
 function mergeMessages(messages?:Message[]):Message[][] {
@@ -40,72 +42,86 @@ const MessagesList: React.FC<Props> = (props) => {
     const userId = props.user?.id;
 
     const message = mergeMessages(props.messages);
+// const lastItemId= ''
+// const itemRef = useRef();
+// useEffect(() => {
+//     itemRef.scrollIntoView()
+// }, [lastItemId])
 
     return (
-        <PerfectScrollbar onScroll={(e) => {props.updateScroll(e.currentTarget)}} containerRef={container => {
-            props.setScroll(container);
-            props.scroll(true);
-        }}>
+        <>
             {!props.currentChat ? <Alert severity="info" style={{margin: 15}}>
                 <Button onClick={() => {
                     props.setIsNewRoomModalOpened(true)
                 }}>Start new chat</Button>
             </Alert> : null}
-            <List id={'list'}>
-                {/* This place should start a loop for room messages and create ListItem for each message */}
-                {message.map(message => {
-                    const first = message[0];
-                    return (
-                    <ListItem key={first.id} style={{display: 'flex', flexDirection: (first.sender === userId ? 'row-reverse' : 'row'), /* my messages - right, others - left*/}}>
-                                {first.type === MessageType.whisper &&
-
-                                    <Paper color={"primary"} className={style.message_container}>
-                                        <ListItemText>
-                                            <Typography color={"primary"} className={style.message_info}>
-                                                {/*createEditIcon(message, userId)*/}
-                                                {first.sender !== userId && <SenderName title={props.chatParticipants[first.sender!]?.title} id={first.sender}/>}
-                                                {first.sender !== userId && <span>&nbsp;|&nbsp;</span>}
-                                                <TimeSince time={first.created}/>
-                                            </Typography>
-                                        </ListItemText>
-
-                                        {/*<video height={"300"} width={"300"} controls>*/}
-                                        {/*    <source src={'video.mp4'} type={"video/mp4"}/>*/}
-                                        {/*    </video>*/}
+            <List id={'list'} style={{height: 680, overflow: 'auto', display: 'flex', flexDirection: 'column-reverse'}}>
+                <InfiniteScroll dataLength={props.messages.length}
+                                hasMore={true}
+                                loader={<h3>...Loading...</h3>}
+                                next={props.fetchNextPageTF}
+                                style={{display: 'flex', flexDirection: 'column-reverse'}}
+                                inverse={true}
+                    // height={680}
+                                scrollableTarget={"list"}
+                >
 
 
+                    {/* This place should start a loop for room messages and create ListItem for each message */}
+                    {props.messages.map((message, index) => {
+                        // const message = message;
+                        return (
+                            <ListItem/*{index  === props.length-1 && ...{ref: itemRef}}*/ id={'listItem'}
+                                                                                           key={message.id} style={{
+                                display: 'flex',
+                                flexDirection: (message.sender === userId ? 'row-reverse' : 'row'), /* my messages - right, others - left*/
+                            }}>
+                                {message.type === MessageType.whisper &&
+                                <Paper color={"primary"} className={style.message_container}>
+                                    <ListItemText>
+                                        <Typography color={"primary"} className={style.message_info}>
+                                            {message.sender !== userId &&
+                                            <SenderName title={props.chatParticipants[message.sender!]?.title}
+                                                        id={message.sender}/>}
+                                            {message.sender !== userId && <span>&nbsp;|&nbsp;</span>}
+                                            <TimeSince time={message.created}/>
+                                        </Typography>
+                                    </ListItemText>
 
-                                        <ListItemText>
-                                            {message.map(text =>
-                                                <>
-                                                    {text.attachmentsFilenames &&
-                                                    <AttachmentsBlock message={text}/>
-                                                    }
-                                                    <Typography color={""}
-                                                                className={style.message}>{text.data}</Typography>
-                                                </>)}
-                                        </ListItemText>
-                                    </Paper>
+                                    <ListItemText>
+                                        <>
+                                            {message.attachmentsFilenames && <AttachmentsBlock message={message}/>}
+                                            <Typography color={""} className={style.message}>{message.data}</Typography>
+                                            {/*<Typography color={""} className={style.message}>{ref.scrollHeight}</Typography>*/}
+                                            {/*<Typography color={""} className={style.message}>{ref.offsetHeight}</Typography>*/}
+                                            {/*<Typography color={""} className={style.message}>{ref.scrollTop}</Typography>*/}
+                                        </>
+                                    </ListItemText>
+                                </Paper>
                                 }
 
-                                {first.type === MessageType.hello &&
-                                    <div className={style.system_message}>
-                                        <span>Room title has been set to '{first.data}'</span>
-                                    </div>
+                                {message.type === MessageType.hello &&
+                                <div className={style.system_message}>
+                                    <span>Room title has been set to '{message.data}'</span>
+                                </div>
                                 }
-                                {first.type === MessageType.iam &&
-                                    <div className={style.system_message}>
-                                        {userId === first.sender
-                                            ? <span>Your name is '{first.data}'. <Button onClick={() => {
-                                                props.setIsEditUserTitleModalOpen(true);
-                                            }}>Change name</Button></span>
-                                            : <span>User&nbsp;<Uuid data={first.sender}/>&nbsp;now known as '{first.data}'</span>}
-                                    </div>
+                                {message.type === MessageType.iam &&
+                                <div className={style.system_message}>
+                                    {userId === message.sender
+                                        ? <span>Your name is '{message.data}'. <Button onClick={() => {
+                                            props.setIsEditUserTitleModalOpen(true);
+                                        }}>Change name</Button></span>
+                                        :
+                                        <span>User&nbsp;<Uuid data={message.sender}/>&nbsp;now known as '{message.data}'</span>}
+                                </div>
                                 }
-                    </ListItem>
-                )})}
+                            </ListItem>
+                        )
+                    })}
+
+                </InfiniteScroll>
             </List>
-        </PerfectScrollbar>
+        </>
     );
 }
 
@@ -179,7 +195,9 @@ const mapStateToProps = (state: AppState, ownState:{setScroll:(div:HTMLElement|n
 })
 
 const mapDispatchToProps = {
-    setIsNewRoomModalOpened, setIsEditUserTitleModalOpen
+    setIsNewRoomModalOpened,
+    setIsEditUserTitleModalOpen,
+    fetchNextPageTF
 }
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
