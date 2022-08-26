@@ -109,3 +109,27 @@
     margin-left: 5px
 }
 
+/* MESSAGES LIST*/
+
+.messages_list {
+
+}
+
+.messages_list::-webkit-scrollbar {
+    width: 7px;
+}
+
+.messages_list::-webkit-scrollbar-track {
+    color: transparent;
+}
+
+.messages_list::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    border-radius: 20px;
+}
+
+.messages_list:hover::-webkit-scrollbar-thumb {
+    background-color: dimgray;
+    border-radius: 20px;
+}
+

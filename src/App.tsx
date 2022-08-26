@@ -19,12 +19,29 @@ import {store} from "./index";
 // });
 
 function foo() {
-    //
-    // navigator.permissions.query({name: 'microphone' as PermissionName})
-    //     .then(permissionStatusPromise => {
-    //         console.log("KKK")
-    //         console.log(permissionStatusPromise)
-    //     });
+
+    let a1;
+    let a2;
+    let a3;
+    a1 = 1;
+    a2 = 2;
+    a3 = 3;
+    let arr = [];
+    arr.push(a2);
+    arr.push(a3);
+    arr.push(a1);
+    console.log(arr);
+    arr.sort((a, b) => {
+        if (a > b) {
+            return -1;
+        } else if (a < b) {
+            return 1;
+        } else {
+            return 0;
+        }
+    });
+    console.log(arr);
+
 }
 
 yup.addMethod(yup.mixed, "isGlobalUserNotExists", function (errorMessage) {

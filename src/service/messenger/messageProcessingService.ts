@@ -129,7 +129,21 @@ function appendMessages(existing: Message[], incoming: Message[]) {
             return map;
         },
         {} as { [key: string]: 1 });
-    return existing.concat(incoming.filter(message => {
+
+    const newFiltered: Message[] = incoming.filter(message => {
         return !map[message.id!];
-    }))
+    });
+    newFiltered.sort(sortByCreatedAt);
+    return [...newFiltered, ...existing];
+
+}
+
+function sortByCreatedAt(a: Message, b: Message) {
+    if(a.created!.getTime() > b.created!.getTime()) {
+        return 1;
+    } else if(a.created!.getTime() < b.created!.getTime()) {
+        return -1;
+    } else {
+        return 0;
+    }
 }

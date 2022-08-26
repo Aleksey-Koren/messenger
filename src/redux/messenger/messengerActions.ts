@@ -265,28 +265,6 @@ export function openChatTF(chatId: string) {
     }
 }
 
-export function fetchNextPageTF() {
-    return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
-        const state = getState();
-        const currentMessages = state.messenger.messages;
-        const oldestCreated = currentMessages[currentMessages.length - 1].created;
-        MessageApi.getMessages({
-            receiver: state.messenger.user!.id,
-            chat: state.messenger.currentChat!,
-            page: 0,
-            size: 15,
-            before: oldestCreated
-        }).then(messages => {
-            console.log("NEXT PAGE")
-            console.log(messages)
-            if(messages.length > 0) {
-                messages = messages.filter(message => message.type !== MessageType.who);
-                dispatch(setMessages([...currentMessages, ...messages]));
-            }
-        })
-    }
-}
-
 export function updateUserTitle(title: string) {
 
     return (dispatch: ThunkDispatch<AppState, any, Action>, getState: () => AppState) => {

@@ -6,73 +6,65 @@ import {AppState} from "../../../index";
 import React, {useEffect, useRef, useState} from "react";
 import {connect, ConnectedProps} from "react-redux";
 import {MessageType} from "../../../model/messenger/messageType";
-import PerfectScrollbar from "react-perfect-scrollbar";
-import {Alert, Button, Paper, Typography} from "@mui/material";
+import {Alert, Button, CircularProgress, Paper, Typography} from "@mui/material";
 import {
     setIsEditUserTitleModalOpen,
     setIsNewRoomModalOpened
 } from "../../../redux/messenger-controls/messengerControlsActions";
 import {Message} from "../../../model/messenger/message";
 import AttachmentsBlock from "../attachments/AttachmentsBlock";
-import {SchedulerService} from "../../../service/schedulerService";
 import InfiniteScroll from "react-infinite-scroll-component";
-import {fetchNextPageTF} from "../../../redux/messenger/messengerActions";
+import {fetchNextPageTF, onScrollTF} from "../../../redux/messages-list/messagesListActions";
+import {EndMessage} from "./EndMessage";
 
 
-function mergeMessages(messages?:Message[]):Message[][] {
-
-    if(!messages) {
-        return [];
-    }
-    const out:Message[][] = [];
-    let current:Message[]|undefined = undefined;
-    for(let i = 0; i < messages.length; i++) {
-        let message = messages[i];
-        if(!current || current[0].sender !== message.sender || current[0].type !== MessageType.whisper || message.type !== MessageType.whisper) {
-            current = []
-            out.push(current);
-        }
-        current.push(message)
-    }
-    return out;
-}
+// function mergeMessages(messages?: Message[]): Message[][] {
+//
+//     if (!messages) {
+//         return [];
+//     }
+//     const out: Message[][] = [];
+//     let current: Message[] | undefined = undefined;
+//     for (let i = 0; i < messages.length; i++) {
+//         let message = messages[i];
+//         if (!current || current[0].sender !== message.sender || current[0].type !== MessageType.whisper || message.type !== MessageType.whisper) {
+//             current = []
+//             out.push(current);
+//         }
+//         current.push(message)
+//     }
+//     return out;
+// }
 
 const MessagesList: React.FC<Props> = (props) => {
 
     const userId = props.user?.id;
-
-    const message = mergeMessages(props.messages);
-// const lastItemId= ''
-// const itemRef = useRef();
-// useEffect(() => {
-//     itemRef.scrollIntoView()
-// }, [lastItemId])
-
     return (
         <>
-            {!props.currentChat ? <Alert severity="info" style={{margin: 15}}>
-                <Button onClick={() => {
-                    props.setIsNewRoomModalOpened(true)
-                }}>Start new chat</Button>
-            </Alert> : null}
-            <List id={'list'} style={{height: 680, overflow: 'auto', display: 'flex', flexDirection: 'column-reverse'}}>
+            {!props.currentChat ?
+                <Alert severity="info" style={{margin: 15}}>
+                    <Button onClick={() => {
+                        props.setIsNewRoomModalOpened(true)
+                    }}>Start new chat</Button>
+                </Alert> : null}
+            <List id={'list'}
+                  onScroll={e => props.onScrollTF(e)}
+                  className={style.messages_list}
+                  style={{height: 680, overflow: 'auto', display: 'flex', flexDirection: 'column-reverse'}}>
                 <InfiniteScroll dataLength={props.messages.length}
-                                hasMore={true}
-                                loader={<h3>...Loading...</h3>}
+                                hasMore={props.hasMore}
+                                loader={<div style={{margin: '10px 50%'}}><CircularProgress/></div>}
                                 next={props.fetchNextPageTF}
                                 style={{display: 'flex', flexDirection: 'column-reverse'}}
                                 inverse={true}
-                    // height={680}
                                 scrollableTarget={"list"}
+                                endMessage={<EndMessage/>}
                 >
-
-
                     {/* This place should start a loop for room messages and create ListItem for each message */}
                     {props.messages.map((message, index) => {
-                        // const message = message;
                         return (
-                            <ListItem/*{index  === props.length-1 && ...{ref: itemRef}}*/ id={'listItem'}
-                                                                                           key={message.id} style={{
+                            <ListItem id={'listItem'}
+                                      key={message.id} style={{
                                 display: 'flex',
                                 flexDirection: (message.sender === userId ? 'row-reverse' : 'row'), /* my messages - right, others - left*/
                             }}>
@@ -92,9 +84,6 @@ const MessagesList: React.FC<Props> = (props) => {
                                         <>
                                             {message.attachmentsFilenames && <AttachmentsBlock message={message}/>}
                                             <Typography color={""} className={style.message}>{message.data}</Typography>
-                                            {/*<Typography color={""} className={style.message}>{ref.scrollHeight}</Typography>*/}
-                                            {/*<Typography color={""} className={style.message}>{ref.offsetHeight}</Typography>*/}
-                                            {/*<Typography color={""} className={style.message}>{ref.scrollTop}</Typography>*/}
                                         </>
                                     </ListItemText>
                                 </Paper>
@@ -118,46 +107,45 @@ const MessagesList: React.FC<Props> = (props) => {
                             </ListItem>
                         )
                     })}
-
                 </InfiniteScroll>
             </List>
         </>
     );
 }
 
-function SenderName({title, id}:{title?:string, id:string}) {
+function SenderName({title, id}: { title?: string, id: string }) {
     const [showId, setShowId] = useState<boolean>(false);
-    return <Button size={"small"} onClick={() => setShowId(!showId)}>{showId ? id : (title ? title : id.substring(0, 5))}</Button>;
+    return <Button size={"small"}
+                   onClick={() => setShowId(!showId)}>{showId ? id : (title ? title : id.substring(0, 5))}</Button>;
 }
-function Uuid({data}:{data:string}) {
+
+function Uuid({data}: { data: string }) {
     const [full, setFull] = useState<boolean>(false);
     return <Button size={"small"} onClick={() => setFull(!full)}>{full ? data : data.substring(0, 5)}</Button>;
 }
 
-function TimeSince(props:{time?:Date}) {
+function TimeSince(props: { time?: Date }) {
     const [time, setTime] = useState<string>('');
     useEffect(() => {
         const interval = setInterval(() => {
-            //@ts-ignore
-            setTime(timeSince(props.time));
+            setTime(timeSince(props.time!));
         }, 1000);
-        //@ts-ignore
-        setTime(timeSince(props.time));
+        setTime(timeSince(props.time!));
         return () => {
             clearInterval(interval);
         }
     }, [setTime, props.time]);
-    if(time) {
+    if (time) {
         return <span>{time} ago</span>
     } else {
         return null;
     }
 }
-function timeSince(time:string|null) {
-    if(!time) {
+
+function timeSince(date?: Date) {
+    if (!date) {
         return '';
     }
-    const date = new Date(time);
     var seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
 
     var interval = seconds / 31536000;
@@ -183,21 +171,27 @@ function timeSince(time:string|null) {
     return "minute";
 }
 
-const mapStateToProps = (state: AppState, ownState:{setScroll:(div:HTMLElement|null) => void, updateScroll:(div:HTMLElement) => void, scroll:(force:boolean) => void}) => ({
+// function onScroll(econtainer: ) {
+//     if(container.scrollTop + container.offsetHeight + 20 >= container.scrollHeight) {
+//         console.log('ON BOTTOM')
+//     } else {
+//         console.log('OUT OF BOTTOM!!!!!')
+//     }
+// }
+
+const mapStateToProps = (state: AppState, ownState: { setScroll: (div: HTMLElement | null) => void, updateScroll: (div: HTMLElement) => void, scroll: (force: boolean) => void }) => ({
     messages: state.messenger.messages,
     chatParticipants: state.messenger.users,
     user: state.messenger.user,
     currentChat: state.messenger.currentChat,
-
-    setScroll: ownState.setScroll,
-    scroll: ownState.scroll,
-    updateScroll: ownState.updateScroll,
+    hasMore: state.messagesList.hasMore
 })
 
 const mapDispatchToProps = {
     setIsNewRoomModalOpened,
     setIsEditUserTitleModalOpen,
-    fetchNextPageTF
+    fetchNextPageTF,
+    onScrollTF
 }
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
