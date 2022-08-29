@@ -39,6 +39,11 @@ import {EndMessage} from "./EndMessage";
 const MessagesList: React.FC<Props> = (props) => {
 
     const userId = props.user?.id;
+    const oldMessages: Message[] = [];
+    const delimeter: Message = {} as Message;
+    const unreadMessages: Message[] = [];
+    const data: Message[] = [...oldMessages, delimeter, ...unreadMessages];
+    console.log("RENDER")
     return (
         <>
             {!props.currentChat ?
@@ -63,7 +68,7 @@ const MessagesList: React.FC<Props> = (props) => {
                     {/* This place should start a loop for room messages and create ListItem for each message */}
                     {props.messages.map((message, index) => {
                         return (
-                            <ListItem id={'listItem'}
+                            <ListItem id={message.id}
                                       key={message.id} style={{
                                 display: 'flex',
                                 flexDirection: (message.sender === userId ? 'row-reverse' : 'row'), /* my messages - right, others - left*/
@@ -84,6 +89,7 @@ const MessagesList: React.FC<Props> = (props) => {
                                         <>
                                             {message.attachmentsFilenames && <AttachmentsBlock message={message}/>}
                                             <Typography color={""} className={style.message}>{message.data}</Typography>
+                                            <Typography color={"green"} className={style.message}>{message.id}</Typography>
                                         </>
                                     </ListItemText>
                                 </Paper>

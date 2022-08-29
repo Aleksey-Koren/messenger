@@ -16,6 +16,15 @@ export function setHasMore(hasMore: boolean): ISetHasMoreAction {
     }
 }
 
+export function SetAtTheBottom(isAtTheBottom: boolean) {
+    return {
+        type: MessagesListActionType.SET_AT_THE_BOTTOM,
+        payload: {
+            isAtTheBottom: isAtTheBottom
+        }
+    }
+}
+
 export function fetchNextPageTF() {
     return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
         const state = getState();
@@ -43,7 +52,19 @@ export function fetchNextPageTF() {
 export function onScrollTF(event: React.UIEvent<HTMLUListElement, UIEvent>) {
     return function (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) {
         const scrollRef = event.currentTarget;
-        console.log(scrollRef.scrollTop);
+        const boundingClientRect = scrollRef.getBoundingClientRect();
+        const y = boundingClientRect.bottom - 40;
+        const x = (boundingClientRect.right - boundingClientRect.left) / 2
+        console.log('Y');
+        console.log(y);
+        console.log("X");
+        console.log(x);
+        const target = document.elementFromPoint(x, y);
+        if (target) {
+            console.log(target.id);
+        }
+
+
         if(scrollRef.scrollTop > -1) {
             console.log('ON THE TOP');
         }
