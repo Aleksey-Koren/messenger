@@ -227,9 +227,9 @@ export function fetchMessengerStateTF(loggedUserId: string) {
                     .then(() => ChatService.tryDecryptChatsTitles(chatResp, globalUsers))
                     .then(chats => {
                         const currentChat = chats[0];
-                        const stringIndexArrayChats = chats.reduce((prev, next) => {
-                            prev[next.id] = next;
-                            return prev;
+                        const stringIndexArrayChats = chats.reduce((collector, next) => {
+                            collector[next.id] = next;
+                            return collector;
                         }, {} as StringIndexArray<Chat>);
 
                         dispatch(setGlobalUsers(globalUsers));

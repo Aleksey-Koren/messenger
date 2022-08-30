@@ -67,51 +67,53 @@ const MessagesList: React.FC<Props> = (props) => {
                 >
                     {/* This place should start a loop for room messages and create ListItem for each message */}
                     {props.messages.map((message, index) => {
-                        return (
-                            <ListItem id={message.id}
-                                      key={message.id} style={{
-                                display: 'flex',
-                                flexDirection: (message.sender === userId ? 'row-reverse' : 'row'), /* my messages - right, others - left*/
-                            }}>
-                                {message.type === MessageType.whisper &&
-                                <Paper color={"primary"} className={style.message_container}>
-                                    <ListItemText>
-                                        <Typography color={"primary"} className={style.message_info}>
-                                            {message.sender !== userId &&
-                                            <SenderName title={props.chatParticipants[message.sender!]?.title}
-                                                        id={message.sender}/>}
-                                            {message.sender !== userId && <span>&nbsp;|&nbsp;</span>}
-                                            <TimeSince time={message.created}/>
-                                        </Typography>
-                                    </ListItemText>
+                        return <ListItem id={message.id}
+                                         key={message.id} style={{
+                            display: 'flex',
+                            flexDirection: (message.sender === userId ? 'row-reverse' : 'row'), /* my messages - right, others - left*/
+                        }}>
+                            {message.type === MessageType.whisper &&
+                            <Paper color={"primary"} className={style.message_container}>
+                                <ListItemText>
+                                    <Typography color={"primary"} className={style.message_info}>
+                                        {message.sender !== userId &&
+                                        <SenderName title={props.chatParticipants[message.sender!]?.title}
+                                                    id={message.sender}/>}
+                                        {message.sender !== userId && <span>&nbsp;|&nbsp;</span>}
+                                        <TimeSince time={message.created}/>
+                                    </Typography>
+                                </ListItemText>
 
-                                    <ListItemText>
-                                        <>
-                                            {message.attachmentsFilenames && <AttachmentsBlock message={message}/>}
-                                            <Typography color={""} className={style.message}>{message.data}</Typography>
-                                            <Typography color={"green"} className={style.message}>{message.id}</Typography>
-                                        </>
-                                    </ListItemText>
-                                </Paper>
-                                }
+                                <ListItemText>
+                                    <>
+                                        {message.attachmentsFilenames && <AttachmentsBlock message={message}/>}
+                                        <Typography color={""} className={style.message}>{message.data}</Typography>
+                                        <Typography color={"green"} className={style.message}>{message.id}</Typography>
+                                        <Typography color={"red"} className={style.message}>{message.created!.toString()}</Typography>
+                                        <Typography color={"red"} className={style.message}>{message.created!.getTime()}</Typography>
+                                    </>
+                                </ListItemText>
+                            </Paper>
+                            }
 
-                                {message.type === MessageType.hello &&
-                                <div className={style.system_message}>
-                                    <span>Room title has been set to '{message.data}'</span>
-                                </div>
-                                }
-                                {message.type === MessageType.iam &&
-                                <div className={style.system_message}>
-                                    {userId === message.sender
-                                        ? <span>Your name is '{message.data}'. <Button onClick={() => {
-                                            props.setIsEditUserTitleModalOpen(true);
-                                        }}>Change name</Button></span>
-                                        :
-                                        <span>User&nbsp;<Uuid data={message.sender}/>&nbsp;now known as '{message.data}'</span>}
-                                </div>
-                                }
-                            </ListItem>
-                        )
+                            {message.type === MessageType.hello &&
+                            <div className={style.system_message}>
+                                <span>Room title has been set to '{message.data}'</span>
+                            </div>
+                            }
+                            {message.type === MessageType.iam &&
+                            <div className={style.system_message}>
+                                {userId === message.sender
+                                    ? <span>Your name is '{message.data}'. <Button onClick={() => {
+                                        props.setIsEditUserTitleModalOpen(true);
+                                    }}>Change name</Button></span>
+                                    :
+                                    <span>User&nbsp;<Uuid
+                                        data={message.sender}/>&nbsp;now known as '{message.data}'</span>}
+                            </div>
+                            }
+                        </ListItem>
+
                     })}
                 </InfiniteScroll>
             </List>

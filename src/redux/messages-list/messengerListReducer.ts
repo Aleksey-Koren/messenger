@@ -2,7 +2,8 @@ import {IMessagesListState, MessagesListAction, MessagesListActionType,} from ".
 
 const initialState: IMessagesListState = {
     hasMore: true,
-    isAtTheBottom: true
+    isAtTheBottom: true,
+    lastRead: null
 }
 
 export function messagesListReducer(state: IMessagesListState = initialState, action: MessagesListAction): IMessagesListState {
@@ -13,6 +14,9 @@ export function messagesListReducer(state: IMessagesListState = initialState, ac
 
         case MessagesListActionType.SET_AT_THE_BOTTOM:
             return {...state, isAtTheBottom: action.payload.isAtTheBottom}
+
+        case MessagesListActionType.SET_LAST_READ:
+            return {...state, lastRead: action.payload.lastRead}
 
         default: return state
     }

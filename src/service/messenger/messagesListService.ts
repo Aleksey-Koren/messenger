@@ -8,4 +8,11 @@ export class MessagesListService {
 
         }
     }
+
+    static calculateAimCoordinates(scrollRef:  EventTarget & HTMLUListElement) {
+        const boundingClientRect = scrollRef.getBoundingClientRect();
+        const y = boundingClientRect.bottom - 40;
+        const x = (boundingClientRect.right - boundingClientRect.left) / 2
+        return {x,y}
+    }
 }

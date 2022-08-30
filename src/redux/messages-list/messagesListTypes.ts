@@ -1,11 +1,15 @@
+import {Message} from "../../model/messenger/message";
+
 export interface IMessagesListState {
     hasMore: boolean;
     isAtTheBottom: boolean;
+    lastRead: Message | null;
 }
 
 export enum MessagesListActionType {
     SET_HAS_MORE,
-    SET_AT_THE_BOTTOM
+    SET_AT_THE_BOTTOM,
+    SET_LAST_READ
 }
 
 export interface ISetHasMoreAction {
@@ -22,4 +26,11 @@ export interface ISetAtTheBottom {
     }
 }
 
-export type MessagesListAction = ISetHasMoreAction | ISetAtTheBottom;
+export interface ISetLastRead {
+    type: MessagesListActionType.SET_LAST_READ;
+    payload: {
+        lastRead: Message;
+    }
+}
+
+export type MessagesListAction = ISetHasMoreAction | ISetAtTheBottom | ISetLastRead;

@@ -6,6 +6,8 @@ import {MessageApi} from "../../api/messageApi";
 import {MessageType} from "../../model/messenger/messageType";
 import {setMessages} from "../messenger/messengerActions";
 import React from "react";
+import {MessagesListService} from "../../service/messenger/messagesListService";
+import {Message} from "../../model/messenger/message";
 
 export function setHasMore(hasMore: boolean): ISetHasMoreAction {
     return {
@@ -21,6 +23,15 @@ export function SetAtTheBottom(isAtTheBottom: boolean) {
         type: MessagesListActionType.SET_AT_THE_BOTTOM,
         payload: {
             isAtTheBottom: isAtTheBottom
+        }
+    }
+}
+
+export function SetLastRead(lastRead: Message) {
+    return {
+        type: MessagesListActionType.SET_LAST_READ,
+        payload: {
+            lastRead: lastRead
         }
     }
 }
@@ -52,13 +63,7 @@ export function fetchNextPageTF() {
 export function onScrollTF(event: React.UIEvent<HTMLUListElement, UIEvent>) {
     return function (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) {
         const scrollRef = event.currentTarget;
-        const boundingClientRect = scrollRef.getBoundingClientRect();
-        const y = boundingClientRect.bottom - 40;
-        const x = (boundingClientRect.right - boundingClientRect.left) / 2
-        console.log('Y');
-        console.log(y);
-        console.log("X");
-        console.log(x);
+        const {x, y} = MessagesListService.calculateAimCoordinates(scrollRef);
         const target = document.elementFromPoint(x, y);
         if (target) {
             console.log(target.id);
