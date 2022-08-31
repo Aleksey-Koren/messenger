@@ -18,7 +18,7 @@ export function setHasMore(hasMore: boolean): ISetHasMoreAction {
     }
 }
 
-export function SetAtTheBottom(isAtTheBottom: boolean) {
+export function setAtTheBottom(isAtTheBottom: boolean) {
     return {
         type: MessagesListActionType.SET_AT_THE_BOTTOM,
         payload: {
@@ -27,7 +27,7 @@ export function SetAtTheBottom(isAtTheBottom: boolean) {
     }
 }
 
-export function SetLastRead(lastRead: Message) {
+export function setLastRead(lastRead: string) {
     return {
         type: MessagesListActionType.SET_LAST_READ,
         payload: {
@@ -62,16 +62,25 @@ export function fetchNextPageTF() {
 
 export function onScrollTF(event: React.UIEvent<HTMLUListElement, UIEvent>) {
     return function (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) {
+        const state = getState();
         const scrollRef = event.currentTarget;
         const {x, y} = MessagesListService.calculateAimCoordinates(scrollRef);
         const target = document.elementFromPoint(x, y);
-        if (target) {
-            console.log(target.id);
+        if(target) {
+            if (MessagesListService.isAfter(target.id, state.messagesList.lastRead)) {
+                console.log('setLastRead  :  ' + target.id)
+                dispatch(setLastRead(target.id));
+            }
         }
 
+        if(scrollRef.scrollTop > -1 && !state.messagesList.isAtTheBottom) {
+            console.log("AT THE BOTTOM");
+            dispatch(setAtTheBottom(true));
+        }
 
-        if(scrollRef.scrollTop > -1) {
-            console.log('ON THE TOP');
+        if(scrollRef.scrollTop < -1 && state.messagesList.isAtTheBottom) {
+            console.log("GO UP");
+            dispatch(setAtTheBottom(false));
         }
     }
 }

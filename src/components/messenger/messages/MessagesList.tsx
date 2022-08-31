@@ -16,6 +16,7 @@ import AttachmentsBlock from "../attachments/AttachmentsBlock";
 import InfiniteScroll from "react-infinite-scroll-component";
 import {fetchNextPageTF, onScrollTF} from "../../../redux/messages-list/messagesListActions";
 import {EndMessage} from "./EndMessage";
+import {MessagesListService} from "../../../service/messenger/messagesListService";
 
 
 // function mergeMessages(messages?: Message[]): Message[][] {
@@ -37,13 +38,16 @@ import {EndMessage} from "./EndMessage";
 // }
 
 const MessagesList: React.FC<Props> = (props) => {
-
     const userId = props.user?.id;
-    const oldMessages: Message[] = [];
-    const delimeter: Message = {} as Message;
-    const unreadMessages: Message[] = [];
-    const data: Message[] = [...oldMessages, delimeter, ...unreadMessages];
-    console.log("RENDER")
+
+    const lastReadUuid = props.lastRead ? props.lastRead.split(':')[0] : null;
+    const messages = props.messages;
+    const isUnreadMessagesExist = MessagesListService.isUnreadMessagesExist(lastReadUuid, messages);
+    console.log('!!!Render');
+
+    // useEffect(() => {
+    // }, [props.lastRead])
+
     return (
         <>
             {!props.currentChat ?
@@ -66,53 +70,108 @@ const MessagesList: React.FC<Props> = (props) => {
                                 endMessage={<EndMessage/>}
                 >
                     {/* This place should start a loop for room messages and create ListItem for each message */}
-                    {props.messages.map((message, index) => {
-                        return <ListItem id={message.id}
-                                         key={message.id} style={{
-                            display: 'flex',
-                            flexDirection: (message.sender === userId ? 'row-reverse' : 'row'), /* my messages - right, others - left*/
-                        }}>
-                            {message.type === MessageType.whisper &&
-                            <Paper color={"primary"} className={style.message_container}>
-                                <ListItemText>
-                                    <Typography color={"primary"} className={style.message_info}>
-                                        {message.sender !== userId &&
-                                        <SenderName title={props.chatParticipants[message.sender!]?.title}
-                                                    id={message.sender}/>}
-                                        {message.sender !== userId && <span>&nbsp;|&nbsp;</span>}
-                                        <TimeSince time={message.created}/>
-                                    </Typography>
-                                </ListItemText>
+                    {messages.map((message) => {
 
-                                <ListItemText>
-                                    <>
-                                        {message.attachmentsFilenames && <AttachmentsBlock message={message}/>}
-                                        <Typography color={""} className={style.message}>{message.data}</Typography>
-                                        <Typography color={"green"} className={style.message}>{message.id}</Typography>
-                                        <Typography color={"red"} className={style.message}>{message.created!.toString()}</Typography>
-                                        <Typography color={"red"} className={style.message}>{message.created!.getTime()}</Typography>
-                                    </>
-                                </ListItemText>
-                            </Paper>
-                            }
+                        if (MessagesListService.isMessageLastRead(message.id!, lastReadUuid) && isUnreadMessagesExist) {
+                            return <>
+                                <h3>----------------- unread messages -----------------</h3>
+                                <ListItem id={MessagesListService.mapMessageToLastReadString(message)}
+                                          key={message.id} style={{
+                                    display: 'flex',
+                                    flexDirection: (message.sender === userId ? 'row-reverse' : 'row'), /* my messages - right, others - left*/
+                                }}>
+                                    {message.type === MessageType.whisper &&
+                                    <Paper color={"primary"} className={style.message_container}>
+                                        <ListItemText>
+                                            <Typography color={"primary"} className={style.message_info}>
+                                                {message.sender !== userId &&
+                                                <SenderName title={props.chatParticipants[message.sender!]?.title}
+                                                            id={message.sender}/>}
+                                                {message.sender !== userId && <span>&nbsp;|&nbsp;</span>}
+                                                <TimeSince time={message.created}/>
+                                            </Typography>
+                                        </ListItemText>
 
-                            {message.type === MessageType.hello &&
-                            <div className={style.system_message}>
-                                <span>Room title has been set to '{message.data}'</span>
-                            </div>
-                            }
-                            {message.type === MessageType.iam &&
-                            <div className={style.system_message}>
-                                {userId === message.sender
-                                    ? <span>Your name is '{message.data}'. <Button onClick={() => {
-                                        props.setIsEditUserTitleModalOpen(true);
-                                    }}>Change name</Button></span>
-                                    :
-                                    <span>User&nbsp;<Uuid
-                                        data={message.sender}/>&nbsp;now known as '{message.data}'</span>}
-                            </div>
-                            }
-                        </ListItem>
+                                        <ListItemText>
+                                            <>
+                                                {message.attachmentsFilenames && <AttachmentsBlock message={message}/>}
+                                                <Typography color={""}
+                                                            className={style.message}>{message.data}</Typography>
+                                                <Typography color={"green"}
+                                                            className={style.message}>{MessagesListService.mapMessageToLastReadString(message)}</Typography>
+                                            </>
+                                        </ListItemText>
+                                    </Paper>
+                                    }
+
+                                    {message.type === MessageType.hello &&
+                                    <div className={style.system_message}>
+                                        <span>Room title has been set to '{message.data}'</span>
+                                    </div>
+                                    }
+                                    {message.type === MessageType.iam &&
+                                    <div className={style.system_message}>
+                                        {userId === message.sender
+                                            ? <span>Your name is '{message.data}'. <Button onClick={() => {
+                                                props.setIsEditUserTitleModalOpen(true);
+                                            }}>Change name</Button></span>
+                                            :
+                                            <span>User&nbsp;<Uuid
+                                                data={message.sender}/>&nbsp;now known as '{message.data}'</span>}
+                                    </div>
+                                    }
+
+                                </ListItem>
+                            </>
+                        } else {
+                            return <ListItem id={MessagesListService.mapMessageToLastReadString(message)}
+                                             key={message.id} style={{
+                                display: 'flex',
+                                flexDirection: (message.sender === userId ? 'row-reverse' : 'row'), /* my messages - right, others - left*/
+                            }}>
+                                {message.type === MessageType.whisper &&
+                                <Paper color={"primary"} className={style.message_container}>
+                                    <ListItemText>
+                                        <Typography color={"primary"} className={style.message_info}>
+                                            {message.sender !== userId &&
+                                            <SenderName title={props.chatParticipants[message.sender!]?.title}
+                                                        id={message.sender}/>}
+                                            {message.sender !== userId && <span>&nbsp;|&nbsp;</span>}
+                                            <TimeSince time={message.created}/>
+                                        </Typography>
+                                    </ListItemText>
+
+                                    <ListItemText>
+                                        <>
+                                            {message.attachmentsFilenames && <AttachmentsBlock message={message}/>}
+                                            <Typography color={""} className={style.message}>{message.data}</Typography>
+                                            <Typography color={"green"}
+                                                        className={style.message}>{MessagesListService.mapMessageToLastReadString(message)}</Typography>
+                                        </>
+                                    </ListItemText>
+                                </Paper>
+                                }
+
+                                {message.type === MessageType.hello &&
+                                <div className={style.system_message}>
+                                    <span>Room title has been set to '{message.data}'</span>
+                                </div>
+                                }
+                                {message.type === MessageType.iam &&
+                                <div className={style.system_message}>
+                                    {userId === message.sender
+                                        ? <span>Your name is '{message.data}'. <Button onClick={() => {
+                                            props.setIsEditUserTitleModalOpen(true);
+                                        }}>Change name</Button></span>
+                                        :
+                                        <span>User&nbsp;<Uuid
+                                            data={message.sender}/>&nbsp;now known as '{message.data}'</span>}
+                                </div>
+                                }
+
+                            </ListItem>
+                        }
+
 
                     })}
                 </InfiniteScroll>
@@ -187,12 +246,14 @@ function timeSince(date?: Date) {
 //     }
 // }
 
-const mapStateToProps = (state: AppState, ownState: { setScroll: (div: HTMLElement | null) => void, updateScroll: (div: HTMLElement) => void, scroll: (force: boolean) => void }) => ({
+const mapStateToProps = (state: AppState, ownState: { setScroll: (div: HTMLElement | null) => void, updateScroll: (div: HTMLElement) => void }) => ({
+    setScrollRef: ownState.setScroll,
     messages: state.messenger.messages,
     chatParticipants: state.messenger.users,
     user: state.messenger.user,
     currentChat: state.messenger.currentChat,
-    hasMore: state.messagesList.hasMore
+    hasMore: state.messagesList.hasMore,
+    lastRead: state.messagesList.lastRead
 })
 
 const mapDispatchToProps = {

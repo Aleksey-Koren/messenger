@@ -32,6 +32,8 @@ import {Builder} from "builder-pattern";
 import {GlobalUser} from "../../model/local-storage/localStorageTypes";
 import {AttachmentsServiceUpload} from "../../service/messenger/attachments/attachmentsServiceUpload";
 import {MessageService} from "../../service/messenger/messageService";
+import {setLastRead} from "../messages-list/messagesListActions";
+import {MessagesListService} from "../../service/messenger/messagesListService";
 
 export function setUser(user: User): IPlainDataAction<IMessengerStateOpt> {
 
@@ -131,7 +133,7 @@ export function sendMessageNewVersion(messageText: string,
     }
 }
 
-export function sendMessage(messageText: string, messageType: MessageType, callback: () => void, attachments?: FileList) {
+export function sendMessage(messageText: string, messageType: MessageType, attachments?: FileList) {
     return async (dispatch: AppDispatch, getState: () => AppState) => {
         const currentChat = getState().messenger.currentChat;
         const user = getState().messenger.user;
@@ -164,7 +166,6 @@ export function sendMessage(messageText: string, messageType: MessageType, callb
                 }
                 // dispatch(setMessages(appendMessages(chatMessages, messages)))
             }).then(response => {
-                callback();
                 return response;
             })
             .catch((e) => Notification.add({severity: 'error', message: 'Message is not sent', error: e}));
@@ -201,8 +202,8 @@ export function fetchMessagesTF() {
                 created: state.messenger.lastMessagesFetch!,
                 before: nextMessageFetch
             }).then(messagesResp => {
-                dispatch(setLastMessagesFetch(nextMessageFetch));
                 MessageProcessingService.processMessages(dispatch, getState, messagesResp);
+                dispatch(setLastMessagesFetch(nextMessageFetch));
             });
         }
     }
@@ -261,6 +262,7 @@ export function openChatTF(chatId: string) {
         }).then(messages => {
             messages = messages.filter(message => message.type !== MessageType.who);
             dispatch(setMessages(messages));
+            dispatch(setLastRead(MessagesListService.mapMessageToLastReadString(messages[0])));
         })
     }
 }
