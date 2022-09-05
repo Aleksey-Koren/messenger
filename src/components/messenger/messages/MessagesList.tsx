@@ -11,12 +11,12 @@ import {
     setIsEditUserTitleModalOpen,
     setIsNewRoomModalOpened
 } from "../../../redux/messenger-controls/messengerControlsActions";
-import {Message} from "../../../model/messenger/message";
 import AttachmentsBlock from "../attachments/AttachmentsBlock";
 import InfiniteScroll from "react-infinite-scroll-component";
 import {fetchNextPageTF, onScrollTF} from "../../../redux/messages-list/messagesListActions";
 import {EndMessage} from "./EndMessage";
 import {MessagesListService} from "../../../service/messenger/messagesListService";
+import ScrollToUnreadButton from "./ScrollToUnreadButton";
 
 
 // function mergeMessages(messages?: Message[]): Message[][] {
@@ -38,15 +38,13 @@ import {MessagesListService} from "../../../service/messenger/messagesListServic
 // }
 
 const MessagesList: React.FC<Props> = (props) => {
-    const userId = props.user?.id;
 
+    const scrollRef = useRef<HTMLUListElement | null>(null);
+    const userId = props.user?.id;
     const lastReadUuid = props.lastRead ? props.lastRead.split(':')[0] : null;
     const messages = props.messages;
     const isUnreadMessagesExist = MessagesListService.isUnreadMessagesExist(lastReadUuid, messages);
-    console.log('!!!Render');
-
-    // useEffect(() => {
-    // }, [props.lastRead])
+    console.log('!!!Render ' + isUnreadMessagesExist);
 
     return (
         <>
@@ -57,6 +55,7 @@ const MessagesList: React.FC<Props> = (props) => {
                     }}>Start new chat</Button>
                 </Alert> : null}
             <List id={'list'}
+                  ref={scrollRef}
                   onScroll={e => props.onScrollTF(e)}
                   className={style.messages_list}
                   style={{height: 680, overflow: 'auto', display: 'flex', flexDirection: 'column-reverse'}}>
@@ -73,12 +72,13 @@ const MessagesList: React.FC<Props> = (props) => {
                     {messages.map((message) => {
 
                         if (MessagesListService.isMessageLastRead(message.id!, lastReadUuid) && isUnreadMessagesExist) {
-                            return <>
-                                <h3>----------------- unread messages -----------------</h3>
-                                <ListItem id={MessagesListService.mapMessageToLastReadString(message)}
-                                          key={message.id} style={{
+                            return <div id={MessagesListService.mapMessageToLastReadString(message)} key={message.id}>
+
+                                <ListItem
+                                           style={{
                                     display: 'flex',
                                     flexDirection: (message.sender === userId ? 'row-reverse' : 'row'), /* my messages - right, others - left*/
+
                                 }}>
                                     {message.type === MessageType.whisper &&
                                     <Paper color={"primary"} className={style.message_container}>
@@ -97,7 +97,7 @@ const MessagesList: React.FC<Props> = (props) => {
                                                 {message.attachmentsFilenames && <AttachmentsBlock message={message}/>}
                                                 <Typography color={""}
                                                             className={style.message}>{message.data}</Typography>
-                                                <Typography color={"green"}
+                                                <Typography color={"white"}
                                                             className={style.message}>{MessagesListService.mapMessageToLastReadString(message)}</Typography>
                                             </>
                                         </ListItemText>
@@ -122,7 +122,10 @@ const MessagesList: React.FC<Props> = (props) => {
                                     }
 
                                 </ListItem>
-                            </>
+                                <div>
+                                    <h3 style={{textAlign: 'center', color: 'yellow'}}>----------------- unread messages -----------------</h3>
+                                </div>
+                            </div>
                         } else {
                             return <ListItem id={MessagesListService.mapMessageToLastReadString(message)}
                                              key={message.id} style={{
@@ -145,7 +148,7 @@ const MessagesList: React.FC<Props> = (props) => {
                                         <>
                                             {message.attachmentsFilenames && <AttachmentsBlock message={message}/>}
                                             <Typography color={""} className={style.message}>{message.data}</Typography>
-                                            <Typography color={"green"}
+                                            <Typography color={"white"}
                                                         className={style.message}>{MessagesListService.mapMessageToLastReadString(message)}</Typography>
                                         </>
                                     </ListItemText>
@@ -176,6 +179,9 @@ const MessagesList: React.FC<Props> = (props) => {
                     })}
                 </InfiniteScroll>
             </List>
+            {isUnreadMessagesExist &&
+            <ScrollToUnreadButton unreadQuantity={100} scrollRef={scrollRef.current}/>
+            }
         </>
     );
 }

@@ -1,21 +1,23 @@
 import {Message} from "../../model/messenger/message";
 
 export interface IMessagesListState {
-    hasMore: boolean;
+    isOnscrollMuted: boolean;
     isAtTheBottom: boolean;
     lastRead: string | null;
+    hasMore: boolean;
 }
 
 export enum MessagesListActionType {
-    SET_HAS_MORE = 'SET_HAS_MORE',
+    SET_ONSCROLL_MUTED = 'SET_ONSCROLL_MUTED',
     SET_AT_THE_BOTTOM = 'SET_AT_THE_BOTTOM',
-    SET_LAST_READ = 'SET_LAST_READ'
+    SET_LAST_READ = 'SET_LAST_READ',
+    HAS_MORE = 'HAS_MORE'
 }
 
-export interface ISetHasMoreAction {
-    type: MessagesListActionType.SET_HAS_MORE;
+export interface ISetOnscrollMuted {
+    type: MessagesListActionType.SET_ONSCROLL_MUTED;
     payload: {
-        hasMore: boolean
+        isOnscrollMuted: boolean
     }
 }
 
@@ -33,4 +35,11 @@ export interface ISetLastRead {
     }
 }
 
-export type MessagesListAction = ISetHasMoreAction | ISetAtTheBottom | ISetLastRead;
+export interface ISetHasMore {
+    type: MessagesListActionType.HAS_MORE;
+    payload: {
+        hasMore: boolean;
+    }
+}
+
+export type MessagesListAction = ISetOnscrollMuted | ISetAtTheBottom | ISetLastRead | ISetHasMore;

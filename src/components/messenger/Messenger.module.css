@@ -68,6 +68,7 @@
     word-break: break-word;
     border-radius: 10px;
     padding: 0 10px;
+    margin-right: 35px;
 }
 
 .system_message {
@@ -133,3 +134,10 @@
     border-radius: 20px;
 }
 
+.scroll_button {
+    position: fixed;
+    height: 100px;
+    width: 100px;
+    right: 100px;
+    bottom: 100px;
+}

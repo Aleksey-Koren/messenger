@@ -143,15 +143,15 @@ function appendMessages(existing: Message[], incoming: Message[]) {
     const newFiltered: Message[] = incoming.filter(message => {
         return !map[message.id!];
     });
-    newFiltered.sort(sortByCreatedAt);
+    newFiltered.sort(sortByCreatedAtDesc);
     return [...newFiltered, ...existing];
 }
 
-function sortByCreatedAt(a: Message, b: Message) {
+function sortByCreatedAtDesc(a: Message, b: Message) {
     if(a.created!.getTime() > b.created!.getTime()) {
-        return 1;
-    } else if(a.created!.getTime() < b.created!.getTime()) {
         return -1;
+    } else if(a.created!.getTime() < b.created!.getTime()) {
+        return 1;
     } else {
         return 0;
     }

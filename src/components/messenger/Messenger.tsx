@@ -86,7 +86,7 @@ const Messenger: React.FC<TProps> = (props) => {
                             <MessengerMenu/>
                         </div>
 
-                        <div style={{flex: 1, overflow: 'hidden', padding: '15px 0'}}>
+                        <div style={{ overflow: 'hidden', padding: '15px 0'}}>
                             <MessagesList updateScroll={(container) => {
                                 scrollContext.scrolled = container.scrollTop + container.offsetHeight + 20 < container.scrollHeight;
                             }}
