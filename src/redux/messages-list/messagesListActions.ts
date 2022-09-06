@@ -7,7 +7,6 @@ import {MessageType} from "../../model/messenger/messageType";
 import {setMessages} from "../messenger/messengerActions";
 import React from "react";
 import {MessagesListService} from "../../service/messenger/messagesListService";
-import {Message} from "../../model/messenger/message";
 
 export function setOnscrollMuted(isOnscrollMuted: boolean): ISetOnscrollMuted {
     return {
@@ -107,7 +106,7 @@ export function scrollToUnreadTF(lastReadHtmlId: string, scrollRef: HTMLUListEle
         for (let i = children.length - 1; i >= 0; i--) {
             if (children[i].id === lastReadHtmlId) {
                 dispatch(setOnscrollMuted(true));
-                children[i].scrollIntoView();
+                children[i - 1].scrollIntoView(false);
                 setTimeout(() => {dispatch(setOnscrollMuted(false))}, 500);
                 return;
             }
