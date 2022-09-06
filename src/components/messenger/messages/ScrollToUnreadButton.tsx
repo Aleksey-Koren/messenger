@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {AppState} from "../../../index";
 import {connect, ConnectedProps} from "react-redux";
 import {MessagesListService} from "../../../service/messenger/messagesListService";
@@ -12,7 +12,11 @@ interface IOwnProps {
 }
 
 const ScrollToUnreadButton: React.FC<TProps> = (props) => {
-    const coordinates = MessagesListService.calculateScrollButtonCoordinates(props.scrollRef);
+
+    const [coordinates, setCoordinates] = useState<{x: number, y: number}>(MessagesListService.calculateScrollButtonCoordinates(props.scrollRef));
+    window.onresize = () => {
+        setCoordinates(MessagesListService.calculateScrollButtonCoordinates(props.scrollRef));
+    }
     return <div className={style.container} style={{left: `${coordinates.x}px`, top: `${coordinates.y}px`}}>
         <span className={style.quantity}>{props.unreadQuantity}</span>
         <ArrowCircleDownIcon fontSize={'large'}

@@ -39,7 +39,7 @@ const MessagesList: React.FC<Props> = (props) => {
                   ref={scrollRef}
                   onScroll={e => props.onScrollTF(e)}
                   className={style.messages_list}
-                  style={{height: 680, overflow: 'auto', display: 'flex', flexDirection: 'column-reverse'}}>
+                  style={{height: 680, minHeight: 200, overflow: 'auto', display: 'flex', flexDirection: 'column-reverse'}}>
 
                 <InfiniteScroll dataLength={props.messages.length}
                                 hasMore={props.hasMore}
