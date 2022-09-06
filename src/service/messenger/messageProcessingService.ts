@@ -116,7 +116,7 @@ export class MessageProcessingService {
             if(isAtTheBottom) {
                 const appended = appendMessages(existing, incoming);
                 dispatch(setMessages(appended));
-                dispatch(setLastRead(MessagesListService.mapMessageToLastReadString(appended[0])));
+                dispatch(setLastRead(MessagesListService.mapMessageToHTMLId(appended[0])));
             } else {
                 appendMessages(existing, incoming);
             }

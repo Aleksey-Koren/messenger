@@ -72,7 +72,7 @@ const MessagesList: React.FC<Props> = (props) => {
                     {messages.map((message) => {
 
                         if (MessagesListService.isMessageLastRead(message.id!, lastReadUuid) && isUnreadMessagesExist) {
-                            return <div id={MessagesListService.mapMessageToLastReadString(message)} key={message.id}>
+                            return <div id={MessagesListService.mapMessageToHTMLId(message)} key={message.id}>
 
                                 <ListItem
                                            style={{
@@ -98,7 +98,7 @@ const MessagesList: React.FC<Props> = (props) => {
                                                 <Typography color={""}
                                                             className={style.message}>{message.data}</Typography>
                                                 <Typography color={"white"}
-                                                            className={style.message}>{MessagesListService.mapMessageToLastReadString(message)}</Typography>
+                                                            className={style.message}>{MessagesListService.mapMessageToHTMLId(message)}</Typography>
                                             </>
                                         </ListItemText>
                                     </Paper>
@@ -127,7 +127,7 @@ const MessagesList: React.FC<Props> = (props) => {
                                 </div>
                             </div>
                         } else {
-                            return <ListItem id={MessagesListService.mapMessageToLastReadString(message)}
+                            return <ListItem id={MessagesListService.mapMessageToHTMLId(message)}
                                              key={message.id} style={{
                                 display: 'flex',
                                 flexDirection: (message.sender === userId ? 'row-reverse' : 'row'), /* my messages - right, others - left*/
@@ -149,7 +149,7 @@ const MessagesList: React.FC<Props> = (props) => {
                                             {message.attachmentsFilenames && <AttachmentsBlock message={message}/>}
                                             <Typography color={""} className={style.message}>{message.data}</Typography>
                                             <Typography color={"white"}
-                                                        className={style.message}>{MessagesListService.mapMessageToLastReadString(message)}</Typography>
+                                                        className={style.message}>{MessagesListService.mapMessageToHTMLId(message)}</Typography>
                                         </>
                                     </ListItemText>
                                 </Paper>
@@ -174,8 +174,6 @@ const MessagesList: React.FC<Props> = (props) => {
 
                             </ListItem>
                         }
-
-
                     })}
                 </InfiniteScroll>
             </List>

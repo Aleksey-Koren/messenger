@@ -89,7 +89,7 @@ export function onScrollTF(event: React.UIEvent<HTMLUListElement, UIEvent>) {
             dispatch(setAtTheBottom(true));
             const messages = state.messenger.messages;
             if (messages.length > 0) {
-                dispatch(setLastRead(MessagesListService.mapMessageToLastReadString(messages[0])));
+                dispatch(setLastRead(MessagesListService.mapMessageToHTMLId(messages[0])));
             }
         }
 

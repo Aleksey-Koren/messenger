@@ -262,7 +262,7 @@ export function openChatTF(chatId: string) {
         }).then(messages => {
             messages = messages.filter(message => message.type !== MessageType.who);
             dispatch(setMessages(messages));
-            dispatch(setLastRead(MessagesListService.mapMessageToLastReadString(messages[0])));
+            dispatch(setLastRead(MessagesListService.mapMessageToHTMLId(messages[0])));
         })
     }
 }

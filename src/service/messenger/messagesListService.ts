@@ -46,7 +46,7 @@ export class MessagesListService {
         throw new Error('Error while scrolling to first unread message');
     }
 
-    static mapMessageToLastReadString(message: Message) {
+    static mapMessageToHTMLId(message: Message) {
         return message.id! + ':' + message.created!.getTime();
     }
 
