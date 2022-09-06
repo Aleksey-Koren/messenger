@@ -35,6 +35,8 @@ const scrollContext: { container: HTMLElement | null, scrolled: boolean, charged
 const Messenger: React.FC<TProps> = (props) => {
     const dispatch = useDispatch();
 
+    console.log("render");
+
     useEffect(() => {
 
         if (LocalStorageService.isLocalStorageExists() && !SchedulerService.isSchedulerStarted()) {
@@ -45,17 +47,17 @@ const Messenger: React.FC<TProps> = (props) => {
             SchedulerService.startScheduler(dispatch, store.getState);
             props.setIsWelcomeModalOpen(false);
         }
-        if (scrollContext.charged) {
-            scrollContext.charged = false;
-            setTimeout(function () {
-                scrollContext.container?.scroll({top: scrollContext.container?.scrollHeight});
-            }, 50);
-        }
+        // if (scrollContext.charged) {
+        //     scrollContext.charged = false;
+        //     setTimeout(function () {
+        //         scrollContext.container?.scroll({top: scrollContext.container?.scrollHeight});
+        //     }, 50);
+        // }
     });
 
-    useEffect(() => {
-        scrollTo(false);
-    }, [props.messages?.length])
+    // useEffect(() => {
+    //     scrollTo(false);
+    // }, [props.messages?.length])
 
     const currentChat = props.chats[props.currentChat] || {};
 
@@ -84,15 +86,14 @@ const Messenger: React.FC<TProps> = (props) => {
                             <MessengerMenu/>
                         </div>
 
-                        <div style={{flex: 1, overflow: 'hidden', padding: '15px 0'}}>
+                        <div style={{ overflow: 'hidden', padding: '15px 0'}}>
                             <MessagesList updateScroll={(container) => {
                                 scrollContext.scrolled = container.scrollTop + container.offsetHeight + 20 < container.scrollHeight;
                             }}
-                                          setScroll={(container) => scrollContext.container = container}
-                                          scroll={scrollTo}/>
+                                          setScroll={(container) => scrollContext.container = container}/>
                         </div>
                         <div style={{margin: 'auto 15px 0', height: 120}}>
-                            <MessengerFooter currentChat={props.currentChat} scroll={scrollTo}/>
+                            <MessengerFooter currentChat={props.currentChat}/>
                         </div>
                     </div>
                 </Grid>
@@ -119,11 +120,11 @@ function renderChats(chats: StringIndexArray<Chat>, openChatTF: (chatId: string)
     return out;
 }
 
-function scrollTo(force: boolean) {
-    if (force || !scrollContext.scrolled) {
-        scrollContext.charged = true;
-    }
-}
+// function scrollTo(force: boolean) {
+//     if (force || !scrollContext.scrolled) {
+//         scrollContext.charged = true;
+//     }
+// }
 
 
 const mapStateToProps = (state: AppState) => ({

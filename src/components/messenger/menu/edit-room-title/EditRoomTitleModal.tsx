@@ -24,9 +24,8 @@ const EditRoomTitleModal: React.FC<Props> = (props) => {
             <Formik
                 initialValues={{title: chat?.title}}
                 onSubmit={(values) => {
-                    props.sendMessage(values.title!, MessageType.hello, () => {
-                        props.setIsEditRoomTitleModalOpen(false);
-                    })
+                    props.sendMessage(values.title!, MessageType.hello);
+                    props.setIsEditRoomTitleModalOpen(false);
                 }}
                 validationSchema={validationSchema}
             >

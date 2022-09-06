@@ -20,7 +20,6 @@ import VoiceMessage from "./VoiceMessage";
 
 
 interface MessengerFooterProps {
-    scroll: (force:boolean) => void;
     currentChat: string|undefined|null;
 }
 
@@ -34,7 +33,7 @@ const MessengerFooter: React.FC<TProps> = (props) => {
 
     function send(text:string, attachments: FileList) {
         if(MessageService.isMessageNotEmpty(text, attachments)) {
-            props.sendMessage(text, MessageType.whisper, () => props.scroll(false), attachments);
+            props.sendMessage(text, MessageType.whisper, attachments);
             formik.setFieldValue('message', '', false);
             formik.setFieldValue('attachments', {attachments: null, fileNames: []})
             setAttachmentsState({attachments: null, fileNames: []});
@@ -123,7 +122,6 @@ const MessengerFooter: React.FC<TProps> = (props) => {
 }
 
 const mapStateToProps = (state: AppState, ownProps: MessengerFooterProps) => ({
-    scroll: ownProps.scroll,
     currentChat: ownProps.currentChat,
     audioRecorder: state.voiceMessages.audioRecorder,
     isRecording: state.voiceMessages.isRecording

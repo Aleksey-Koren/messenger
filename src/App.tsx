@@ -18,15 +18,6 @@ import {store} from "./index";
 //     });
 // });
 
-function foo() {
-    //
-    // navigator.permissions.query({name: 'microphone' as PermissionName})
-    //     .then(permissionStatusPromise => {
-    //         console.log("KKK")
-    //         console.log(permissionStatusPromise)
-    //     });
-}
-
 yup.addMethod(yup.mixed, "isGlobalUserNotExists", function (errorMessage) {
     return this.test('test.ts-global-user-existing', errorMessage, function (value) {
         const {path, createError} = this;
@@ -37,7 +28,6 @@ yup.addMethod(yup.mixed, "isGlobalUserNotExists", function (errorMessage) {
 })
 
 function App() {
-    foo();
     const theme = createTheme({
         palette: {
             mode: 'dark',
