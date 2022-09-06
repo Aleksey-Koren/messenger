@@ -102,7 +102,7 @@ export function onScrollTF(event: React.UIEvent<HTMLUListElement, UIEvent>) {
 
 export function scrollToUnreadTF(lastReadHtmlId: string, scrollRef: HTMLUListElement) {
     return function (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) {
-        const children = scrollRef.children.item(0)!.children.item(0)!.children;
+        const children = scrollRef.children[0].children[0].children;
         for (let i = children.length - 1; i >= 0; i--) {
             if (children[i].id === lastReadHtmlId) {
                 dispatch(setOnscrollMuted(true));

@@ -13,7 +13,6 @@ interface IOwnProps {
 
 const ScrollToUnreadButton: React.FC<TProps> = (props) => {
     const coordinates = MessagesListService.calculateScrollButtonCoordinates(props.scrollRef);
-
     return <div className={style.container} style={{left: `${coordinates.x}px`, top: `${coordinates.y}px`}}>
         <span className={style.quantity}>{props.unreadQuantity}</span>
         <ArrowCircleDownIcon fontSize={'large'}
