@@ -13,6 +13,7 @@ export interface IMessengerStateOpt {
     user?: User | null;
     currentChat?: string | null;
     lastMessagesFetch?: Date | null;
+
 }
 
 export interface IMessengerState extends IMessengerStateOpt {

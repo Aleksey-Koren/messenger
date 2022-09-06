@@ -11,13 +11,15 @@ import {messengerReducer} from "./redux/messenger/messengerReducer";
 import {messengerMenuReducer} from "./redux/messenger-menu/messengerMenuReducer";
 import {messengerControlsReducer} from "./redux/messenger-controls/messengerControlsReducer";
 import {voiceMessagesReducer} from "./redux/voiceMessages/voiceMessagesReducer";
+import {messagesListReducer} from "./redux/messages-list/messengerListReducer";
 
 const reducers = combineReducers({
     authorizationReducer: authorizationReducer,
     messenger: messengerReducer,
     messengerMenu: messengerMenuReducer,
     messengerControls: messengerControlsReducer,
-    voiceMessages: voiceMessagesReducer
+    voiceMessages: voiceMessagesReducer,
+    messagesList: messagesListReducer
 });
 
 export const store = configureStore({reducer: reducers, devTools: true, middleware: [thunk, promise]})

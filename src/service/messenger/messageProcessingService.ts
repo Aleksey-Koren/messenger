@@ -12,6 +12,8 @@ import {
     setUser,
     setUsers
 } from "../../redux/messenger/messengerActions";
+import {setLastRead} from "../../redux/messages-list/messagesListActions";
+import {MessagesListService} from "./messagesListService";
 
 export class MessageProcessingService {
 
@@ -26,6 +28,7 @@ export class MessageProcessingService {
         const existing = [...state.messenger.messages];
         const globalUsers = {...state.messenger.globalUsers};
         const users = {...state.messenger.users}
+        const isAtTheBottom = state.messagesList.isAtTheBottom;
 
         let isChatsUpdated = false;
         let isGlobalUsersUpdated = false;
@@ -110,6 +113,13 @@ export class MessageProcessingService {
         }
         if (isMessagesUpdated) {
             dispatch(setMessages(appendMessages(existing, incoming)));
+            if(isAtTheBottom) {
+                const appended = appendMessages(existing, incoming);
+                dispatch(setMessages(appended));
+                dispatch(setLastRead(MessagesListService.mapMessageToHTMLId(appended[0])));
+            } else {
+                appendMessages(existing, incoming);
+            }
         }
         if (isCurrentUserUpdated) {
             dispatch(setUser(currentUser));
@@ -129,7 +139,20 @@ function appendMessages(existing: Message[], incoming: Message[]) {
             return map;
         },
         {} as { [key: string]: 1 });
-    return existing.concat(incoming.filter(message => {
+
+    const newFiltered: Message[] = incoming.filter(message => {
         return !map[message.id!];
-    }))
+    });
+    newFiltered.sort(sortByCreatedAtDesc);
+    return [...newFiltered, ...existing];
+}
+
+function sortByCreatedAtDesc(a: Message, b: Message) {
+    if(a.created!.getTime() > b.created!.getTime()) {
+        return -1;
+    } else if(a.created!.getTime() < b.created!.getTime()) {
+        return 1;
+    } else {
+        return 0;
+    }
 }

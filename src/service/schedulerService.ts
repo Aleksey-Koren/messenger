@@ -4,7 +4,6 @@ import {fetchMessagesTF, setLastMessagesFetch} from "../redux/messenger/messenge
 import {LocalStorageService} from "./local-data/localStorageService";
 import {MessageApi} from "../api/messageApi";
 import {MessageType} from "../model/messenger/messageType";
-import {Message} from "../model/messenger/message";
 import {MessageProcessingService} from "./messenger/messageProcessingService";
 import {ThunkDispatch} from "redux-thunk";
 import {AppState} from "../index";

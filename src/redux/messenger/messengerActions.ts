@@ -31,6 +31,9 @@ import {ChatService} from "../../service/messenger/chatService";
 import {Builder} from "builder-pattern";
 import {GlobalUser} from "../../model/local-storage/localStorageTypes";
 import {AttachmentsServiceUpload} from "../../service/messenger/attachments/attachmentsServiceUpload";
+import {MessageService} from "../../service/messenger/messageService";
+import {setLastRead} from "../messages-list/messagesListActions";
+import {MessagesListService} from "../../service/messenger/messagesListService";
 
 export function setUser(user: User): IPlainDataAction<IMessengerStateOpt> {
 
@@ -130,7 +133,7 @@ export function sendMessageNewVersion(messageText: string,
     }
 }
 
-export function sendMessage(messageText: string, messageType: MessageType, callback: () => void, attachments?: FileList) {
+export function sendMessage(messageText: string, messageType: MessageType, attachments?: FileList) {
     return async (dispatch: AppDispatch, getState: () => AppState) => {
         const currentChat = getState().messenger.currentChat;
         const user = getState().messenger.user;
@@ -163,7 +166,6 @@ export function sendMessage(messageText: string, messageType: MessageType, callb
                 }
                 // dispatch(setMessages(appendMessages(chatMessages, messages)))
             }).then(response => {
-                callback();
                 return response;
             })
             .catch((e) => Notification.add({severity: 'error', message: 'Message is not sent', error: e}));
@@ -200,8 +202,8 @@ export function fetchMessagesTF() {
                 created: state.messenger.lastMessagesFetch!,
                 before: nextMessageFetch
             }).then(messagesResp => {
-                dispatch(setLastMessagesFetch(nextMessageFetch));
                 MessageProcessingService.processMessages(dispatch, getState, messagesResp);
+                dispatch(setLastMessagesFetch(nextMessageFetch));
             });
         }
     }
@@ -226,9 +228,9 @@ export function fetchMessengerStateTF(loggedUserId: string) {
                     .then(() => ChatService.tryDecryptChatsTitles(chatResp, globalUsers))
                     .then(chats => {
                         const currentChat = chats[0];
-                        const stringIndexArrayChats = chats.reduce((prev, next) => {
-                            prev[next.id] = next;
-                            return prev;
+                        const stringIndexArrayChats = chats.reduce((collector, next) => {
+                            collector[next.id] = next;
+                            return collector;
                         }, {} as StringIndexArray<Chat>);
 
                         dispatch(setGlobalUsers(globalUsers));
@@ -258,11 +260,12 @@ export function openChatTF(chatId: string) {
             size: 20,
             before: getState().messenger.lastMessagesFetch!
         }).then(messages => {
-            dispatch(setMessages(messages.filter(message => message.type !== MessageType.who)))
+            messages = messages.filter(message => message.type !== MessageType.who);
+            dispatch(setMessages(messages));
+            dispatch(setLastRead(MessagesListService.mapMessageToHTMLId(messages[0])));
         })
     }
 }
-
 
 export function updateUserTitle(title: string) {
 
