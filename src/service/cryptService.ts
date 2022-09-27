@@ -20,7 +20,7 @@ export class CryptService {
             privateKey!
         );
 
-        if(data === null) {
+        if (data === null) {
             throw new Error('Encryption function has returned null. Something went wrong');
         }
 

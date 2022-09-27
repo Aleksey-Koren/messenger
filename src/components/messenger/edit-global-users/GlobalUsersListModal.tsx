@@ -13,10 +13,10 @@ import {
     stringIndexArrayToArray,
     stringIndexArrayToEntryArray
 } from "../../../model/stringIndexArray";
-import {Chat} from "../../../model/messenger/chat";
 import {setIsGlobalUserConfigurationModalOpen} from "../../../redux/messenger-controls/messengerControlsActions";
 import {GlobalUser} from "../../../model/local-storage/localStorageTypes";
 import {GlobalUsersSearchService} from "../../../service/local-data/globalUsersSearchService";
+import {Chat} from "../../../model/messenger/chat";
 
 export interface ISearchParams {
     id?: string
@@ -32,7 +32,6 @@ const GlobalUsersListModal: React.FC<TProps> = (props) => {
 
     useEffect(() => {
         setUsersToRender(GlobalUsersSearchService.filterGlobalUsers(searchParams, globalUsersArray));
-        console.log('USE EFFECT');
     }, [props.globalUsers])
 
     return (
@@ -94,7 +93,7 @@ const GlobalUsersListModal: React.FC<TProps> = (props) => {
                                 <ul>
                                     {stringIndexArrayToEntryArray<string>(globalUser.titles).map(entry =>
                                         <li key={entry.key}>
-                                            <h2>{generateUsernameToChatTitleRatio(entry, props.chats)}</h2>
+                                            {/*<h2>{generateUsernameToChatTitleRatio(entry, props.rooms)}</h2>*/}
                                         </li>
                                     )}
                                 </ul>
@@ -107,6 +106,7 @@ const GlobalUsersListModal: React.FC<TProps> = (props) => {
     )
 }
 
+//REMADE!!!!!!!!!!!!!!!!!
 function generateUsernameToChatTitleRatio(entry: StringIndexArrayEntry<string>, chats: StringIndexArray<Chat>) {
     const chat = chats[entry.key];
 
@@ -119,7 +119,7 @@ function generateUsernameToChatTitleRatio(entry: StringIndexArrayEntry<string>, 
 
 const mapStateToProps = (state: AppState) => ({
     globalUsers: state.messenger.globalUsers,
-    chats: state.messenger.chats
+    chats: state.chats.chats
 })
 
 const mapDispatchToProps = {

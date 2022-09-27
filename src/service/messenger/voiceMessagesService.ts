@@ -1,4 +1,3 @@
-
 export class VoiceMessagesService {
 
     static startRecording(recorder: MediaRecorder) {
@@ -8,7 +7,7 @@ export class VoiceMessagesService {
     }
 
     static stopRecording(recorder: MediaRecorder) {
-        if(recorder.state === 'recording') {
+        if (recorder.state === 'recording') {
             recorder.stop()
         }
     }

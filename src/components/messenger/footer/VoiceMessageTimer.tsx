@@ -1,5 +1,5 @@
 import {Timer} from "@mui/icons-material";
-import React, {useEffect, useState} from "react";
+import React from "react";
 import TimerString from "./TimerString";
 import {connect, ConnectedProps} from "react-redux";
 import {AppState} from "../../../index";
@@ -9,7 +9,7 @@ import Notification from "../../../Notification";
 const VoiceMessageTimer: React.FC<TProps> = (props) => {
 
     const maxDuration = 30; //todo value should be taken from properties;
-    if(props.duration > maxDuration) {
+    if (props.duration > maxDuration) {
         VoiceMessagesService.stopRecording(props.recorder);
         Notification.add({
             message: `Max voice message duration is ${maxDuration} seconds :-(   But you can send several one by one :-)`,

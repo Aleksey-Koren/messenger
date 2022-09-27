@@ -6,7 +6,7 @@ export interface IVoiceMessagesStateOpt {
     duration?: number | null;
 }
 
-export interface  IVoiceMessagesState extends IVoiceMessagesStateOpt {
+export interface IVoiceMessagesState extends IVoiceMessagesStateOpt {
     isRecording: boolean;
     audioRecorder: MediaRecorder | null;
     chunks: ArrayBuffer[];

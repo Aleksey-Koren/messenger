@@ -1,4 +1,4 @@
-.dialog__info_container{
+.dialog__info_container {
     background: #262424;
     display: flex;
     flex-direction: column;
@@ -6,7 +6,7 @@
     align-items: center;
 }
 
-.dialog__content_row{
+.dialog__content_row {
     width: 100%;
     margin: 10px 5px;
     display: flex;
@@ -14,11 +14,11 @@
     align-items: center;
 }
 
-.dialog__content_row_label{
+.dialog__content_row_label {
     margin-right: 10px;
 }
 
-.dialog__content_row_input{
+.dialog__content_row_input {
     width: 400px;
     overflow-y: hidden;
     border-radius: 2px;
@@ -27,7 +27,7 @@
     resize: none;
 }
 
-.dialog__actions{
+.dialog__actions {
     display: flex !important;
     justify-content: space-around !important;
     background: #262424;
@@ -35,7 +35,7 @@
 
 .dialog__actions button {
     border-radius: 2px;
-    border: 1px dotted#90caf9;
+    border: 1px dotted #90caf9;
 }
 
 .dialog__actions button:hover {

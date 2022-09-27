@@ -13,7 +13,7 @@ interface IOwnProps {
 
 const ScrollToUnreadButton: React.FC<TProps> = (props) => {
 
-    const [coordinates, setCoordinates] = useState<{x: number, y: number}>(MessagesListService.calculateScrollButtonCoordinates(props.scrollRef));
+    const [coordinates, setCoordinates] = useState<{ x: number, y: number }>(MessagesListService.calculateScrollButtonCoordinates(props.scrollRef));
     window.onresize = () => {
         setCoordinates(MessagesListService.calculateScrollButtonCoordinates(props.scrollRef));
     }

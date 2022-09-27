@@ -1,4 +1,3 @@
-
 import React from "react";
 import {connect, ConnectedProps} from "react-redux";
 import style from "../Messenger.module.css";
@@ -9,14 +8,11 @@ const CreateNewPrivateButton: React.FC<TProps> = (props) => {
 
     return (
         <div className={style.controls_button_container}>
-            <button className={style.controls_button}
-                    onClick={() => props.setIsNewPrivateModalOpened(true)}
-            >
-
+            <button className={style.controls_button} onClick={() => props.setIsNewPrivateModalOpened(true)}>
                 <div className={style.button_content}>
                     <PersonAddAlt1Icon/>
-                    <div className={style.button_content_spacer}></div>
-                    <span>New private room</span>
+                    <div className={style.button_content_spacer}/>
+                    <span>New private chat</span>
                 </div>
             </button>
         </div>

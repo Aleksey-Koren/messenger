@@ -1,11 +1,9 @@
-import React, {Dispatch, SetStateAction, useState} from "react";
+import React, {useState} from "react";
 // import {AppState} from "../../../index";
 import AsyncSelect from "react-select/async";
 import {connect, ConnectedProps} from "react-redux";
 // import {User} from "../../../model/User";
-
 // import {findUsersPerPage} from "../../../service/userService";
-import {MultiValue} from "react-select";
 
 const AddUserSelect: React.FC<TProps> = (props: TProps) => {
 
@@ -27,12 +25,13 @@ const AddUserSelect: React.FC<TProps> = (props: TProps) => {
             option: (base, state) => ({...base, color: state.isFocused ? "black" : "white", borderRadius: '20px'}),
             placeholder: (base, state) => ({...base, color: "white"})
         }}
-                     // loadOptions={promiseOptions(props.selectedRoom.id)}
+            // loadOptions={promiseOptions(props.selectedRoom.id)}
                      isMulti
                      getOptionLabel={s => "label"}
                      getOptionValue={s => JSON.stringify(s)}
                      maxMenuHeight={300}
-                     onChange={() => {}}
+                     onChange={() => {
+                     }}
                      placeholder={'Search...'}
                      noOptionsMessage={({inputValue}) => inputValue ? "No results found" : ""}
                      isSearchable={isSearchable}
@@ -40,7 +39,7 @@ const AddUserSelect: React.FC<TProps> = (props: TProps) => {
     );
 }
 
-function promiseOptions (roomId: number) {
+function promiseOptions(roomId: number) {
     return new Promise(resolve => null);
     // return (inputValue: string): Promise<User[]> => {
     //     return findUsersPerPage(0, 20, {title: inputValue, notInRoom: roomId}).then(s => s.data.content)

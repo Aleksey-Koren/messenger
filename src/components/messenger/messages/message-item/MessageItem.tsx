@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 import {AppState} from "../../../../index";
 import {connect, ConnectedProps} from "react-redux";
 import {MessagesListService} from "../../../../service/messenger/messagesListService";
@@ -26,48 +26,49 @@ const MessageItem: React.FC<TProps> = (props) => {
                          display: 'flex',
                          flexDirection: (message.sender === userId ? 'row-reverse' : 'row'), /* my messages - right, others - left*/
                      }}>
+        {message.type === MessageType.WHISPER &&
+            <Paper className={style.message_container} style={{
+                minWidth: "40%",
+                backgroundColor: "#182533"
+            }}>
+                <ListItemText>
+                    <Typography color={"primary"} className={style.message_info}>
+                        <TimeSince time={message.created}/>
+                        {message.sender !== userId && <span>&nbsp;|&nbsp;</span>}
+                        {message.sender !== userId &&
+                            <SenderName title={props.chatParticipants[message.sender!]?.title}
+                                        id={message.sender}/>}
+                    </Typography>
+                </ListItemText>
 
-        {message.type === MessageType.whisper &&
-        <Paper color={"primary"} className={style.message_container}>
-            <ListItemText>
-                <Typography color={"primary"} className={style.message_info}>
-                    {message.sender !== userId &&
-                    <SenderName title={props.chatParticipants[message.sender!]?.title}
-                                id={message.sender}/>}
-                    {message.sender !== userId && <span>&nbsp;|&nbsp;</span>}
-                    <TimeSince time={message.created}/>
-                </Typography>
-            </ListItemText>
-
-            <ListItemText>
-                <>
-                    {message.attachmentsFilenames && <AttachmentsBlock message={message}/>}
-                    <Typography color={""} className={style.message}>{message.data}</Typography>
-                    <Typography color={"green"}
-                                className={style.message}>{MessagesListService.mapMessageToHTMLId(message)}</Typography>
-                </>
-            </ListItemText>
-        </Paper>
+                <ListItemText>
+                    <>
+                        {message.attachmentsFilenames && <AttachmentsBlock message={message}/>}
+                        <Typography color={""} className={style.message}>{message.data}</Typography>
+                        {/*<Typography color={"green"}*/}
+                        {/*            className={style.message}>{MessagesListService.mapMessageToHTMLId(message)}</Typography>*/}
+                    </>
+                </ListItemText>
+            </Paper>
         }
 
-        {message.type === MessageType.hello &&
-        <div className={style.system_message}>
-            <span>Room title has been set to '{message.data}'</span>
-        </div>
+        {message.type === MessageType.CHAT &&
+            <div className={style.system_message}>
+                <span>'{message.data}'</span>
+            </div>
         }
 
-        {message.type === MessageType.iam &&
-        <div className={style.system_message}>
-            {userId === message.sender
-                ? <span>Your name is '{message.data}'. <Button onClick={() => {
-                    props.setIsEditUserTitleModalOpen(true);
-                }}>Change name</Button></span>
-                :
-                <span>User&nbsp;<Uuid
-                    data={message.sender}/>&nbsp;now known as '{message.data}'</span>}
-        </div>
+        {message.type === MessageType.INVITE_CHAT &&
+            <div className={style.system_message}>
+                <span>'Member {message.data} invited to the chat'</span>
+            </div>
         }
 
+        {message.type === MessageType.LEAVE_CHAT &&
+            <div className={style.system_message}>
+                <span>'Member {message.data} left the room'</span>
+            </div>
+        }
     </ListItem>
 }
 

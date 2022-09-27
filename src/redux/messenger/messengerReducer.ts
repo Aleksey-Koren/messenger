@@ -1,30 +1,35 @@
 import {
     IMessengerState,
-    SET_CURRENT_CHAT, SET_CHATS, SET_USERS,
+    SET_GLOBAL_USERS,
+    SET_LAST_MESSAGES_FETCH,
     SET_MESSAGES,
     SET_USER,
-    TMessengerAction,
     SET_USER_TITLE,
-    SET_LAST_MESSAGES_FETCH,
-    SET_GLOBAL_USERS
+    SET_USERS,
+    TMessengerAction
 } from "./messengerTypes";
 import {User} from "../../model/messenger/user";
 import {CryptService} from "../../service/cryptService";
 import {LOGOUT} from "../authorization/authorizationTypes";
-import {SchedulerService} from "../../service/schedulerService";
 import {LocalStorageService} from "../../service/local-data/localStorageService";
 import {StringIndexArray} from "../../model/stringIndexArray";
 import {GlobalUser} from "../../model/local-storage/localStorageTypes";
+import {over} from "stompjs";
+import SockJS from "sockjs-client";
 
 
 const initialState: IMessengerState = {
-    user: null,
-    chats: {},
     messages: [],
+    currentPage: 0,
+    sizePage: 10,
+    totalElements: 0,
+    totalPages: 0,
+    numberOfElements: 0,
+    user: null,
     users: {},
     globalUsers: {},
-    currentChat: null,
     lastMessagesFetch: null,
+    stompClient: over(new SockJS('//localhost:8080/ws')),
 }
 
 export function messengerReducer(state: IMessengerState = initialState, action: TMessengerAction): IMessengerState {
@@ -37,7 +42,13 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
             return {...state, user: user};
 
         case SET_MESSAGES:
-            return {...state, messages: action.payload.messages};
+            console.log(action.payload)
+
+            console.log(action.payload)
+            return {
+                ...state,
+                messages: action.payload.messages
+            };
 
         case SET_USER: {
             const user = action.payload.user;
@@ -53,48 +64,25 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
                 globalUsers: touchGlobalUsers(state.globalUsers, {[user.id]: user})
             }
         }
-
-        case SET_CURRENT_CHAT: {
-            const user = state.user;
-            if (!user) {
-                return state;
-            }
-            if (action.payload.currentChat !== state.currentChat) {
-                return {
-                    ...state,
-                    currentChat: action.payload.currentChat,
-                    messages: []
-                }
-            } else {
-                return state;
-            }
-        }
-
         case SET_USERS:
             return {
                 ...state,
                 users: action.payload.users,
                 globalUsers: touchGlobalUsers(state.globalUsers, action.payload.users)
             }
-
-        case SET_CHATS:
-            LocalStorageService.chatsLastSeenToStorage(action.payload.chats);
-            return {...state, chats: action.payload.chats}
-
         case SET_GLOBAL_USERS:
+            console.log("SET_GLOBAL_USERS")
+            console.log(action.payload.globalUsers)
             LocalStorageService.globalUsersToStorage(action.payload.globalUsers);
             return {...state, globalUsers: action.payload.globalUsers};
 
         case LOGOUT:
             localStorage.clear();
-            SchedulerService.stopScheduler();
             return {...initialState, globalUsers: {}};
 
         case SET_LAST_MESSAGES_FETCH:
             LocalStorageService.lastMessagesFetchToStorage(action.payload.lastMessagesFetch!)
-
             return {...state, lastMessagesFetch: action.payload.lastMessagesFetch};
-
         default:
             return state;
     }

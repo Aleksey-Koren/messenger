@@ -17,21 +17,23 @@ function TitleAlreadyExistsModal(props: IProps) {
     // }
 
     return (
-            <div>
-                <Dialog
-                    open={false}
-                    onClose={() => {}}
-                    aria-labelledby="alert-dialog-title"
-                    aria-describedby="alert-dialog-description"
-                >
-                    <DialogTitle className={style.dialog__title}>
-                        {`Room with title "${props.title}" already exists`}
-                    </DialogTitle>
-                    <DialogActions className={style.dialog__actions}>
-                        <Button onClick={() => {}}>Ok</Button>
-                    </DialogActions>
-                </Dialog>
-            </div>
+        <div>
+            <Dialog
+                open={false}
+                onClose={() => {
+                }}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle className={style.dialog__title}>
+                    {`Room with title "${props.title}" already exists`}
+                </DialogTitle>
+                <DialogActions className={style.dialog__actions}>
+                    <Button onClick={() => {
+                    }}>Ok</Button>
+                </DialogActions>
+            </Dialog>
+        </div>
     );
 }
 

@@ -13,7 +13,7 @@ export class CustomerMapper {
             .build()
     }
 
-    static toEntity(customer:CustomerDto):User {
+    static toEntity(customer: CustomerDto): User {
         return {
             id: customer.id!,
             publicKey: CryptService.base64ToUint8(customer.pk!)

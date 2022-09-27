@@ -1,21 +1,20 @@
-import React from "react";
 import {Message} from "../../model/messenger/message";
 import {ICoordinates} from "../../model/commonInterfaces";
 
 export class MessagesListService {
 
-    static calculateAimCoordinates(scrollRef:  EventTarget & HTMLUListElement): ICoordinates {
+    static calculateAimCoordinates(scrollRef: EventTarget & HTMLUListElement): ICoordinates {
         const boundingClientRect = scrollRef.getBoundingClientRect();
         const y = boundingClientRect.bottom - 50;
         const x = (boundingClientRect.right - boundingClientRect.left) / 2
-        return {x,y}
+        return {x, y}
     }
 
     static calculateScrollButtonCoordinates(scrollRef: HTMLUListElement): ICoordinates {
         const boundingClientRect = scrollRef.getBoundingClientRect();
         const y = boundingClientRect.bottom - 80;
         const x = boundingClientRect.right - 50;
-        return {x,y};
+        return {x, y};
     }
 
     static isAfter(current: string, lastRead: string | null) {
@@ -37,7 +36,7 @@ export class MessagesListService {
     }
 
     static areUnreadMessagesExist(lastReadUuid: string | null, messages: Message []) {
-        if(messages.length === 0) {
+        if (messages.length === 0) {
             return false;
         }
         return lastReadUuid !== messages[0].id!;

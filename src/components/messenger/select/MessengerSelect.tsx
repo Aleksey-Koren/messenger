@@ -2,18 +2,18 @@ import React, {SyntheticEvent, useMemo, useRef, useState} from "react";
 import {connect, ConnectedProps} from "react-redux";
 import {SingleValue} from "react-select";
 import {AppState} from "../../../index";
-import {setCurrentChat} from "../../../redux/messenger/messengerActions";
 import {Autocomplete, TextField} from "@mui/material";
+import {getChatById} from "../../../redux/chats/chatsActions";
 
-type Option = {id:string,label:string};
+type Option = { id: string, label: string };
 
 const MessengerSelect: React.FC<TProps> = (props) => {
 
-    const [value, setValue] = useState<Option|null>(null);
+    const [value, setValue] = useState<Option | null>(null);
 
-    const options =  useMemo(() => {
-        const out:Option[] = [];
-        for(let key in props.chats) {
+    const options = useMemo(() => {
+        const out: Option[] = [];
+        for (let key in props.chats) {
             let option = props.chats[key];
             out.push({id: option.id as string, label: option.title as string});
         }
@@ -21,22 +21,25 @@ const MessengerSelect: React.FC<TProps> = (props) => {
     }, [props.chats])
 
 
-    function onChange (event: SyntheticEvent, value:SingleValue<{id: string}>) {
+    function onChange(event: SyntheticEvent, value: SingleValue<{ id: string }>) {
         const id = value?.id;
-        if(!props.chats || !id) {
+
+        setValue(null);
+        if (!props.chats || !id) {
             return
         }
-        for(let key in props.chats) {
+        for (let key in props.chats) {
             let chat = props.chats[key];
-            if(chat.id === id) {
-                props.setCurrentChat(chat.id!);
+            if (chat.id === id) {
+                props.getChatById(chat.id!)
                 setValue(null);
-                if(textInput.current) {
+                if (textInput.current) {
                     textInput.current.value = '';
                 }
             }
         }
     }
+
     const textInput = useRef<HTMLInputElement>(null);
 
     return (
@@ -46,19 +49,18 @@ const MessengerSelect: React.FC<TProps> = (props) => {
             onChange={onChange}
             blurOnSelect
             clearOnBlur
-            renderInput={(params) => <TextField {...params} label="Search existing chats" />}
+            renderInput={(params) => <TextField {...params} label="Search existing chats"/>}
         />
     );
 }
 
 
 const mapStateToProps = (state: AppState) => ({
-    chats: state.messenger.chats
-
+    chats: state.chats.chats
 })
 
 const mapDispatchToProps = {
-    setCurrentChat
+    getChatById,
 }
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

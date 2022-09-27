@@ -1,12 +1,11 @@
-import {Button, Dialog, DialogActions, DialogContent, DialogTitle} from "@mui/material";
+import {Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel} from "@mui/material";
 import {connect, ConnectedProps} from "react-redux";
-import React from "react";
+import React, {useState} from "react";
 import ReportIcon from '@mui/icons-material/Report';
 import style from './ConfirmModal.module.css';
-import {setIsConfirmModalOpen} from "../../redux/messenger-controls/messengerControlsActions";
 
 interface IOwnProps {
-    confirmFunction: () => void,
+    confirmFunction: (data: string) => void,
     text: string,
     closeFunction: () => void
 }
@@ -14,15 +13,22 @@ interface IOwnProps {
 
 const ConfirmModal: React.FC<Props> = (props) => {
 
+    const [valueCheckBox, setValueCheckBox] = useState(false)
+
     return (
         <Dialog open={true}>
             <DialogTitle className={style.dialog__title}>
                 <ReportIcon fontSize={'medium'} className={style.dialog__title_icon}/>
-                Are you sure?
+                {props.text}
             </DialogTitle>
 
             <DialogContent className={style.dialog__content}>
-                <span className={style.dialog__content_text}>{props.text}</span>
+                <FormControlLabel
+                    control={
+                        <Checkbox onChange={event => setValueCheckBox(event.target.checked)}/>
+                    }
+                    label="Delete all my messages. That action can't be undone"
+                />
             </DialogContent>
 
             <DialogActions className={style.dialog__actions}>
@@ -30,7 +36,7 @@ const ConfirmModal: React.FC<Props> = (props) => {
                     No
                 </Button>
                 <Button className={style.dialog__agree_button} onClick={() => {
-                    props.confirmFunction();
+                    props.confirmFunction(valueCheckBox ? 'LEAVE_ROOM_WITH_DELETE_OWN_MESSAGES' : "LEAVE_ROOM");
                     props.closeFunction();
                 }}>
                     Yes

@@ -1,6 +1,3 @@
-import {Message} from "../../model/messenger/message";
-import {MessageType} from "../../model/messenger/messageType";
-import {MessageApi} from "../../api/messageApi";
 import {User} from "../../model/messenger/user";
 import {StringIndexArray} from "../../model/stringIndexArray";
 import {CustomerApi} from "../../api/customerApi";
@@ -11,43 +8,8 @@ import {AppState} from "../../index";
 import {Action} from "redux";
 import {setGlobalUsers} from "../../redux/messenger/messengerActions";
 import {GlobalUser} from "../../model/local-storage/localStorageTypes";
-import {UserMapper} from "../../mapper/userMapper";
 
 export class CustomerService {
-
-    static processUnknownChatParticipants(participants: User[], knownParticipants: Message[], currentChatId: string, senderId: string) {
-        const knownParticipantsTitles: StringIndexArray<string> = knownParticipants.reduce((map, participant) => {
-            map[participant.sender] = participant.data!;
-            return map;
-        }, {} as StringIndexArray<string>)
-
-        const whoMessages: Message[] = [];
-
-        const participantsIndexArray = participants.reduce((array, participant) => {
-            array[participant.id] = {
-                id: participant?.id!,
-                title: knownParticipantsTitles[participant.id],
-                publicKey: participant?.publicKey
-            }
-            return array;
-        }, {} as StringIndexArray<User>);
-
-        participants.filter(participant => !knownParticipantsTitles[participant.id])
-            .forEach(unknownParticipant => {
-                whoMessages.push({
-                    chat: currentChatId,
-                    type: MessageType.who,
-                    sender: senderId,
-                    receiver: unknownParticipant!.id,
-                    data: ""
-                } as Message);
-            })
-
-        if (whoMessages.length !== 0) {
-            MessageApi.sendMessages(whoMessages, UserMapper.toGlobalUsers(participants)).then();
-        }
-        return participantsIndexArray;
-    }
 
     static addUnknownUsersToGlobalUsers(helloMessages: MessageDto[], globalUsers: StringIndexArray<GlobalUser>) {
         const requiredUsers: string[] = [];

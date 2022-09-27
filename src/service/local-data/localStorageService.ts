@@ -3,7 +3,7 @@ import {GlobalUser, LocalStorageData, StateData} from "../../model/local-storage
 import {Builder} from "builder-pattern";
 import {CryptService} from "../cryptService";
 import {StringIndexArray} from "../../model/stringIndexArray";
-import {Chat} from "../../model/messenger/chat";
+import {TChat} from "../../model/messenger/tchat";
 
 export class LocalStorageService {
 
@@ -36,7 +36,6 @@ export class LocalStorageService {
 
     static globalUsersToStorage(globalUsers: StringIndexArray<GlobalUser>) {
         const parsedLocalStorageData = retrieveParsedLocalStorageData()!;
-
         parsedLocalStorageData.globalUsers = globalUsers;
 
         localStorage.setItem('whisper', JSON.stringify(parsedLocalStorageData));
@@ -62,7 +61,7 @@ export class LocalStorageService {
         return null;
     }
 
-    static chatsLastSeenToStorage(chats: StringIndexArray<Chat>) {
+    static chatsLastSeenToStorage(chats: StringIndexArray<TChat>) {
         const chatsLastSeen: StringIndexArray<Date> = {};
 
         for (let chatId in chats) {

@@ -1,4 +1,3 @@
-
 export enum MimeType {
     IMAGE = 1,
     VIDEO = 2,
@@ -13,6 +12,8 @@ export type TArrayWithMimeType = {
 
 export type TAttachmentFile = {
     data?: Blob;
+    height?: number,
+    width?: number
     mimeType?: MimeType,
     isDecrypted: boolean
 }

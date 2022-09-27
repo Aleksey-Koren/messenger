@@ -1,12 +1,6 @@
 import {MessageDto} from "../../dto/messageDto";
-import {Chat} from "../../model/messenger/chat";
+import {TChat} from "../../model/messenger/tchat";
 import {MessageMapper} from "../../mapper/messageMapper";
-import {ChatApi} from "../../api/chatApi";
-import {MessageApi} from "../../api/messageApi";
-import {MessageType} from "../../model/messenger/messageType";
-import {CustomerService} from "./customerService";
-import {setUsers} from "../../redux/messenger/messengerActions";
-import {AppDispatch} from "../../index";
 import {StringIndexArray} from "../../model/stringIndexArray";
 import {GlobalUser} from "../../model/local-storage/localStorageTypes";
 import {LocalStorageService} from "../local-data/localStorageService";
@@ -16,7 +10,7 @@ export class ChatService {
     static async tryDecryptChatsTitles(chats: MessageDto[], globalUsers: StringIndexArray<GlobalUser>) {
         const chatsLastSeen = LocalStorageService.chatsLastSeenFromLocalStorage() || {};
 
-        return await Promise.all(chats.map<Promise<Chat>>(async chatDto => {
+        return await Promise.all(chats.map<Promise<TChat>>(async chatDto => {
             const sender = globalUsers[chatDto.sender];
             if (sender) {
                 const chat = await MessageMapper.toEntity(chatDto, sender.userId);
@@ -38,37 +32,4 @@ export class ChatService {
         }))
     }
 
-    static processChatParticipants(dispatch: AppDispatch, chatId: string, globalUsers: StringIndexArray<GlobalUser>, currentUserId: string) {
-
-        return ChatApi.getParticipants(chatId)
-            .then((chatParticipants) => {
-                return MessageApi.getMessages({
-                    receiver: currentUserId,
-                    chat: chatId,
-                    type: MessageType.iam,
-                }).then(s => {
-                    return {
-                        knownParticipants: s,
-                        chatParticipants: chatParticipants
-                    }
-                })
-            }).then(s => {
-                const users = CustomerService.processUnknownChatParticipants(s.chatParticipants, s.knownParticipants, chatId, currentUserId);
-                CustomerService.updateChatParticipantsCertificates(globalUsers, s.chatParticipants, dispatch);
-                dispatch(setUsers(users, chatId));
-            });
-
-        // .then((chatParticipants) => {
-        //
-        //     MessageApi.getMessages({
-        //         receiver: currentUserId,
-        //         chat: chatId,
-        //         type: MessageType.iam,
-        //     }).then(knownParticipants => {
-        //             const users = CustomerService.processUnknownChatParticipants(chatParticipants, knownParticipants, chatId, currentUserId);
-        //             CustomerService.updateChatParticipantsCertificates(globalUsers, chatParticipants, dispatch);
-        //             dispatch(setUsers(users, chatId));
-        //         })
-        // });
-    }
 }

@@ -8,9 +8,9 @@ import {IPlainDataAction} from "../../../redux/redux-types";
 import {AppState, useAppDispatch} from "../../../index";
 import {
     setIsEditGlobalUsersModalOpened,
-    setIsEditRoomTitleModalOpen
+    setIsEditRoomTitleModalOpen,
+    setIsMembersModalOpened
 } from "../../../redux/messenger-menu/messengerMenuActions";
-import {setIsMembersModalOpened} from "../../../redux/messenger-menu/messengerMenuActions";
 import CreateNewPublicButton from "../new-public/CreateNewPublicButton";
 import EditUserTitleButton from "../edit-user-title/EditUserTitleButton";
 import IconedButton from "../../button/IconedButton";
@@ -40,30 +40,29 @@ function MessengerMenu(props: TProps) {
                 open={!!anchorEl}
                 onClose={() => setAnchorEl(null)}
             >
-
                 <div>
                     {props.chatSelected &&
-                    <>
-                        <MenuItem>
-                            <EditUserTitleButton/>
-                        </MenuItem>
-                        <MenuItem>
-                            <IconedButton onClick={() => onMenuItemClick(props.setIsEditRoomTitleModalOpen)}
-                                          icon={<EditIcon style={{marginRight: '10px'}} fontSize={"medium"}/>}
-                                          text={"Rename chat"}/>
-                        </MenuItem>
-                        <MenuItem>
-                            <IconedButton onClick={() => onMenuItemClick(props.setIsMembersModalOpened)}
-                                          icon={<Groups style={{marginRight: '10px'}} fontSize={"medium"}/>}
-                                          text={"Members"}/>
-                        </MenuItem>
-                        <MenuItem>
-                            <IconedButton onClick={() => onMenuItemClick(props.setIsLeaveChatConfirmModalOpened)}
-                                          icon={<ExitToAppIcon style={{marginRight: '10px'}} fontSize={'medium'}/>}
-                                          text={"Leave chat"}/>
-                        </MenuItem>
-                        <Divider/>
-                    </>
+                        <>
+                            <MenuItem>
+                                <EditUserTitleButton/>
+                            </MenuItem>
+                            <MenuItem>
+                                <IconedButton onClick={() => onMenuItemClick(props.setIsEditRoomTitleModalOpen)}
+                                              icon={<EditIcon style={{marginRight: '10px'}} fontSize={"medium"}/>}
+                                              text={"Rename chat"}/>
+                            </MenuItem>
+                            <MenuItem>
+                                <IconedButton onClick={() => onMenuItemClick(props.setIsMembersModalOpened)}
+                                              icon={<Groups style={{marginRight: '10px'}} fontSize={"medium"}/>}
+                                              text={"Members"}/>
+                            </MenuItem>
+                            <MenuItem>
+                                <IconedButton onClick={() => onMenuItemClick(props.setIsLeaveChatConfirmModalOpened)}
+                                              icon={<ExitToAppIcon style={{marginRight: '10px'}} fontSize={'medium'}/>}
+                                              text={"Leave chat"}/>
+                            </MenuItem>
+                            <Divider/>
+                        </>
                     }
                     <MenuItem>
                         <IconedButton onClick={() => onMenuItemClick(props.setIsEditGlobalUsersModalOpened)}
@@ -78,30 +77,15 @@ function MessengerMenu(props: TProps) {
                                       icon={<ExitToAppIcon style={{marginRight: '10px'}} fontSize={"medium"}/>}
                                       text={"Logout"}/>
                     </MenuItem>
-                    {/*<Divider/>*/}
-                    {/*<MenuItem onClick={() => {*/}
-                    {/*}}>*/}
-                    {/*    <ExitToAppIcon style={{marginRight: '10px'}} fontSize={'medium'}/>*/}
-                    {/*    Leave room*/}
-                    {/*</MenuItem>*/}
                 </div>
-
-                {/*{3 === 3 &&     // if room type is private or current user is room admin*/}
-                {/*    <MenuItem onClick={() => {*/}
-                {/*    }}>*/}
-                {/*        <DeleteOutlineOutlinedIcon style={{marginRight: '10px', color: 'red'}} fontSize={'medium'}/>*/}
-                {/*        <span style={{color: 'red'}}>Delete room</span>*/}
-                {/*    </MenuItem>*/}
-                {/*}*/}
             </Menu>
-
         </div>
     );
 }
 
 
 const mapStateToProps = (state: AppState) => ({
-    chatSelected: !!state.messenger.currentChat,
+    chatSelected: !!state.chats.chat,
 })
 
 const mapDispatchToProps = {

@@ -11,7 +11,6 @@ import {
 } from "../../../redux/authorization/authorizationActions";
 import {Field, Form, Formik} from "formik";
 import * as Yup from 'yup';
-import {authorizationReducer} from "../../../redux/authorization/authorizationReducer";
 
 const LoginModal: React.FC<Props> = (props) => {
 
@@ -56,7 +55,8 @@ const LoginModal: React.FC<Props> = (props) => {
                                 >
                                     <div className={style.dialog__content_row}>
                                         <strong className={style.dialog__content_row_label}>Private Key</strong>
-                                        <Field as={"textarea"} name={"pKey"} rows={3} className={style.dialog__input_field} placeholder={"Your private key"}/>
+                                        <Field as={"textarea"} name={"pKey"} rows={3}
+                                               className={style.dialog__input_field} placeholder={"Your private key"}/>
                                     </div>
 
                                 </Tooltip>
@@ -83,8 +83,7 @@ const LoginModal: React.FC<Props> = (props) => {
     );
 }
 
-const mapStateToProps = (state: AppState) => ({
-})
+const mapStateToProps = (state: AppState) => ({})
 
 const mapDispatchToProps = {
     authenticateTF,

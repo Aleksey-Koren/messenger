@@ -3,6 +3,6 @@ import React from "react";
 import {Message} from "../../model/messenger/message";
 
 export function fetchAttachmentsTF(message: Message,
-                                 setComponentState: React.Dispatch<React.SetStateAction<IAttachmentsBlockState>>) {
+                                   setComponentState: React.Dispatch<React.SetStateAction<IAttachmentsBlockState>>) {
 
 }

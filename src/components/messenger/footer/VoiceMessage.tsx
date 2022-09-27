@@ -6,7 +6,6 @@ import {VoiceMessagesService} from "../../../service/messenger/voiceMessagesServ
 import VoiceMessageTimer from "./VoiceMessageTimer";
 
 
-
 interface IOwnProps {
     audioRecorder: MediaRecorder,
     isRecording: boolean

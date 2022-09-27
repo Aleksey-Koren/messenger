@@ -28,6 +28,7 @@ export function voiceMessagesReducer(state: IVoiceMessagesState = initialState, 
         case SET_DURATION:
             return {...state, duration: action.payload.duration}
 
-        default: return state;
+        default:
+            return state;
     }
 }

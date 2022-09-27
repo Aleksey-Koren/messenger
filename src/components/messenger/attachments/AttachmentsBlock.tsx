@@ -6,7 +6,6 @@ import LoadingSpinner from "./LoadingSpinner";
 import Attachment from "./Attachment";
 import {Message} from "../../../model/messenger/message";
 import {AttachmentServiceDownload} from "../../../service/messenger/attachments/attachmentServiceDownload";
-import {fetchAttachmentsTF} from "../../../redux/attachments/attachmentsActions";
 
 interface IOwnProps {
     message: Message
@@ -14,7 +13,7 @@ interface IOwnProps {
 
 export interface IAttachmentsBlockState {
     isPending: boolean;
-    files: TAttachmentFile[]
+    files: (TAttachmentFile | undefined)[]
 }
 
 const AttachmentsBlock: React.FC<TProps> = (props) => {
@@ -23,19 +22,19 @@ const AttachmentsBlock: React.FC<TProps> = (props) => {
 
     useEffect(() => {
         AttachmentServiceDownload.fetchAttachments(props.message, setState);
-    },[])
+    }, [])
 
     return <>
         <div style={{display: "flex", flexDirection: "column"}}>
             {state.isPending &&
-            <div style={{display: "flex", flexDirection: "column"}}>
-                {props.message.attachmentsFilenames!.map(() => <LoadingSpinner/>)}
-            </div>
+                <div style={{display: "flex", flexDirection: "column"}}>
+                    {props.message.attachmentsFilenames!.map(() => <LoadingSpinner key={props.message.id}/>)}
+                </div>
             }
             {!state.isPending &&
-            <div style={{display: "flex"}}>
-                {state.files.map(file => <Attachment file={file}/>)}
-            </div>
+                <div style={{display: "flex"}}>
+                    {state.files!.map(file => <Attachment file={file!} key={props.message.id}/>)}
+                </div>
             }
         </div>
     </>

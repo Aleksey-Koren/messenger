@@ -6,8 +6,7 @@ import {connect, ConnectedProps} from "react-redux";
 import React from "react";
 import {AppState} from "../../../../index";
 import {setIsEditRoomTitleModalOpen} from "../../../../redux/messenger-menu/messengerMenuActions";
-import {sendMessage} from "../../../../redux/messenger/messengerActions";
-import {MessageType} from "../../../../model/messenger/messageType";
+import {updateChatTitleById} from "../../../../redux/chats/chatsActions";
 
 const validationSchema = yup.object().shape({
     title: yup.string().required('Title cannot be empty').min(3,)
@@ -15,16 +14,15 @@ const validationSchema = yup.object().shape({
 
 const EditRoomTitleModal: React.FC<Props> = (props) => {
 
-    const chat = props.chats[props.currentChat!] || {};
-
     return (
         <Dialog open={true} onClose={() => {
         }} maxWidth={"sm"} fullWidth>
             <DialogTitle className={style.dialog__title}>Enter room title</DialogTitle>
             <Formik
-                initialValues={{title: chat?.title}}
+                initialValues={{title: props.currentChat?.title}}
                 onSubmit={(values) => {
-                    props.sendMessage(values.title!, MessageType.hello);
+                    props.updateChatTitleById(props.currentChat!.id, values.title!)
+                    // props.sendMessage(values.title!, MessageType.hello);
                     props.setIsEditRoomTitleModalOpen(false);
                 }}
                 validationSchema={validationSchema}
@@ -55,13 +53,14 @@ const EditRoomTitleModal: React.FC<Props> = (props) => {
 }
 
 const mapStateToProps = (state: AppState) => ({
-    currentChat: state.messenger.currentChat,
-    chats: state.messenger.chats
+    currentChat: state.chats.chat
+    // currentChat: state.messenger.currentChat,
+    // chats: state.messenger.chats
 })
 
 const mapDispatchToProps = {
     setIsEditRoomTitleModalOpen,
-    sendMessage
+    updateChatTitleById,
 }
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

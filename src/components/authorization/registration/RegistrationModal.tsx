@@ -44,9 +44,9 @@ const RegistrationModal: React.FC<Props> = (props) => {
                     <div className={style.dialog__content_row}>
                         <strong className={style.dialog__content_row_label}>Private Key:</strong>
                         <textarea rows={3} readOnly className={style.dialog__content_row_input}
-                                 defaultValue={props.privateKey?.join(',')}/>
+                                  defaultValue={props.privateKey?.join(',')}/>
                     </div>
-                    
+
                     <div className={style.dialog__content_row}>
                         <strong className={style.dialog__content_row_label}>Public Key:</strong>
                         <textarea rows={3} readOnly className={style.dialog__content_row_input}
@@ -56,7 +56,7 @@ const RegistrationModal: React.FC<Props> = (props) => {
             </DialogContent>
 
             <DialogActions className={style.dialog__actions}>
-                <Button  onClick={() => {
+                <Button onClick={() => {
                     props.setIsRegistrationModalOpen(false, false)
                 }}>I save it, go to the chats</Button>
             </DialogActions>

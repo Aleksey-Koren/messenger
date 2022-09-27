@@ -26,10 +26,6 @@ export class MessageService {
                 }
             }
         }
-
-        if (message.type === MessageType.hello) {
-            await MessageService.tryDecryptUndecryptableMessages([message])
-        }
     }
 
     static async tryDecryptUndecryptableMessages(messages: Message[]) {
@@ -82,7 +78,7 @@ export class MessageService {
         })
     }
 
-    static isMessageNotEmpty(text:string, attachments: FileList) {
+    static isMessageNotEmpty(text: string, attachments: FileList) {
         return (text !== '' || attachments.length > 0);
     }
 

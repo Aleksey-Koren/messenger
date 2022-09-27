@@ -17,8 +17,6 @@ import {
 } from "../../../redux/messenger-controls/messengerControlsActions";
 
 
-
-
 function MessengerModalWindows(props: TProps) {
 
     return (
@@ -33,7 +31,7 @@ function MessengerModalWindows(props: TProps) {
             {props.isEditGlobalUsersModalOpened && <GlobalUsersListModal/>}
             {props.isGlobalUserConfigurationModalOpen && <GlobalUserConfigurationModal/>}
             {props.isLeaveChatConfirmModalOpened && <ConfirmModal
-                confirmFunction={() => props.leaveChatTF()}
+                confirmFunction={props.leaveChatTF}
                 text={"Are you sure that you want to leave chat?"}
                 closeFunction={() => props.setIsLeaveChatConfirmModalOpened(false)}
             />}

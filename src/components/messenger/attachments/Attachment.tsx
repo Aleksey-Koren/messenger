@@ -13,18 +13,24 @@ const Attachment: React.FC<TProps> = (props) => {
 
     if (props.file.mimeType === MimeType.IMAGE) {
         return <>
-            <img style={{margin: "5px"}}
-                 src={url} height={200} width={200} alt={"Can not be displayed"}/>
+            <img style={{
+                width: "100%",
+                maxWidth: "445px",
+                height: "auto",
+            }}
+                 src={url}
+                 alt={"Can not be displayed"}
+            />
         </>
     } else if (props.file.mimeType === MimeType.VIDEO) {
         return <>
             <video height={"300"} width={"300"} controls style={{margin: "5px"}}>
                 <source src={url} type={"video/mp4"}/>
-                </video>
+            </video>
         </>
     } else if (props.file.mimeType === MimeType.AUDIO) {
         return <>
-            <audio controls src={url} style={{margin: "5px"}}/>
+            <audio controls src={url} style={{margin: "5px",}}/>
         </>
     } else {
         //todo we need to implement more convenient component. But not simple <span>

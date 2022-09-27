@@ -11,19 +11,14 @@ import {
 import {AppDispatch, AppState} from "../../index";
 import {ThunkDispatch} from "redux-thunk";
 import {Action} from "redux";
-import {MessageApi} from "../../api/messageApi";
-import {openChatTF, setChats, setCurrentChat, setGlobalUsers} from "../messenger/messengerActions";
+import {sendMessage, setGlobalUsers, setMessages} from "../messenger/messengerActions";
 import {MessageType} from "../../model/messenger/messageType";
 import {Message} from "../../model/messenger/message";
-import {setIsMembersModalOpened} from "../messenger-menu/messengerMenuActions";
-import Notification from '../../Notification';
-import {Chat} from "../../model/messenger/chat";
-import {Builder} from "builder-pattern";
 import {GlobalUser} from "../../model/local-storage/localStorageTypes";
 import {CustomerApi} from "../../api/customerApi";
-import {ChatApi} from "../../api/chatApi";
-import {ChatService} from "../../service/messenger/chatService";
-import {StringIndexArray} from "../../model/stringIndexArray";
+import {MessageMapper} from "../../mapper/messageMapper";
+import {ChatsApi} from "../../api/ChatsApi";
+import {setChat, setChats} from "../chats/chatsActions";
 
 export function setIsNewPrivateModalOpened(isOpened: boolean): IPlainDataAction<boolean> {
     return {
@@ -82,88 +77,39 @@ export function removeGlobalUserPublicKeyTF(publicKey: string, globalUser: Globa
     }
 }
 
-
-
-export function createNewRoomTF(title: string, userTitle: string) {
-
+export function leaveChatTF(data: string) {
     return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
-        const user = getState().messenger.user;
-        const globalUsers = {...getState().messenger.globalUsers};
+        const state = getState();
+        let currentChat = state.chats.chat!;
 
-        if (!user) {
-            throw new Error("User is not logged in");
-        }
-
-        MessageApi.sendMessages([{
-            type: MessageType.hello,
-            sender: user.id!,
-            receiver: user.id!,
-            data: title
-        } as Message], globalUsers)
-            .then((messages) => {
-                const message = messages[0];
-                const newChat: Chat = Builder<Chat>()
-                    .id(message.chat)
-                    .title(title)
-                    .isUnreadMessagesExist(false)
-                    .lastSeenAt(new Date())
-                    .build()
-                const state = getState();
-                const chats = {...state.messenger.chats};
-                chats[newChat.id] = newChat;
-                globalUsers[user.id].titles[newChat.id] = userTitle;
-                dispatch(setChats(chats));
-                dispatch(setGlobalUsers(globalUsers));
-                dispatch(setCurrentChat(newChat.id));
-
-                dispatch(setIsNewPrivateModalOpened(false));
-                dispatch(setIsMembersModalOpened(true));
-
-            }).catch(err => {
-            console.error(err)
-            Notification.add({message: 'Something went wrong.', error: err, severity: 'error'});
-        })
-    }
-}
-
-export function leaveChatTF() {
-    return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
         CustomerApi.getServerUser()
             .then(serverUser => {
-                const state = getState();
-                MessageApi.sendMessages([{
-                    type: MessageType.server,
+                const globalUsers = getState().messenger.globalUsers;
+                const customerId = state.messenger.user!.id;
+
+                const message = {
+                    type: MessageType.SERVER,
                     sender: state.messenger.user!.id,
                     receiver: serverUser.id,
-                    data: 'LEAVE_CHAT',
-                    chat: state.messenger.currentChat!,
+                    data: data,
+                    chat: currentChat.id,
                     decrypted: false
-                }], state.messenger.globalUsers)
-                    .then(() => {
-                        return ChatApi.getChats(state.messenger.user!.id)
-                            .then(helloMessages => {
-                                ChatService.tryDecryptChatsTitles(helloMessages, state.messenger.globalUsers)
-                                    .then(chats => {
-                                        if(chats.length !== 0) {
-                                            //todo sorting doesn't gives an effect... we need something else
-                                            chats = chats.sort((a, b) => -(a.lastSeenAt.valueOf() - b.lastSeenAt.valueOf()));
+                } as Message;
 
-                                            chats.forEach(s => console.log('CHAT TITLE: ' + s.title + ' ' + s.lastSeenAt.toString()));
 
-                                            const currentChat = chats[0];
+                MessageMapper.toDto(message, globalUsers[message.receiver])
+                    .then(dto => {
+                        const secretText = dto.data;
+                        const nonce = dto.nonce
+                        ChatsApi.removeCustomerFromRoom(currentChat.id, customerId, secretText!, nonce!)
+                            .then(() => {
+                                let chats = state.chats.chats;
+                                let members = currentChat.members.filter(user => user.id !== customerId)
 
-                                            const stringIndexArrayChats = chats.reduce((prev, next) => {
-                                                prev[next.id] = next;
-                                                return prev;
-                                            }, {} as StringIndexArray<Chat>);
-
-                                            dispatch(setChats(stringIndexArrayChats));
-                                            dispatch(openChatTF(currentChat.id));
-                                        } else {
-                                            dispatch(setChats({}));
-                                            dispatch(setCurrentChat(null));
-                                        }
-                                    })
+                                dispatch(sendMessage(customerId, MessageType.LEAVE_CHAT, members));
+                                dispatch(setChats(chats.filter(chat => chat.id !== currentChat.id)))
+                                dispatch(setMessages([]))
+                                dispatch(setChat(null))
                             })
                     })
             })

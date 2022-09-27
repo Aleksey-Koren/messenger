@@ -7,7 +7,7 @@ import {
     setIsLoginModalOpen,
     setIsWelcomeModalOpen
 } from "../../../redux/authorization/authorizationActions";
-import {connect, ConnectedProps, useDispatch} from "react-redux";
+import {connect, ConnectedProps} from "react-redux";
 
 function WelcomeModal(props: Props) {
 
@@ -42,7 +42,7 @@ function WelcomeModal(props: Props) {
 }
 
 const mapStateToProps = (state: AppState) => ({
-        isOpen: state.authorizationReducer.isWelcomeModalOpen,
+    isOpen: state.authorizationReducer.isWelcomeModalOpen,
 })
 
 const mapDispatchToProps = {

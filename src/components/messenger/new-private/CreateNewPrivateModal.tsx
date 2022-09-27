@@ -28,7 +28,7 @@ function CreateNewPrivateModal() {
             >
                 {formik => (
                     <div>
-                        <Form >
+                        <Form>
                             <DialogContent className={style.dialog__content}>
                                 <TextField
                                     autoFocus margin="dense" type="text"

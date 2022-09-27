@@ -57,8 +57,8 @@ export class MessageMapper {
 
         if (message.attachments) {
             const files: string[] = [];
-            let data: {nonce: Uint8Array, data: Uint8Array};
-            for(let attachment of message.attachments) {
+            let data: { nonce: Uint8Array, data: Uint8Array };
+            for (let attachment of message.attachments) {
                 data = CryptService.encrypt(attachment, CryptService.base64ToUint8(receiver.certificates[0]), nonce);
                 files.push(CryptService.uint8ToBase64(data.data));
             }
@@ -66,4 +66,16 @@ export class MessageMapper {
         }
         return dto;
     }
+
+    // static async encryptText(text: string, publicKey: Uint8Array) {
+    //     const certificate = CryptService.uint8ToBase64(publicKey)
+    //     const nonce: Uint8Array = crypto.getRandomValues(new Uint8Array(24));
+    //
+    //     const data = CryptService.encrypt(CryptService.plainStringToUint8(text),
+    //         CryptService.base64ToUint8(certificate[0]), nonce);
+    //
+    //     data = CryptService.uint8ToBase64(data);
+    //
+    //     return data;
+    // }
 }

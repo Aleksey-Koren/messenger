@@ -1,5 +1,6 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+// import ReactDOM from 'react-dom';
+import ReactDOM from "react-dom/client";
 import './index.css';
 import App from './App';
 import {Provider, TypedUseSelectorHook, useDispatch, useSelector} from "react-redux";
@@ -12,6 +13,7 @@ import {messengerMenuReducer} from "./redux/messenger-menu/messengerMenuReducer"
 import {messengerControlsReducer} from "./redux/messenger-controls/messengerControlsReducer";
 import {voiceMessagesReducer} from "./redux/voiceMessages/voiceMessagesReducer";
 import {messagesListReducer} from "./redux/messages-list/messengerListReducer";
+import {chatsReducer} from "./redux/chats/chatsReducer";
 
 const reducers = combineReducers({
     authorizationReducer: authorizationReducer,
@@ -19,7 +21,8 @@ const reducers = combineReducers({
     messengerMenu: messengerMenuReducer,
     messengerControls: messengerControlsReducer,
     voiceMessages: voiceMessagesReducer,
-    messagesList: messagesListReducer
+    messagesList: messagesListReducer,
+    chats: chatsReducer,
 });
 
 export const store = configureStore({reducer: reducers, devTools: true, middleware: [thunk, promise]})
@@ -29,9 +32,10 @@ export type AppState = ReturnType<typeof store.getState>
 export const useAppDispatch = () => useDispatch<AppDispatch>()
 export const useAppSelector: TypedUseSelectorHook<AppState> = useSelector
 
-ReactDOM.render(
+const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
+
+root.render(
     <Provider store={store}>
         <App/>
     </Provider>,
-    document.getElementById('root')
 );

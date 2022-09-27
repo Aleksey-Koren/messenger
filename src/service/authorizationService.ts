@@ -14,5 +14,4 @@ export class AuthorizationService {
         return 'test' === CryptService.uint8ToPlainString(decrypted!);
     }
 
-
 }

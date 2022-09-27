@@ -1,6 +1,5 @@
 import {StringIndexArray} from "../stringIndexArray";
 import {User} from "../messenger/user";
-import {Chat} from "../messenger/chat";
 
 export interface GlobalUser {
     userId: string,

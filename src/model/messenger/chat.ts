@@ -1,9 +1,7 @@
-import {Message} from "./message";
+import {Customer} from "./customer";
 
 export interface Chat {
     id: string;
     title: string;
-    confirmed: boolean;
-    isUnreadMessagesExist: boolean;
-    lastSeenAt: Date;
+    members: Customer[];
 }

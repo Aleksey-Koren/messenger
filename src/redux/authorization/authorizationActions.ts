@@ -6,10 +6,10 @@ import {
     SET_IS_WELCOME_MODAL_OPEN
 } from "./authorizationTypes";
 import {IPlainDataAction} from "../redux-types";
-import {AppDispatch, AppState} from "../../index";
+import {AppState} from "../../index";
 import {CustomerApi} from "../../api/customerApi";
 import {AuthorizationService} from "../../service/authorizationService";
-import {fetchMessengerStateTF, setUser} from "../messenger/messengerActions";
+import {connectStompClient, setGlobalUsers, setUser} from "../messenger/messengerActions";
 import {LocalStorageService} from "../../service/local-data/localStorageService";
 import Notification from '../../Notification';
 import {Builder} from "builder-pattern";
@@ -20,6 +20,7 @@ import {ThunkDispatch} from "redux-thunk";
 import {CryptService} from "../../service/cryptService";
 import {User} from "../../model/messenger/user";
 import {v4} from "uuid";
+import {getChatsByCustomerId} from "../chats/chatsActions";
 
 
 export function setIsWelcomeModalOpen(isOpen: boolean): IPlainDataAction<boolean> {
@@ -50,7 +51,7 @@ export function setIsRegistrationModalOpen(isOpen: boolean, isGhost: boolean): I
 }
 
 export function authenticateTF(id: string, privateKeyStr: string) {
-    return (dispatch: ThunkDispatch<AppState, void, Action>) => {
+    return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
         CustomerApi.getCustomer(id)
             .then(user => {
                 const publicKey = user.publicKey!;
@@ -58,36 +59,55 @@ export function authenticateTF(id: string, privateKeyStr: string) {
                 if (AuthorizationService.areKeysValid(publicKey, privateKey)) {
                     user.privateKey = privateKey;
                     dispatch(setUser(user));
-                    dispatch(fetchMessengerStateTF(user.id!));
-                    dispatch(setIsLoginModalOpen(false));
                     LocalStorageService.userToStorage(user);
+
+                    dispatch(setIsLoginModalOpen(false));
+                    dispatch(connectStompClient(user.id))
+                    CustomerApi.getCustomersWhichMembersOfChatsOfCustomerId(id)
+                        .then(users => {
+                            const globalUsers = {...getState().messenger.globalUsers};
+                            users.forEach((userItem) => {
+                                globalUsers[userItem.id!] = {
+                                    userId: userItem.id,
+                                    certificates: [CryptService.uint8ToBase64(userItem.publicKey)],
+                                    titles: {}
+                                };
+                            });
+                            LocalStorageService.globalUsersToStorage(globalUsers);
+                            dispatch(getChatsByCustomerId(user.id, 0, 0));
+                            dispatch(setGlobalUsers(globalUsers))
+                        })
                 } else {
                     Notification.add({message: 'ID or PRIVATE KEY is incorrect', severity: 'error'});
                 }
             }).catch((e) => {
-                Notification.add({error: e, message: 'ID or PRIVATE KEY is incorrect', severity: 'error'});
-            })
+            Notification.add({error: e, message: 'ID or PRIVATE KEY is incorrect', severity: 'error'});
+        })
     }
 }
 
 export function registerTF(isGhost?: boolean) {
-    return (dispatch: AppDispatch) => {
+    return (dispatch: ThunkDispatch<AppState, void, Action>) => {
         const keyPair = nacl.box.keyPair();
 
         const customer = Builder(Customer)
             .pk(keyPair.publicKey)
             .build();
 
-        (isGhost ? new Promise<User>(resolve => {resolve({
-            id: v4(),
-            privateKey: keyPair.secretKey,
-            publicKey: keyPair.publicKey})}
+        (isGhost ? new Promise<User>(resolve => {
+                resolve({
+                    id: v4(),
+                    privateKey: keyPair.secretKey,
+                    publicKey: keyPair.publicKey
+                })
+            }
         ) : CustomerApi.register(customer))
-            .then((user:User) => {
+            .then((user: User) => {
                 user.privateKey = keyPair.secretKey
                 dispatch(setIsRegistrationModalOpen(true, !!isGhost));
                 dispatch(setIsWelcomeModalOpen(false));
                 dispatch(setUser(user));
+                dispatch(connectStompClient(user.id))
                 LocalStorageService.userToStorage(user);
             }).catch((e) => {
             dispatch(setIsWelcomeModalOpen(true));
@@ -96,29 +116,9 @@ export function registerTF(isGhost?: boolean) {
     }
 }
 
-
 export function logout(): IPlainDataAction<boolean> {
     return {
         type: LOGOUT,
         payload: true
     }
 }
-
-/*
-const keyPair = nacl.box.keyPair();
-var uuid = "45322f4d-dc28-4af3-9f09-b98678e16727";
-var nonce = crypto.getRandomValues(new Uint8Array(24));
-var out = nacl.box(CryptService.plainStringToUint8(uuid), nonce, keyPair.publicKey, keyPair.secretKey);
-var data = [];
-data.push(CryptService.uint8ToBase64(out));
-data.push(CryptService.uint8ToBase64(nonce));
-data.push(CryptService.uint8ToBase64(keyPair.publicKey));
-data.push(CryptService.uint8ToBase64(keyPair.secretKey));
-var decrypt = CryptService.uint8ToBase64(nacl.box.open(
-    CryptService.base64ToUint8(data[0]),
-    CryptService.base64ToUint8(data[1]),
-    CryptService.base64ToUint8(data[2]),
-    CryptService.base64ToUint8(data[3])
-)!);
-console.log(data, Buffer.from(decrypt, 'base64').toString('utf-8'));
-*/

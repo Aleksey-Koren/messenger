@@ -3,6 +3,7 @@ import {axiosApi} from "../http/axios";
 import {CustomerDto} from "../dto/CustomerDto";
 import {CustomerMapper} from "../mapper/customerMapper";
 import {User} from "../model/messenger/user";
+import {Member} from "../model/messenger/member";
 
 export class CustomerApi {
 
@@ -18,11 +19,29 @@ export class CustomerApi {
         })
     }
 
+    static getCustomersWhichMembersOfChatsOfCustomerId(customerId: string): Promise<User[]> {
+        return axiosApi.get<CustomerDto[]>(`customers/chat-members/distinct/${customerId}`).then(async response => {
+            return await Promise.all(response.data.map(dto => CustomerMapper.toEntity(dto)));
+        })
+    }
+
+    static getCustomersByChatId(chatId: string): Promise<User[]> {
+        return axiosApi.get<CustomerDto[]>(`customers/chats/${chatId}`).then(async response => {
+            return await Promise.all(response.data.map(dto => CustomerMapper.toEntity(dto)));
+        })
+    }
+
+    static getMembersByChatId(chatId: string) {
+        return axiosApi.get<Member[]>(`customers/chats/${chatId}`).then(response => response.data)
+    }
+
+
     static delete(customer: Customer) {
         return axiosApi.delete<void>('customers', {data: CustomerMapper.toDto(customer)});
     }
 
     static getUsers(idList: string[]) {
+        console.log("getUsers")
         const packages = [];
         let chunk = [];
         for (let i = 0; i < idList.length; i++) {
