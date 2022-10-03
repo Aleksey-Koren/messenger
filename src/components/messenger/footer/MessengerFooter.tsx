@@ -33,6 +33,7 @@ const MessengerFooter: React.FC<TProps> = (props) => {
 
     function send(text:string, attachments: FileList) {
         if(MessageService.isMessageNotEmpty(text, attachments)) {
+            //SEND
             props.sendMessage(text, MessageType.whisper, attachments);
             formik.setFieldValue('message', '', false);
             formik.setFieldValue('attachments', {attachments: null, fileNames: []})

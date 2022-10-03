@@ -4,9 +4,27 @@ import {AppState} from "../../index";
 import {Action} from "redux";
 import {MessageApi} from "../../api/messageApi";
 import {MessageType} from "../../model/messenger/messageType";
-import {setMessages} from "../messenger/messengerActions";
+import {
+    setChats,
+    setCurrentChat,
+    setGlobalUsers,
+    setLastMessagesFetch,
+    setMessages,
+    setUsers
+} from "../messenger/messengerActions";
 import React from "react";
 import {MessagesListService} from "../../service/messenger/messagesListService";
+import {Message} from "../../model/messenger/message";
+import {CryptService} from "../../service/cryptService";
+import {MessageService} from "../../service/messenger/messageService";
+import {Chat} from "../../model/messenger/chat";
+import {Builder} from "builder-pattern";
+import {setIsMembersModalOpened} from "../messenger-menu/messengerMenuActions";
+import {setIsNewPrivateModalOpened} from "../messenger-controls/messengerControlsActions";
+import {StringIndexArray} from "../../model/stringIndexArray";
+import {User} from "../../model/messenger/user";
+import {ChatService} from "../../service/messenger/chatService";
+import {MessageProcessingService} from "../../service/messenger/messageProcessingService";
 
 export function setOnscrollMuted(isOnscrollMuted: boolean): ISetOnscrollMuted {
     return {
@@ -46,6 +64,7 @@ export function setHasMore(hasMore: boolean) {
 
 export function fetchNextPageTF() {
     return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
+        console.log("fetchNextPageTF")
         const state = getState();
         const currentMessages = state.messenger.messages;
         const oldestCreated = currentMessages[currentMessages.length - 1].created;
@@ -58,7 +77,7 @@ export function fetchNextPageTF() {
         }).then(messages => {
             console.log("NEXT PAGE")
             console.log(messages)
-            if(messages.length > 0) {
+            if (messages.length > 0) {
                 messages = messages.filter(message => message.type !== MessageType.who);
                 dispatch(setMessages([...currentMessages, ...messages]));
             } else {
@@ -73,10 +92,10 @@ export function onScrollTF(event: React.UIEvent<HTMLUListElement, UIEvent>) {
         const state = getState();
         const scrollRef = event.currentTarget
 
-        if(!state.messagesList.isOnscrollMuted) {
+        if (!state.messagesList.isOnscrollMuted) {
             const {x, y} = MessagesListService.calculateAimCoordinates(scrollRef);
             const target = document.elementFromPoint(x, y);
-            if(target) {
+            if (target) {
                 if (MessagesListService.isAfter(target.id, state.messagesList.lastRead)) {
                     console.log('setLastRead  :  ' + target.id)
                     dispatch(setLastRead(target.id));
@@ -84,7 +103,7 @@ export function onScrollTF(event: React.UIEvent<HTMLUListElement, UIEvent>) {
             }
         }
 
-        if(scrollRef.scrollTop > -1 && !state.messagesList.isAtTheBottom) {
+        if (scrollRef.scrollTop > -1 && !state.messagesList.isAtTheBottom) {
             console.log("AT THE BOTTOM");
             dispatch(setAtTheBottom(true));
             const messages = state.messenger.messages;
@@ -93,7 +112,7 @@ export function onScrollTF(event: React.UIEvent<HTMLUListElement, UIEvent>) {
             }
         }
 
-        if(scrollRef.scrollTop < -1 && state.messagesList.isAtTheBottom) {
+        if (scrollRef.scrollTop < -1 && state.messagesList.isAtTheBottom) {
             console.log("GO UP");
             dispatch(setAtTheBottom(false));
         }
@@ -107,10 +126,153 @@ export function scrollToUnreadTF(lastReadHtmlId: string, scrollRef: HTMLUListEle
             if (children[i].id === lastReadHtmlId) {
                 dispatch(setOnscrollMuted(true));
                 children[i - 1].scrollIntoView(false);
-                setTimeout(() => {dispatch(setOnscrollMuted(false))}, 500);
+                setTimeout(() => {
+                    dispatch(setOnscrollMuted(false))
+                }, 500);
                 return;
             }
         }
         throw new Error('Error while scrolling to first unread message');
+    }
+}
+
+
+export function getLastMessage(payload: any) {
+    return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
+        const message: Message = {
+            id: payload.id,
+            sender: payload.sender,
+            receiver: payload.receiver,
+            chat: payload.chat!,
+            type: payload.type,
+            created: new Date(payload.created!),
+            data: payload.data,
+            attachmentsFilenames: !!payload.attachments ? payload.attachments?.split(";") : undefined,
+            nonce: payload.nonce ? CryptService.base64ToUint8(payload.nonce!) : undefined,
+            decrypted: false
+        };
+
+        MessageService.decryptMessageDataByIterateOverPublicKeys(message, payload.sender)
+            .then(() => {
+                switch (message.type) {
+                    case MessageType.whisper:
+                        MessageProcessingService.processMessages(dispatch, getState, [message]);
+                        break
+                    case MessageType.hello:
+                        handleHelloMessage(message, dispatch, getState)
+                        break
+                    case MessageType.iam:
+                        handleAimMessage(message, dispatch, getState)
+                        processChatParticipants(message, dispatch, getState);
+                        break
+                    case MessageType.who:
+                        processChatParticipants(message, dispatch, getState);
+                        break;
+                    case MessageType.LEAVE_CHAT:
+                        handleLeaveChatMessage(message, dispatch, getState)
+                        break
+                }
+            })
+    }
+}
+
+function processChatParticipants(message: Message, dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) {
+    const user = getState().messenger.user;
+    const globalUsers = {...getState().messenger.globalUsers};
+
+    ChatService.processChatParticipants(dispatch, message.chat, globalUsers, user!.id, getState)
+        .then(() => {
+            let nextMessageFetch: Date = new Date();
+            dispatch(setLastMessagesFetch(nextMessageFetch));
+            MessageProcessingService.processMessages(dispatch, getState, [message]);
+        });
+}
+
+function handleAimMessage(message: Message, dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) {
+    const state = getState();
+    const currentMessages = state.messenger.messages;
+    let updateMessages: Message[] = []
+    const found = currentMessages.find(item => item.type === MessageType.iam
+        && item.sender === message.sender)
+
+    if (found !== undefined) {
+        for (let i = 0; i < currentMessages.length; i++) {
+            if (currentMessages[i].id !== found!.id) {
+                console.log(currentMessages[i])
+                updateMessages.push(currentMessages[i])
+            }
+        }
+        dispatch(setMessages(updateMessages))
+    }
+}
+
+
+function handleHelloMessage(message: Message, dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) {
+    const state = getState();
+    const user = getState().messenger.user;
+
+    const chats = {...state.messenger.chats};
+    const globalUsers = {...getState().messenger.globalUsers};
+    const currentMessages = getState().messenger.messages;
+
+    const found = currentMessages.find(item => item.type === MessageType.hello);
+    const updatedMessage = currentMessages.filter(item => item.type !== MessageType.hello)
+    dispatch(setMessages(updatedMessage))
+
+    const newChat: Chat = Builder<Chat>()
+        .id(message.chat)
+        .title(message.data!)
+        .isUnreadMessagesExist(false)
+        .lastSeenAt(new Date())
+        .build()
+
+
+    chats[newChat.id] = newChat;
+    globalUsers[user!.id].titles[newChat.id] = state.messenger.user!.title || state.messenger.user!.id;
+
+    dispatch(setChats(chats));
+    dispatch(setGlobalUsers(globalUsers));
+    dispatch(setCurrentChat(newChat.id));
+
+    ChatService.processChatParticipants(dispatch, newChat.id, globalUsers, user!.id, getState)
+        .then(() => {
+            let nextMessageFetch: Date = new Date();
+            dispatch(setLastMessagesFetch(nextMessageFetch));
+            MessageProcessingService.processMessages(dispatch, getState, [message]);
+        });
+
+    dispatch(setIsNewPrivateModalOpened(false));
+    if (message.sender == user!.id && found === undefined) {
+        dispatch(setIsMembersModalOpened(true));
+    }
+    if (message.sender === message.receiver || message.receiver === user?.id) {
+        dispatch(setHasMore(false))
+    }
+}
+
+function handleLeaveChatMessage(message: Message, dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) {
+    const user = getState().messenger.user;
+    if (message.sender === user!.id) {
+        let updatedChats: StringIndexArray<Chat> = {}
+        for (let id in getState().messenger.chats) {
+            const chat = getState().messenger.chats[id]
+            if (chat.id !== message.chat) {
+                updatedChats[id] = chat;
+            }
+        }
+
+        dispatch(setMessages([]))
+        dispatch(setCurrentChat(null))
+        dispatch(setChats(updatedChats));
+    } else {
+        let members: StringIndexArray<User> = {}
+
+        for (let id in getState().messenger.users) {
+            const member = getState().messenger.users[id]
+            if (member.id !== message.sender) {
+                members[id] = member;
+            }
+        }
+        dispatch(setUsers(members, message.chat))
     }
 }

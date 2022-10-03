@@ -4,6 +4,7 @@ import {Chat} from "../../model/messenger/chat";
 import {Message} from "../../model/messenger/message";
 import {StringIndexArray} from "../../model/stringIndexArray";
 import {GlobalUser} from "../../model/local-storage/localStorageTypes";
+import {Client} from "stompjs";
 
 export interface IMessengerStateOpt {
     chats?: StringIndexArray<Chat>;
@@ -24,6 +25,7 @@ export interface IMessengerState extends IMessengerStateOpt {
     user: User | null;
     currentChat: string | null;
     lastMessagesFetch: Date | null;
+    stompClient: Client;
 }
 
 export type TMessengerAction = IPlainDataAction<IMessengerState>

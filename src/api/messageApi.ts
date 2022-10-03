@@ -9,7 +9,7 @@ import {GlobalUser} from "../model/local-storage/localStorageTypes";
 export class MessageApi {
 
     static async sendMessages(messages: Message[], users: StringIndexArray<GlobalUser>) {
-
+        console.log("API sendMessages")
         return Promise.all(messages.map(message => MessageMapper.toDto(message, users[message.receiver]))).then(dto => {
             return axiosApi.post<MessageDto[]>('messages?iam=' + messages[0].sender, dto);
         }).then(async response => {
@@ -26,6 +26,8 @@ export class MessageApi {
         page?: number,
         size?: number
     }) {
+        // console.log("API getMessages")
+
         let dto = (await axiosApi.get<{ content: MessageDto[] }>('messages', {params: request})).data;
 
         return await Promise.all(dto.content.map(async dto => await MessageMapper.toEntity(dto, dto.sender)));

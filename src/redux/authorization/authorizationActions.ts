@@ -9,7 +9,7 @@ import {IPlainDataAction} from "../redux-types";
 import {AppDispatch, AppState} from "../../index";
 import {CustomerApi} from "../../api/customerApi";
 import {AuthorizationService} from "../../service/authorizationService";
-import {fetchMessengerStateTF, setUser} from "../messenger/messengerActions";
+import {connectStompClient, fetchMessengerStateTF, setUser} from "../messenger/messengerActions";
 import {LocalStorageService} from "../../service/local-data/localStorageService";
 import Notification from '../../Notification';
 import {Builder} from "builder-pattern";
@@ -61,6 +61,7 @@ export function authenticateTF(id: string, privateKeyStr: string) {
                     dispatch(fetchMessengerStateTF(user.id!));
                     dispatch(setIsLoginModalOpen(false));
                     LocalStorageService.userToStorage(user);
+                    dispatch(connectStompClient(user.id!));
                 } else {
                     Notification.add({message: 'ID or PRIVATE KEY is incorrect', severity: 'error'});
                 }
@@ -71,7 +72,7 @@ export function authenticateTF(id: string, privateKeyStr: string) {
 }
 
 export function registerTF(isGhost?: boolean) {
-    return (dispatch: AppDispatch) => {
+    return (dispatch: ThunkDispatch<AppState, void, Action>) => {
         const keyPair = nacl.box.keyPair();
 
         const customer = Builder(Customer)
@@ -88,6 +89,7 @@ export function registerTF(isGhost?: boolean) {
                 dispatch(setIsRegistrationModalOpen(true, !!isGhost));
                 dispatch(setIsWelcomeModalOpen(false));
                 dispatch(setUser(user));
+                dispatch(connectStompClient(user.id!));
                 LocalStorageService.userToStorage(user);
             }).catch((e) => {
             dispatch(setIsWelcomeModalOpen(true));

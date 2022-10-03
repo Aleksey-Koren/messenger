@@ -15,6 +15,7 @@ import {setChats, setCurrentChat, setUsers} from "../messenger/messengerActions"
 import {ChatApi} from "../../api/chatApi";
 import {CryptService} from "../../service/cryptService";
 import Notification from "../../Notification";
+import {MessageMapper} from "../../mapper/messageMapper";
 
 
 export function setIsMembersModalOpened(isOpened: boolean): IPlainDataAction<boolean> {
@@ -49,16 +50,33 @@ export function addUserToRoomTF(me: User, customer: User, otherId: string) {
         users[otherId] = customer;
         dispatch(setUsers(users, currentChat.id));
 
-        return MessageApi.sendMessages([{
-            type: MessageType.hello,
-            receiver: otherId,
-            sender: me.id,
-            chat: currentChat?.id,
-            data: currentChat?.title
-        } as Message], getState().messenger.globalUsers).then((response) => {
-            Notification.add({message: "Invitation sent", severity: 'info'});
-            return response;
-        })
+        const messageToSend = {
+                type: MessageType.hello,
+                receiver: otherId,
+                sender: me.id,
+                chat: currentChat?.id,
+                data: currentChat?.title
+            } as Message
+
+        //!!!
+        Promise.all([messageToSend].map(message => MessageMapper
+            .toDto(message, getState().messenger.globalUsers[message.receiver])))
+            .then(dto => {
+                console.log("STOMP SEND")
+                getState().messenger.stompClient
+                    .send(`/app/chat/send-message/${me.id}`, {}, JSON.stringify(dto))
+            })
+
+        // return MessageApi.sendMessages([{
+        //     type: MessageType.hello,
+        //     receiver: otherId,
+        //     sender: me.id,
+        //     chat: currentChat?.id,
+        //     data: currentChat?.title
+        // } as Message], getState().messenger.globalUsers).then((response) => {
+        //     Notification.add({message: "Invitation sent", severity: 'info'});
+        //     return response;
+        // })
     }
 }
 

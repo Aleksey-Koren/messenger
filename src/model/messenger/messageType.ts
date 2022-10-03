@@ -3,5 +3,7 @@ export enum MessageType {
     iam = 'iam',
     whisper = 'whisper',
     who = 'who',
-    server = 'server'
+    server = 'server',
+    LEAVE_CHAT = 'LEAVE_CHAT',
+    CHANGE_NAME = 'CHANGE_NAME'
 }

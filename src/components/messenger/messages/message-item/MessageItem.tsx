@@ -28,7 +28,10 @@ const MessageItem: React.FC<TProps> = (props) => {
                      }}>
 
         {message.type === MessageType.whisper &&
-        <Paper color={"primary"} className={style.message_container}>
+        <Paper color={"primary"} className={style.message_container} style={{
+            minWidth: "40%",
+            backgroundColor: "#182533"
+        }}>
             <ListItemText>
                 <Typography color={"primary"} className={style.message_info}>
                     {message.sender !== userId &&

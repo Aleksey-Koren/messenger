@@ -16,7 +16,11 @@ import EditUserTitleButton from "../edit-user-title/EditUserTitleButton";
 import IconedButton from "../../button/IconedButton";
 import {connect, ConnectedProps} from "react-redux";
 import {logout} from "../../../redux/authorization/authorizationActions";
-import {setIsLeaveChatConfirmModalOpened} from "../../../redux/messenger-controls/messengerControlsActions";
+import {
+    setIsLeaveChatConfirmModalOpened,
+    setIsNewRoomModalOpened
+} from "../../../redux/messenger-controls/messengerControlsActions";
+import Chat from "@mui/icons-material/Chat";
 
 
 function MessengerMenu(props: TProps) {
@@ -71,28 +75,17 @@ function MessengerMenu(props: TProps) {
                                       text={"Edit Global Users"}/>
                     </MenuItem>
                     <MenuItem>
-                        <CreateNewPublicButton/>
+                        {/*<CreateNewPublicButton/>*/}
+                        <IconedButton icon={<Chat style={{marginRight: '10px'}} />}
+                                      text={"New chat"}
+                                      onClick={() => onMenuItemClick(props.setIsNewRoomModalOpened)} />
                     </MenuItem>
                     <MenuItem>
                         <IconedButton onClick={() => onMenuItemClick(props.logout)}
                                       icon={<ExitToAppIcon style={{marginRight: '10px'}} fontSize={"medium"}/>}
                                       text={"Logout"}/>
                     </MenuItem>
-                    {/*<Divider/>*/}
-                    {/*<MenuItem onClick={() => {*/}
-                    {/*}}>*/}
-                    {/*    <ExitToAppIcon style={{marginRight: '10px'}} fontSize={'medium'}/>*/}
-                    {/*    Leave room*/}
-                    {/*</MenuItem>*/}
                 </div>
-
-                {/*{3 === 3 &&     // if room type is private or current user is room admin*/}
-                {/*    <MenuItem onClick={() => {*/}
-                {/*    }}>*/}
-                {/*        <DeleteOutlineOutlinedIcon style={{marginRight: '10px', color: 'red'}} fontSize={'medium'}/>*/}
-                {/*        <span style={{color: 'red'}}>Delete room</span>*/}
-                {/*    </MenuItem>*/}
-                {/*}*/}
             </Menu>
 
         </div>
@@ -108,6 +101,7 @@ const mapDispatchToProps = {
     setIsEditGlobalUsersModalOpened,
     setIsEditRoomTitleModalOpen,
     setIsMembersModalOpened,
+    setIsNewRoomModalOpened,
     setIsLeaveChatConfirmModalOpened,
     logout
 }

@@ -14,13 +14,16 @@ import {
 } from "../../redux/messenger/messengerActions";
 import {setLastRead} from "../../redux/messages-list/messagesListActions";
 import {MessagesListService} from "./messagesListService";
+import {MessageMapper} from "../../mapper/messageMapper";
+import {UserMapper} from "../../mapper/userMapper";
+import {Builder} from "builder-pattern";
 
 export class MessageProcessingService {
 
     static processMessages(dispatch: ThunkDispatch<AppState, void, Action>,
                            getState: () => AppState,
                            newMessages: Message[]) {
-
+        // console.log("processMessages")
         const state = getState();
         const currentChat = state.messenger.currentChat;
         let currentUser = {...state.messenger.user!};
@@ -69,6 +72,7 @@ export class MessageProcessingService {
                     }
                     break;
                 case MessageType.whisper:
+                    console.log("CASE WHISPER")
                     if (message.chat === currentChat) {
                         incoming.push(message);
                         isMessagesUpdated = true;
@@ -78,6 +82,7 @@ export class MessageProcessingService {
                     }
                     break;
                 case MessageType.iam:
+                    console.log("CASE IAM")
                     globalUsers[message.sender].titles[message.chat] = message.data!;
 
                     isGlobalUsersUpdated = true;
@@ -94,11 +99,21 @@ export class MessageProcessingService {
                     }
                     break;
                 case MessageType.who:
-                    dispatch(sendMessageNewVersion(globalUsers[currentUser!.id].titles[message.chat] || currentUser!.id,
-                        MessageType.iam,
-                        message.chat,
-                        message.sender)
-                    );
+
+                    const iamMessageToSend = Builder<Message>()
+                        .chat(message.chat)
+                        .data(globalUsers[currentUser!.id].titles[message.chat] || currentUser!.id)
+                        .type(MessageType.iam)
+                        .sender(getState().messenger.user?.id!)
+                        .receiver(message.sender)
+                        .build();
+
+                    Promise.all([iamMessageToSend].map(message => MessageMapper
+                        .toDto(message, globalUsers[message.receiver])))
+                        .then(dto => {
+                            getState().messenger.stompClient
+                                .send(`/app/chat/send-message/${currentUser?.id}`, {}, JSON.stringify(dto))
+                        })
                     break;
                 default:
                     throw new Error('Unknown message type: ' + message.type);

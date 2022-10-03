@@ -7,49 +7,72 @@ import {CustomerApi} from "../../api/customerApi";
 import {CryptService} from "../cryptService";
 import {MessageDto} from "../../dto/messageDto";
 import {ThunkDispatch} from "redux-thunk";
-import {AppState} from "../../index";
+import {AppDispatch, AppState} from "../../index";
 import {Action} from "redux";
-import {setGlobalUsers} from "../../redux/messenger/messengerActions";
+import {
+    connectStompClient,
+    setGlobalUsers,
+    setUsers,
+    stompClientSendMessage
+} from "../../redux/messenger/messengerActions";
 import {GlobalUser} from "../../model/local-storage/localStorageTypes";
 import {UserMapper} from "../../mapper/userMapper";
+import {MessageMapper} from "../../mapper/messageMapper";
 
 export class CustomerService {
 
-    static processUnknownChatParticipants(participants: User[], knownParticipants: Message[], currentChatId: string, senderId: string) {
-        const knownParticipantsTitles: StringIndexArray<string> = knownParticipants.reduce((map, participant) => {
-            map[participant.sender] = participant.data!;
-            return map;
-        }, {} as StringIndexArray<string>)
+    static processUnknownChatParticipants(participants: User[],
+                                          knownParticipants: Message[],
+                                          currentChatId: string,
+                                          senderId: string,
+                                          dispatch: AppDispatch,
+                                          getState: () => AppState) {
 
-        const whoMessages: Message[] = [];
+            // console.log("processUnknownChatParticipants")
+            const knownParticipantsTitles: StringIndexArray<string> = knownParticipants.reduce((map, participant) => {
+                map[participant.sender] = participant.data!;
+                return map;
+            }, {} as StringIndexArray<string>)
 
-        const participantsIndexArray = participants.reduce((array, participant) => {
-            array[participant.id] = {
-                id: participant?.id!,
-                title: knownParticipantsTitles[participant.id],
-                publicKey: participant?.publicKey
+            const whoMessages: Message[] = [];
+
+            const participantsIndexArray = participants.reduce((array, participant) => {
+                array[participant.id] = {
+                    id: participant?.id!,
+                    title: knownParticipantsTitles[participant.id],
+                    publicKey: participant?.publicKey
+                }
+                return array;
+            }, {} as StringIndexArray<User>);
+
+            participants.filter(participant => !knownParticipantsTitles[participant.id])
+                .forEach(unknownParticipant => {
+                    whoMessages.push({
+                        chat: currentChatId,
+                        type: MessageType.who,
+                        sender: senderId,
+                        receiver: unknownParticipant!.id,
+                        data: ""
+                    } as Message);
+                })
+
+            if (whoMessages.length !== 0) {
+                console.log("sendMessages = WHO")
+
+                const user = getState().messenger.user;
+
+                Promise.all(whoMessages.map(message => MessageMapper
+                    .toDto(message, UserMapper.toGlobalUsers(participants)[message.receiver])))
+                    .then(dto => {
+                        getState().messenger.stompClient
+                            .send(`/app/chat/send-message/${user?.id}`, {}, JSON.stringify(dto))
+                    })
             }
-            return array;
-        }, {} as StringIndexArray<User>);
-
-        participants.filter(participant => !knownParticipantsTitles[participant.id])
-            .forEach(unknownParticipant => {
-                whoMessages.push({
-                    chat: currentChatId,
-                    type: MessageType.who,
-                    sender: senderId,
-                    receiver: unknownParticipant!.id,
-                    data: ""
-                } as Message);
-            })
-
-        if (whoMessages.length !== 0) {
-            MessageApi.sendMessages(whoMessages, UserMapper.toGlobalUsers(participants)).then();
-        }
-        return participantsIndexArray;
+            dispatch(setUsers(participantsIndexArray, currentChatId));
     }
 
     static addUnknownUsersToGlobalUsers(helloMessages: MessageDto[], globalUsers: StringIndexArray<GlobalUser>) {
+        // console.log("addUnknownUsersToGlobalUsers")
         const requiredUsers: string[] = [];
 
         helloMessages.forEach(helloMessage => {
@@ -70,6 +93,7 @@ export class CustomerService {
     }
 
     static updateChatParticipantsCertificates(globalUsers: StringIndexArray<GlobalUser>, chatParticipants: User[], dispatch: ThunkDispatch<AppState, void, Action>) {
+        // console.log("updateChatParticipantsCertificates")
         let isGlobalUsersUpdate = false;
 
         chatParticipants.forEach(participant => {

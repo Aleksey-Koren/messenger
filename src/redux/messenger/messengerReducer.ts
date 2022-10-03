@@ -15,6 +15,8 @@ import {SchedulerService} from "../../service/schedulerService";
 import {LocalStorageService} from "../../service/local-data/localStorageService";
 import {StringIndexArray} from "../../model/stringIndexArray";
 import {GlobalUser} from "../../model/local-storage/localStorageTypes";
+import {over} from "stompjs";
+import SockJS from "sockjs-client";
 
 
 const initialState: IMessengerState = {
@@ -25,6 +27,7 @@ const initialState: IMessengerState = {
     globalUsers: {},
     currentChat: null,
     lastMessagesFetch: null,
+    stompClient: over(new SockJS('//localhost:8080/ws')),
 }
 
 export function messengerReducer(state: IMessengerState = initialState, action: TMessengerAction): IMessengerState {
