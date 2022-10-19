@@ -68,7 +68,7 @@ const MessagesList: React.FC<Props> = (props) => {
                                         <UnreadDelimiter/>
                                     </div>
                                 } else {
-                                    return <MessageItem message={message}/>
+                                    return <MessageItem message={message} key={message.id}/>
                                 }
                             })}
 

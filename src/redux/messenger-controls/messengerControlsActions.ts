@@ -121,9 +121,7 @@ export function leaveChatTF() {
                     decrypted: false
                 } as Message
 
-                const messagesToSend: Message[] = [];
-                messagesToSend.push(message)
-                Promise.all(messagesToSend.map(message => MessageMapper.toDto(message, globalUsers[message.receiver])))
+                Promise.all([message].map(message => MessageMapper.toDto(message, globalUsers[message.receiver])))
                     .then(dto => {
                         getState().messenger.stompClient
                             .send(`/app/chat/send-message/${user?.id}`, {}, JSON.stringify(dto));
@@ -149,42 +147,6 @@ export function leaveChatTF() {
                                     .send(`/app/chat/send-message/${user?.id}`, {}, JSON.stringify(dto))
                             })
                     })
-
-                // MessageApi.sendMessages([{
-                //     type: MessageType.server,
-                //     sender: state.messenger.user!.id,
-                //     receiver: serverUser.id,
-                //     data: 'LEAVE_CHAT',
-                //     chat: state.messenger.currentChat!,
-                //     decrypted: false
-                // }], state.messenger.globalUsers)
-                //     .then(() => {
-                //         return ChatApi.getChats(state.messenger.user!.id)
-                //             .then(helloMessages => {
-                //                 ChatService.tryDecryptChatsTitles(helloMessages, state.messenger.globalUsers)
-                //                     .then(chats => {
-                //                         if(chats.length !== 0) {
-                //                             //todo sorting doesn't gives an effect... we need something else
-                //                             chats = chats.sort((a, b) => -(a.lastSeenAt.valueOf() - b.lastSeenAt.valueOf()));
-                //
-                //                             chats.forEach(s => console.log('CHAT TITLE: ' + s.title + ' ' + s.lastSeenAt.toString()));
-                //
-                //                             const currentChat = chats[0];
-                //
-                //                             const stringIndexArrayChats = chats.reduce((prev, next) => {
-                //                                 prev[next.id] = next;
-                //                                 return prev;
-                //                             }, {} as StringIndexArray<Chat>);
-                //
-                //                             dispatch(setChats(stringIndexArrayChats));
-                //                             dispatch(openChatTF(currentChat.id));
-                //                         } else {
-                //                             dispatch(setChats({}));
-                //                             dispatch(setCurrentChat(null));
-                //                         }
-                //                     })
-                //             })
-                //     })
             })
     }
 }

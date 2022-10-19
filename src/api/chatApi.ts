@@ -18,6 +18,14 @@ export class ChatApi {
         });
     }
 
+    static removeCustomerFromChat(customerId: string, chatId: string, token: string) {
+        return axiosApi.delete<any>(`chats/${chatId}/customers/${customerId}`, {
+            headers: {
+                Token: token,
+            }
+        }).then(response => response.data)
+    }
+
     static quitFromChat(chatId: string, myId: string, data: { data: string, nonce: string }) {
         return axiosApi.delete(`chats/${chatId}`, {
             params: {

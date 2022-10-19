@@ -6,7 +6,7 @@ import {
     TMessengerAction,
     SET_USER_TITLE,
     SET_LAST_MESSAGES_FETCH,
-    SET_GLOBAL_USERS
+    SET_GLOBAL_USERS, SET_ADMINISTRATORS
 } from "./messengerTypes";
 import {User} from "../../model/messenger/user";
 import {CryptService} from "../../service/cryptService";
@@ -24,6 +24,7 @@ const initialState: IMessengerState = {
     chats: {},
     messages: [],
     users: {},
+    administrators: {},
     globalUsers: {},
     currentChat: null,
     lastMessagesFetch: null,
@@ -31,17 +32,13 @@ const initialState: IMessengerState = {
 }
 
 export function messengerReducer(state: IMessengerState = initialState, action: TMessengerAction): IMessengerState {
-
     switch (action.type) {
-
         case SET_USER_TITLE:
             const user: User = {...state.user!, title: action.payload.user!.title}
             LocalStorageService.userToStorage(user);
             return {...state, user: user};
-
         case SET_MESSAGES:
             return {...state, messages: action.payload.messages};
-
         case SET_USER: {
             const user = action.payload.user;
             if (!user) {
@@ -56,7 +53,6 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
                 globalUsers: touchGlobalUsers(state.globalUsers, {[user.id]: user})
             }
         }
-
         case SET_CURRENT_CHAT: {
             const user = state.user;
             if (!user) {
@@ -72,32 +68,30 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
                 return state;
             }
         }
-
         case SET_USERS:
             return {
                 ...state,
                 users: action.payload.users,
                 globalUsers: touchGlobalUsers(state.globalUsers, action.payload.users)
             }
-
+        case SET_ADMINISTRATORS:
+            return {
+                ...state,
+                administrators: action.payload.administrators,
+            }
         case SET_CHATS:
             LocalStorageService.chatsLastSeenToStorage(action.payload.chats);
             return {...state, chats: action.payload.chats}
-
         case SET_GLOBAL_USERS:
             LocalStorageService.globalUsersToStorage(action.payload.globalUsers);
             return {...state, globalUsers: action.payload.globalUsers};
-
         case LOGOUT:
             localStorage.clear();
             SchedulerService.stopScheduler();
             return {...initialState, globalUsers: {}};
-
         case SET_LAST_MESSAGES_FETCH:
             LocalStorageService.lastMessagesFetchToStorage(action.payload.lastMessagesFetch!)
-
             return {...state, lastMessagesFetch: action.payload.lastMessagesFetch};
-
         default:
             return state;
     }

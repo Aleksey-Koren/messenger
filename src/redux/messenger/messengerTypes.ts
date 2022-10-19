@@ -5,11 +5,13 @@ import {Message} from "../../model/messenger/message";
 import {StringIndexArray} from "../../model/stringIndexArray";
 import {GlobalUser} from "../../model/local-storage/localStorageTypes";
 import {Client} from "stompjs";
+import {Administrator} from "../../model/messenger/administrator";
 
 export interface IMessengerStateOpt {
     chats?: StringIndexArray<Chat>;
     messages?: Message[];
     users?: StringIndexArray<User>;
+    administrators?: StringIndexArray<Administrator>;
     globalUsers?: StringIndexArray<GlobalUser>;
     user?: User | null;
     currentChat?: string | null;
@@ -21,6 +23,7 @@ export interface IMessengerState extends IMessengerStateOpt {
     chats: StringIndexArray<Chat>;
     messages: Message[];
     users: StringIndexArray<User>;
+    administrators: StringIndexArray<Administrator>;
     globalUsers: StringIndexArray<GlobalUser>;
     user: User | null;
     currentChat: string | null;
@@ -35,7 +38,8 @@ export const SET_CURRENT_CHAT = 'SET_CURRENT_CHAT';
 export const SET_MESSAGES = 'SET_MESSAGES';
 export const SET_USER_TITLE = 'SET_USER_TITLE';
 export const SET_USERS = 'SET_CURRENT_USERS';
+export const SET_ADMINISTRATORS = 'SET_ADMINISTRATORS';
 export const SET_CHATS = 'SET_CURRENT_CHATS';
-export const SET_PRIVATE_KEY = 'SET_PRIVATE_KEY';
 export const SET_GLOBAL_USERS = 'SET_GLOBAL_USERS';
+export const SET_PRIVATE_KEY = 'SET_PRIVATE_KEY';
 export const SET_LAST_MESSAGES_FETCH = 'SET_LAST_MESSAGES_FETCH';

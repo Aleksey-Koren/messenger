@@ -192,13 +192,11 @@ function handleAimMessage(message: Message, dispatch: ThunkDispatch<AppState, vo
     const state = getState();
     const currentMessages = state.messenger.messages;
     let updateMessages: Message[] = []
-    const found = currentMessages.find(item => item.type === MessageType.iam
-        && item.sender === message.sender)
+    const found = currentMessages.find(item => item.type === MessageType.iam && item.sender === message.sender)
 
     if (found !== undefined) {
         for (let i = 0; i < currentMessages.length; i++) {
             if (currentMessages[i].id !== found!.id) {
-                console.log(currentMessages[i])
                 updateMessages.push(currentMessages[i])
             }
         }
@@ -253,26 +251,37 @@ function handleHelloMessage(message: Message, dispatch: ThunkDispatch<AppState, 
 function handleLeaveChatMessage(message: Message, dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) {
     const user = getState().messenger.user;
     if (message.sender === user!.id) {
-        let updatedChats: StringIndexArray<Chat> = {}
-        for (let id in getState().messenger.chats) {
-            const chat = getState().messenger.chats[id]
-            if (chat.id !== message.chat) {
-                updatedChats[id] = chat;
-            }
-        }
+        const chats = getState().messenger.chats;
+        delete chats[message.chat]
 
         dispatch(setMessages([]))
         dispatch(setCurrentChat(null))
-        dispatch(setChats(updatedChats));
+        dispatch(setChats(chats));
     } else {
-        let members: StringIndexArray<User> = {}
+        const members = getState().messenger.users;
+        // delete members[message.sender]
 
-        for (let id in getState().messenger.users) {
-            const member = getState().messenger.users[id]
+        let updatedMembers: StringIndexArray<User> = {}
+        for (let id in members) {
+            const member = members[id]
             if (member.id !== message.sender) {
-                members[id] = member;
+                updatedMembers[id] = member;
             }
         }
-        dispatch(setUsers(members, message.chat))
+
+        const currentMessages = getState().messenger.messages;
+        let updateMessages: Message[] = []
+        const found = currentMessages.find(item => item.type === MessageType.iam && item.sender === message.sender)
+
+        if (found !== undefined) {
+            for (let i = 0; i < currentMessages.length; i++) {
+                if (currentMessages[i].id !== found!.id) {
+                    updateMessages.push(currentMessages[i])
+                }
+            }
+            dispatch(setMessages(updateMessages))
+        }
+
+        dispatch(setUsers(updatedMembers, message.chat))
     }
 }

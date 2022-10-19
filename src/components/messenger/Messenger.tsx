@@ -2,24 +2,24 @@ import Grid from '@mui/material/Grid/Grid';
 import List from '@mui/material/List';
 import React, {useEffect} from 'react';
 import style from './Messenger.module.css'
-import {connect, ConnectedProps, useDispatch} from "react-redux";
+import {connect, ConnectedProps} from "react-redux";
 import MessengerFooter from "./footer/MessengerFooter";
 import MessagesList from "./messages/MessagesList";
 import ListItemButton from '@mui/material/ListItemButton';
 import MessengerMenu from "./menu/MessengerMenu";
 import MessengerSelect from "./select/MessengerSelect";
-import {AppState, store, useAppSelector} from "../../index";
+import {AppState} from "../../index";
 import {setIsWelcomeModalOpen} from "../../redux/authorization/authorizationActions";
 import {
     connectStompClient,
     fetchMessengerStateTF,
     openChatTF,
-    setCurrentChat, setGlobalUsers,
-    setLastMessagesFetch,
-    setUser
+    setCurrentChat,
+    setGlobalUsers,
+    setUser,
 } from "../../redux/messenger/messengerActions";
 import MessengerModalWindows from "./modal-windows/MessengerModalWindows";
-import {Box, Button, Typography} from "@mui/material";
+import {Box, Typography} from "@mui/material";
 import PerfectScrollbar from 'react-perfect-scrollbar'
 import {LocalStorageService} from "../../service/local-data/localStorageService";
 import {SchedulerService} from "../../service/schedulerService";
@@ -43,7 +43,6 @@ const Messenger: React.FC<TProps> = (props) => {
             props.connectStompClient(data!.user.id);
             props.setGlobalUsers(data!.globalUsers);
             props.fetchMessengerStateTF(data!.user.id);
-            // SchedulerService.startScheduler(dispatch, store.getState);
             props.setIsWelcomeModalOpen(false);
         }
     }, []);
@@ -75,7 +74,7 @@ const Messenger: React.FC<TProps> = (props) => {
                             <MessengerMenu/>
                         </div>
 
-                        <div style={{ overflow: 'hidden', padding: '15px 0'}}>
+                        <div style={{overflow: 'hidden', padding: '15px 0'}}>
                             <MessagesList updateScroll={(container) => {
                                 scrollContext.scrolled = container.scrollTop + container.offsetHeight + 20 < container.scrollHeight;
                             }}
@@ -102,7 +101,8 @@ function renderChats(chats: StringIndexArray<Chat>, openChatTF: (chatId: string)
             <div
                 className={chat.id === currentChat ? style.chat_selected : style.chat_unselected}>&nbsp;</div>
             <Typography color={'primary'}>
-                {chat.title} {chat.isUnreadMessagesExist && <span style={{color: "red", fontWeight: "bold", fontSize: "24px"}}>*</span>}
+                {chat.title} {chat.isUnreadMessagesExist &&
+                <span style={{color: "red", fontWeight: "bold", fontSize: "24px"}}>*</span>}
             </Typography>
         </ListItemButton>);
     }
@@ -131,7 +131,7 @@ const mapDispatchToProps = {
     openChatTF,
     fetchMessengerStateTF,
     setGlobalUsers,
-    connectStompClient
+    connectStompClient,
 }
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
