@@ -6,7 +6,7 @@ import {
     SET_IS_WELCOME_MODAL_OPEN
 } from "./authorizationTypes";
 import {IPlainDataAction} from "../redux-types";
-import {AppDispatch, AppState} from "../../index";
+import {AppState} from "../../index";
 import {CustomerApi} from "../../api/customerApi";
 import {AuthorizationService} from "../../service/authorizationService";
 import {connectStompClient, fetchMessengerStateTF, setUser} from "../messenger/messengerActions";
@@ -51,41 +51,85 @@ export function setIsRegistrationModalOpen(isOpen: boolean, isGhost: boolean): I
 
 export function authenticateTF(id: string, privateKeyStr: string) {
     return (dispatch: ThunkDispatch<AppState, void, Action>) => {
-        CustomerApi.getCustomer(id)
-            .then(user => {
-                const publicKey = user.publicKey!;
-                const privateKey = CryptService.JSONByteStringToUint8(privateKeyStr);
-                if (AuthorizationService.areKeysValid(publicKey, privateKey)) {
-                    user.privateKey = privateKey;
-                    dispatch(setUser(user));
-                    dispatch(fetchMessengerStateTF(user.id!));
-                    dispatch(setIsLoginModalOpen(false));
-                    LocalStorageService.userToStorage(user);
-                    dispatch(connectStompClient(user.id!));
-                } else {
-                    Notification.add({message: 'ID or PRIVATE KEY is incorrect', severity: 'error'});
-                }
-            }).catch((e) => {
-                Notification.add({error: e, message: 'ID or PRIVATE KEY is incorrect', severity: 'error'});
-            })
+        // CustomerApi.getCustomer(id)
+        //     .then(user => {
+        //         const publicKey = user.publicKey!;
+        //         const privateKey = CryptService.JSONByteStringToUint8(privateKeyStr);
+        //         if (AuthorizationService.areKeysValid(publicKey, privateKey)) {
+        //             user.privateKey = privateKey;
+        //             dispatch(setUser(user));
+        //             dispatch(fetchMessengerStateTF(user.id!));
+        //             dispatch(setIsLoginModalOpen(false));
+        //             LocalStorageService.userToStorage(user);
+        //             dispatch(connectStompClient(user.id!));
+        //         } else {
+        //             Notification.add({message: 'ID or PRIVATE KEY is incorrect', severity: 'error'});
+        //         }
+        //     }).catch((e) => {
+        //     Notification.add({error: e, message: 'ID or PRIVATE KEY is incorrect', severity: 'error'});
+        // })
     }
 }
 
+// ПАРА КЛЮЧЕЙ
 export function registerTF(isGhost?: boolean) {
     return (dispatch: ThunkDispatch<AppState, void, Action>) => {
-        const keyPair = nacl.box.keyPair();
+        // const keyPair = nacl.box.keyPair();
+        //
+        // const customer = Builder(Customer)
+        //     .pk(keyPair.publicKey)
+        //     .build();
+        //
+        // (isGhost ? new Promise<User>(resolve => {
+        //         resolve({
+        //             id: v4(),
+        //             privateKey: keyPair.secretKey,
+        //             publicKey: keyPair.publicKey
+        //         })
+        //     }
+        // ) : CustomerApi.register(customer))
+        //     .then((user: User) => {
+        //         user.privateKey = keyPair.secretKey
+        //         dispatch(setIsRegistrationModalOpen(true, !!isGhost));
+        //         dispatch(setIsWelcomeModalOpen(false));
+        //         dispatch(setUser(user));
+        //         dispatch(connectStompClient(user.id!));
+        //         LocalStorageService.userToStorage(user);
+        //     }).catch((e) => {
+        //     dispatch(setIsWelcomeModalOpen(true));
+        //     Notification.add({message: 'Something went wrong.', severity: 'error', error: e})
+        // })
+    }
+}
+
+
+export function registerRSA(isGhost?: boolean) {
+    return (dispatch: ThunkDispatch<AppState, void, Action>) => {
+        const forge = require("node-forge");
+        const rsa = forge.pki.rsa;
+
+
+        const keypair = rsa.generateKeyPair({bits: 2048});
+        const privateKeyPem = forge.pki.privateKeyToPem(keypair.privateKey)
+        const publicKeyPem = forge.pki.publicKeyToPem(keypair.publicKey)
+
+        console.log(privateKeyPem)
+        console.log(publicKeyPem)
 
         const customer = Builder(Customer)
-            .pk(keyPair.publicKey)
+            .pk(publicKeyPem)
             .build();
 
-        (isGhost ? new Promise<User>(resolve => {resolve({
-            id: v4(),
-            privateKey: keyPair.secretKey,
-            publicKey: keyPair.publicKey})}
+        (isGhost ? new Promise<User>(resolve => {
+                resolve({
+                    id: v4(),
+                    privateKey: privateKeyPem,
+                    publicKey: publicKeyPem
+                })
+            }
         ) : CustomerApi.register(customer))
-            .then((user:User) => {
-                user.privateKey = keyPair.secretKey
+            .then((user: User) => {
+                user.privateKey = privateKeyPem
                 dispatch(setIsRegistrationModalOpen(true, !!isGhost));
                 dispatch(setIsWelcomeModalOpen(false));
                 dispatch(setUser(user));

@@ -5,6 +5,7 @@ import {Action} from "redux";
 import {MessageApi} from "../../api/messageApi";
 import {MessageType} from "../../model/messenger/messageType";
 import {
+    setAdministrators,
     setChats,
     setCurrentChat,
     setGlobalUsers,
@@ -25,6 +26,7 @@ import {StringIndexArray} from "../../model/stringIndexArray";
 import {User} from "../../model/messenger/user";
 import {ChatService} from "../../service/messenger/chatService";
 import {MessageProcessingService} from "../../service/messenger/messageProcessingService";
+import {AdministratorApi} from "../../api/administratorApi";
 
 export function setOnscrollMuted(isOnscrollMuted: boolean): ISetOnscrollMuted {
     return {
@@ -76,7 +78,6 @@ export function fetchNextPageTF() {
             before: oldestCreated
         }).then(messages => {
             console.log("NEXT PAGE")
-            console.log(messages)
             if (messages.length > 0) {
                 messages = messages.filter(message => message.type !== MessageType.who);
                 dispatch(setMessages([...currentMessages, ...messages]));
@@ -232,6 +233,8 @@ function handleHelloMessage(message: Message, dispatch: ThunkDispatch<AppState, 
     dispatch(setGlobalUsers(globalUsers));
     dispatch(setCurrentChat(newChat.id));
 
+
+
     ChatService.processChatParticipants(dispatch, newChat.id, globalUsers, user!.id, getState)
         .then(() => {
             let nextMessageFetch: Date = new Date();
@@ -240,9 +243,14 @@ function handleHelloMessage(message: Message, dispatch: ThunkDispatch<AppState, 
         });
 
     dispatch(setIsNewPrivateModalOpened(false));
-    if (message.sender == user!.id && found === undefined) {
-        dispatch(setIsMembersModalOpened(true));
-    }
+    AdministratorApi.getAllAdministratorsByChatId(message.chat)
+        .then(administrators => {
+            dispatch(setAdministrators(administrators))
+            if (message.sender == user!.id && found === undefined) {
+                dispatch(setIsMembersModalOpened(true));
+            }
+        })
+
     if (message.sender === message.receiver || message.receiver === user?.id) {
         dispatch(setHasMore(false))
     }
@@ -258,16 +266,20 @@ function handleLeaveChatMessage(message: Message, dispatch: ThunkDispatch<AppSta
         dispatch(setCurrentChat(null))
         dispatch(setChats(chats));
     } else {
-        const members = getState().messenger.users;
-        // delete members[message.sender]
+        AdministratorApi.getAllAdministratorsByChatId(message.chat)
+            .then(administrators => {
+                dispatch(setAdministrators(administrators))
+                const members = getState().messenger.users;
 
-        let updatedMembers: StringIndexArray<User> = {}
-        for (let id in members) {
-            const member = members[id]
-            if (member.id !== message.sender) {
-                updatedMembers[id] = member;
-            }
-        }
+                let updatedMembers: StringIndexArray<User> = {}
+                for (let id in members) {
+                    const member = members[id]
+                    if (member.id !== message.sender) {
+                        updatedMembers[id] = member;
+                    }
+                }
+                dispatch(setUsers(updatedMembers, message.chat))
+            })
 
         const currentMessages = getState().messenger.messages;
         let updateMessages: Message[] = []
@@ -282,6 +294,5 @@ function handleLeaveChatMessage(message: Message, dispatch: ThunkDispatch<AppSta
             dispatch(setMessages(updateMessages))
         }
 
-        dispatch(setUsers(updatedMembers, message.chat))
     }
 }

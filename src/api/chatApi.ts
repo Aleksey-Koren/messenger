@@ -35,4 +35,12 @@ export class ChatApi {
             }
         });
     }
+
+    static leaveChat(chatId: string, customerId: string, token: string) {
+        return axiosApi.delete<any>(`chats/${chatId}/customers/${customerId}/leave-chat`, {
+            headers: {
+                Token: token,
+            }
+        }).then(response => response.data)
+    }
 }

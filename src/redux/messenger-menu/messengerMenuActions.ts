@@ -90,16 +90,6 @@ export function removeCustomerFromChat(customerId: string, chatId: string) {
 
                         ChatApi.removeCustomerFromChat(customerId, chatId, token)
                             .then(() => {
-                                // const members = getState().messenger.users;
-                                // let updatedMembers: StringIndexArray<User> = {}
-                                // for (let id in members) {
-                                //     const member = members[id]
-                                //     if (member.id !== customerId) {
-                                //         updatedMembers[id] = member;
-                                //     }
-                                // }
-                                // dispatch(setUsers(updatedMembers, message.chat))
-
                                 const messagesLeaveChatToSend: Message[] = [];
                                 const users = getState().messenger.users;
 

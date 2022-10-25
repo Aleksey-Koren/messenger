@@ -202,7 +202,7 @@ export function assignRoleToCustomer(customerId: string, chatId: string, role: s
                 const message = {
                     sender: state.messenger.user!.id,
                     receiver: serverUser.id,
-                    data: user!.id,
+                     data: user!.id,
                     decrypted: false
                 } as Message
 
@@ -355,10 +355,8 @@ export function openChatTF(chatId: string) {
         chats[chatId].lastSeenAt = new Date();
         chats[chatId].isUnreadMessagesExist = false;
 
-
         dispatch(setChats(chats))
         dispatch(setCurrentChat(chatId));
-
 
         AdministratorApi.getAllAdministratorsByChatId(chatId)
             .then(administrators => {

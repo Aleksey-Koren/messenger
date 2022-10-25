@@ -25,8 +25,6 @@ const MessagesList: React.FC<Props> = (props) => {
     const areUnreadMessagesExist = MessagesListService.areUnreadMessagesExist(lastReadUuid, messages);
     let unreadQuantity = 0;
 
-    // console.log('!!!Render ' + areUnreadMessagesExist);
-
     return (
         <>
             {
