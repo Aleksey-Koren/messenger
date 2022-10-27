@@ -3,6 +3,7 @@ import style from "./WelcomeModal.module.css";
 import React from "react";
 import {AppState} from "../../../index";
 import {
+    registerRSA,
     registerTF,
     setIsLoginModalOpen,
     setIsWelcomeModalOpen
@@ -19,7 +20,7 @@ function WelcomeModal(props: Props) {
 
             <DialogActions className={style.dialog__actions}>
                 <Button onClick={() => {
-                    props.registerTF();
+                    props.registerRSA();
                 }}
                 >
                     I'm new user
@@ -48,7 +49,8 @@ const mapStateToProps = (state: AppState) => ({
 const mapDispatchToProps = {
     setIsWelcomeModalOpen,
     setIsLoginModalOpen,
-    registerTF
+    registerTF,
+    registerRSA,
 }
 
 

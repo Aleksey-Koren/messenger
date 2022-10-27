@@ -10,28 +10,26 @@ import {setIsRegistrationModalOpen} from "../../../redux/authorization/authoriza
 const RegistrationModal: React.FC<Props> = (props) => {
 
     return (
-        <Dialog open={true}>
+        <Dialog open={true} maxWidth={'md'}>
             <DialogTitle className={globalStyles.dialog__title}>
                 Done!
             </DialogTitle>
-
             <DialogContent className={globalStyles.dialog__content}>
-                <Typography>
+                <Typography style={{paddingTop: "5px"}}>
                     {props.isGhost
                         ?
-                        <p>
+                        <>
                             You have registered as ghost user.
                             <br/>
                             To make other users be able to chat with you, let them know not only ID but and Public Key
                             too.
                             <br/>
                             You are not saved in database. If you log out, your ghost account will be lost.
-                        </p>
+                        </>
                         :
-                        <p>
-                            Please save your id and private key, it is your credentials. Public key is associated with
-                            your ID and saved in our database.
-                        </p>
+                        <>
+                            Please save your id and private key, it's your credentials.
+                        </>
                     }
                 </Typography>
                 <div className={style.dialog__info_container}>
@@ -40,23 +38,20 @@ const RegistrationModal: React.FC<Props> = (props) => {
                         <textarea rows={1} readOnly className={style.dialog__content_row_input}
                                   defaultValue={props.userId!}/>
                     </div>
-
                     <div className={style.dialog__content_row}>
                         <strong className={style.dialog__content_row_label}>Private Key:</strong>
-                        <textarea rows={3} readOnly className={style.dialog__content_row_input}
-                                 defaultValue={props.privateKey?.join(',')}/>
+                        <textarea rows={8} readOnly className={style.dialog__content_row_input}
+                                  defaultValue={props.privateKey!}/>
                     </div>
-                    
                     <div className={style.dialog__content_row}>
                         <strong className={style.dialog__content_row_label}>Public Key:</strong>
-                        <textarea rows={3} readOnly className={style.dialog__content_row_input}
-                                  defaultValue={props.publicKey?.join(',')}/>
+                        <textarea rows={10} readOnly className={style.dialog__content_row_input}
+                                  defaultValue={props.publicKey!}/>
                     </div>
                 </div>
             </DialogContent>
-
             <DialogActions className={style.dialog__actions}>
-                <Button  onClick={() => {
+                <Button onClick={() => {
                     props.setIsRegistrationModalOpen(false, false)
                 }}>I save it, go to the chats</Button>
             </DialogActions>
@@ -68,8 +63,8 @@ const mapStateToProps = (state: AppState) => {
     const user = state.messenger.user;
     return {
         userId: user?.id,
-        publicKey: user?.publicKey,
-        privateKey: user?.privateKey,
+        publicKey: user?.publicKeyPem,
+        privateKey: user?.privateKeyPem,
         isGhost: state.authorizationReducer.isRegistrationGhost
     }
 }

@@ -2,6 +2,8 @@ import {store} from "../index";
 import nacl from "tweetnacl";
 import naclUtil from "tweetnacl-util";
 
+const forge = require("node-forge");
+const rsa = forge.pki.rsa;
 
 export class CryptService {
 
@@ -20,7 +22,7 @@ export class CryptService {
             privateKey!
         );
 
-        if(data === null) {
+        if (data === null) {
             throw new Error('Encryption function has returned null. Something went wrong');
         }
 
@@ -75,6 +77,59 @@ export class CryptService {
             .map(str => parseInt(str))
         );
     }
+
+    //==================================================================================================================
+
+
+
+    static encryptRSA(message: string | Uint8Array, publicKeyToEncrypt: string, privateKeyToSign?: string, nonce?: string) {
+        console.log(publicKeyToEncrypt)
+        const messenger = store.getState().messenger;
+
+        const privateKey = forge.pki.privateKeyFromPem(privateKeyToSign || messenger.user?.privateKeyPem);
+        const publicKey = forge.pki.publicKeyFromPem(publicKeyToEncrypt)
+
+        if (!privateKey) {
+            throw new Error("User is not logged in");
+        }
+
+        // sign data with a private key and output DigestInfo DER-encoded bytes
+        const md = forge.md.sha1.create();
+        md.update((Math.random() + 1).toString(36).substring(2), 'utf8');
+
+        return {
+            nonce: nonce || forge.util.encode64(privateKey.sign(md)) + ":" + forge.util.encode64(md.digest().bytes()),
+            data: forge.util.encode64(publicKey.encrypt(message))
+        }
+    }
+
+    static decryptRSA(message: string, publicKeyToVerify: string, privateKeyToDecrypt: string, nonce: string) {
+        const messenger = store.getState().messenger;
+        const privateKey = forge.pki.privateKeyFromPem(privateKeyToDecrypt || messenger.user?.privateKeyPem);
+        const publicKey = forge.pki.publicKeyFromPem(publicKeyToVerify)
+
+        if (!privateKey) {
+            throw new Error("User is not logged in");
+        }
+
+        if (nonce !== null) {
+            const values = nonce.split(':');
+            const sign = forge.util.decode64(values[0]);
+            const bytes = forge.util.decode64(values[1]);
+
+            try {
+                publicKey.verify(bytes, sign);
+            } catch (e) {
+                console.error("error: ", e)
+            }
+        }
+
+        return privateKey.decrypt(forge.util.decode64(message))
+    }
+
+
+    //==================================================================================================================
+
 }
 
 // var buffer = util.createBuffer(data, 'utf8');
