@@ -19,8 +19,7 @@
 }
 
 .dialog__content_row_input{
-    width: 400px;
-    overflow-y: hidden;
+    width: 550px;
     border-radius: 2px;
     padding: 10px 10px;
     font-size: 15px;

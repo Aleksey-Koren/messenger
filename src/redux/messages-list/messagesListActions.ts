@@ -149,7 +149,8 @@ export function getLastMessage(payload: any) {
             created: new Date(payload.created!),
             data: payload.data,
             attachmentsFilenames: !!payload.attachments ? payload.attachments?.split(";") : undefined,
-            nonce: payload.nonce ? CryptService.base64ToUint8(payload.nonce!) : undefined,
+            // nonce: payload.nonce ? CryptService.base64ToUint8(payload.nonce!) : undefined,
+            nonce: payload.nonce ? payload.nonce! : undefined,
             decrypted: false
         };
 

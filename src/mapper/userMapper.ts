@@ -12,7 +12,8 @@ export class UserMapper {
             globalUsers[user.id] = {
                 userId: user.id,
                 titles: {},
-                certificates: [CryptService.uint8ToBase64(user.publicKey)]
+                // certificates: [CryptService.uint8ToBase64(user.publicKey!)]
+                certificates: [user.publicKeyPem!]
             }
         }
 
@@ -25,7 +26,8 @@ export class UserMapper {
         for (let userId in globalUsers) {
             users[userId] = {
                 id: userId,
-                publicKey: CryptService.base64ToUint8(globalUsers[userId].certificates[0])
+                // publicKey: CryptService.base64ToUint8(globalUsers[userId].certificates[0])
+                publicKeyPem: globalUsers[userId].certificates[0]
             }
         }
 

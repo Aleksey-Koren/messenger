@@ -36,7 +36,6 @@ const scrollContext: { container: HTMLElement | null, scrolled: boolean, charged
 const Messenger: React.FC<TProps> = (props) => {
 
     useEffect(() => {
-
         if (LocalStorageService.isLocalStorageExists() && !SchedulerService.isSchedulerStarted()) {
             const data = LocalStorageService.loadDataFromLocalStorage();
             props.setUser(data!.user);

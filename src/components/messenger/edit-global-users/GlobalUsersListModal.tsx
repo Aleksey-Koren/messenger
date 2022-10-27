@@ -32,7 +32,6 @@ const GlobalUsersListModal: React.FC<TProps> = (props) => {
 
     useEffect(() => {
         setUsersToRender(GlobalUsersSearchService.filterGlobalUsers(searchParams, globalUsersArray));
-        console.log('USE EFFECT');
     }, [props.globalUsers])
 
     return (

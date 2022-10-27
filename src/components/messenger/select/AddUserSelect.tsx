@@ -11,14 +11,6 @@ const AddUserSelect: React.FC<TProps> = (props: TProps) => {
 
     const [isSearchable, setIsSearchable] = useState<boolean>(true)
 
-    // const onChange = (users: MultiValue<User>) => {
-    //     props.setSelectedUsers([...users]);
-    //     setIsSearchable(users.length < 10);
-    //     console.log(users.length);
-    //     console.log(isSearchable);
-    // }
-
-
     return (
         <AsyncSelect styles={{
             control: (base, state) => ({...base, borderRadius: '20px', backgroundColor: "grey"}),

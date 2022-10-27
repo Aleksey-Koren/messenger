@@ -13,7 +13,6 @@ const validationSchema = yup.object().shape({
 })
 
 const EditUserTitleModal: React.FC<Props> = (props) => {
-    console.log(props);
     return (
         <Dialog open={true} maxWidth={"sm"} fullWidth>
             <DialogTitle className={style.dialog__title}>Update your name</DialogTitle>

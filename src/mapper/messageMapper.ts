@@ -17,7 +17,8 @@ export class MessageMapper {
             created: new Date(dto.created!),
             data: dto.data,
             attachmentsFilenames: !!dto.attachments ? dto.attachments?.split(";") : undefined,
-            nonce: dto.nonce ? CryptService.base64ToUint8(dto.nonce!) : undefined,
+            // nonce: dto.nonce ? CryptService.base64ToUint8(dto.nonce!) : undefined,
+            nonce: dto.nonce ? dto.nonce! : undefined,
             decrypted: false
         };
 
@@ -42,24 +43,31 @@ export class MessageMapper {
             const user = await CustomerApi.getCustomer(message.receiver).then(user => user);
             receiver = {
                 userId: user.id,
-                certificates: [CryptService.uint8ToBase64(user.publicKey)],
+                // certificates: [CryptService.uint8ToBase64(user.publicKey!)],
+                certificates: [user.publicKeyPem!],
                 titles: {}
             }
         }
 
-        const nonce: Uint8Array = crypto.getRandomValues(new Uint8Array(24));
-        dto.nonce = CryptService.uint8ToBase64(nonce);
+        // const nonce: Uint8Array = crypto.getRandomValues(new Uint8Array(24));
+        // dto.nonce = CryptService.uint8ToBase64(nonce);
 
         if (message.data) {
-            const data = CryptService.encrypt(CryptService.plainStringToUint8(message.data), CryptService.base64ToUint8(receiver.certificates[0]), nonce);
-            dto.data = CryptService.uint8ToBase64(data.data);
+            // const data = CryptService.encrypt(CryptService.plainStringToUint8(message.data), CryptService.base64ToUint8(receiver.certificates[0]), nonce);
+            // dto.data = CryptService.uint8ToBase64(data.data);
+            console.log(receiver.certificates[0])
+            const data = CryptService.encryptRSA(message.data, receiver.certificates[0]);
+            dto.data = data.data;
+            dto.nonce = data.nonce;
         }
+        const nonce = dto.nonce;
 
         if (message.attachments) {
             const files: string[] = [];
             let data: {nonce: Uint8Array, data: Uint8Array};
             for(let attachment of message.attachments) {
-                data = CryptService.encrypt(attachment, CryptService.base64ToUint8(receiver.certificates[0]), nonce);
+                // data = CryptService.encrypt(attachment, CryptService.base64ToUint8(receiver.certificates[0]), nonce);
+                data = CryptService.encryptRSA(attachment, receiver.certificates[0], nonce).data;
                 files.push(CryptService.uint8ToBase64(data.data));
             }
             dto.attachments = files.join(";");

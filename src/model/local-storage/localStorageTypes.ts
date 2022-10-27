@@ -12,6 +12,8 @@ export interface LocalStorageUser {
     id: string,
     publicKey: string,
     privateKey: string,
+    publicKeyPem: string,
+    privateKeyPem: string,
     title: string
 }
 

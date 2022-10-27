@@ -56,7 +56,9 @@ const LoginModal: React.FC<Props> = (props) => {
                                 >
                                     <div className={style.dialog__content_row}>
                                         <strong className={style.dialog__content_row_label}>Private Key</strong>
-                                        <Field as={"textarea"} name={"pKey"} rows={3} className={style.dialog__input_field} placeholder={"Your private key"}/>
+                                        <Field as={"textarea"} name={"pKey"} rows={10} className={style.dialog__input_field}
+                                               placeholder={"Your private key"}/>
+                                        {/*<textarea rows={8} readOnly className={style.dialog__content_row_input}/>*/}
                                     </div>
 
                                 </Tooltip>

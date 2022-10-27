@@ -7,7 +7,8 @@ export interface Message {
     chat: string;
     type: MessageType;
     data?: string;
-    nonce?: Uint8Array;
+    // nonce?: Uint8Array;
+    nonce?: string;
     created?: Date;
     attachments?: Uint8Array[];
     attachmentsFilenames?: string[];

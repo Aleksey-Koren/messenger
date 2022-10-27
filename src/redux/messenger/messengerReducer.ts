@@ -105,7 +105,7 @@ function touchGlobalUsers(globalUsers: StringIndexArray<GlobalUser>, usersCache:
         const user = usersCache[key];
         let cert;
         try {
-            cert = CryptService.uint8ToBase64(user.publicKey);
+            cert = user.publicKeyPem!;
         } catch (e) {
             console.error("fail to convert public key into string")
             cert = '';

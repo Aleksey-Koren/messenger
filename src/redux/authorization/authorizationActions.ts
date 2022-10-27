@@ -8,16 +8,13 @@ import {
 import {IPlainDataAction} from "../redux-types";
 import {AppState} from "../../index";
 import {CustomerApi} from "../../api/customerApi";
-import {AuthorizationService} from "../../service/authorizationService";
-import {connectStompClient, fetchMessengerStateTF, setUser} from "../messenger/messengerActions";
+import {connectStompClient, setUser} from "../messenger/messengerActions";
 import {LocalStorageService} from "../../service/local-data/localStorageService";
 import Notification from '../../Notification';
 import {Builder} from "builder-pattern";
 import {Customer} from "../../model/messenger/customer";
-import nacl from "tweetnacl";
 import {Action} from "redux";
 import {ThunkDispatch} from "redux-thunk";
-import {CryptService} from "../../service/cryptService";
 import {User} from "../../model/messenger/user";
 import {v4} from "uuid";
 
@@ -129,7 +126,8 @@ export function registerRSA(isGhost?: boolean) {
             }
         ) : CustomerApi.register(customer))
             .then((user: User) => {
-                user.privateKey = privateKeyPem
+                console.log(user)
+                user.privateKeyPem = privateKeyPem
                 dispatch(setIsRegistrationModalOpen(true, !!isGhost));
                 dispatch(setIsWelcomeModalOpen(false));
                 dispatch(setUser(user));
@@ -137,7 +135,7 @@ export function registerRSA(isGhost?: boolean) {
                 LocalStorageService.userToStorage(user);
             }).catch((e) => {
             dispatch(setIsWelcomeModalOpen(true));
-            Notification.add({message: 'Something went wrong.', severity: 'error', error: e})
+            Notification.add({message: 'Something went wrong. ', severity: 'error', error: e})
         })
     }
 }

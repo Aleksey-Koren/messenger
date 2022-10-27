@@ -43,7 +43,7 @@ export class MessageService {
 
                 await CustomerApi.getCustomer(senderId)
                     .then(user => {
-                        const foundedPublicKey = CryptService.uint8ToBase64(user.publicKey);
+                        const foundedPublicKey = CryptService.uint8ToBase64(user.publicKey!);
                         const decryptedMessageData = decryptMessageData(message, foundedPublicKey);
 
                         console.log('DECRYPT UNDECRYPTABLE MESSAGES. DECRYPTED DATA --- ' + decryptedMessageData)
@@ -63,7 +63,7 @@ export class MessageService {
                             globalUsers[senderId].certificates.unshift(foundedPublicKey);
                         }
 
-                        messagesSenders.set(senderId, user.publicKey);
+                        messagesSenders.set(senderId, user.publicKey!);
                     })
                     .catch((e) => {      // User is a ghost || Server Error
                         message.data = undefined;
@@ -91,16 +91,12 @@ export class MessageService {
     }
 }
 
-function decryptMessageData(message: Message, publicKeyToVerify: string, privateKeyToDecrypt?: Uint8Array) {
-    privateKeyToDecrypt = privateKeyToDecrypt || store.getState().messenger.user?.privateKey;
+function decryptMessageData(message: Message, publicKeyToVerify: string, privateKeyToDecrypt?: string) {
+    privateKeyToDecrypt = privateKeyToDecrypt || store.getState().messenger.user?.privateKeyPem;
     if (!privateKeyToDecrypt) {
         throw new Error("user is not logged in")
     }
 
-    return CryptService.decryptToString(
-        CryptService.base64ToUint8(message.data!),
-        CryptService.base64ToUint8(publicKeyToVerify),
-        message.nonce!,
-        privateKeyToDecrypt
-    ) || undefined;
+    return CryptService.decryptRSA(message.data!, publicKeyToVerify, privateKeyToDecrypt, message.nonce!);
+
 }

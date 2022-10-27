@@ -6,14 +6,10 @@ import {
     DialogActions,
     DialogContent,
     DialogContentText,
-    DialogTitle,
-    FormControl,
-    IconButton,
-    InputLabel,
+    DialogTitle, FormControl,
+    IconButton, InputLabel,
     ListItem,
-    ListItemIcon,
-    MenuItem,
-    Select,
+    ListItemIcon, MenuItem, Select,
     TextField,
     Toolbar,
     Typography
@@ -123,10 +119,8 @@ const ParticipantsListModal: React.FC<Props> = (props) => {
                     )}
                 </Formik>
                 <List dense sx={{width: '100%'}} className={style.dialog__participants_list}>
-                    {chatParticipants?.map(member => (
-                        <>
-                            {Item(member)}
-                        </>
+                    {chatParticipants?.map((member, index) => (
+                        <Item key={index} member={member} user={props.user}/>
                     ))}
                 </List>
             </Dialog>
@@ -155,13 +149,13 @@ const ParticipantsListModal: React.FC<Props> = (props) => {
         </>
     );
 
-    function Item(member: User) {
+    function Item(props: any) {
+        const member = props.member;
         const roleItem = chatAdministrators?.find(admin => admin.userId === member.id)?.userType || UserType.NO_ROLE
         const userRole = chatAdministrators?.find(admin => admin.userId === props.user?.id)?.userType || UserType.NO_ROLE
 
         return (
             <ListItem
-                key={member.id}
                 secondaryAction={
                     member.id === props.user?.id ?
                         <IconButton

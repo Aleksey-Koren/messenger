@@ -78,7 +78,8 @@ export class CustomerService {
             response.forEach((user) => {
                 globalUsers[user.id!] = {
                     userId: user.id,
-                    certificates: [CryptService.uint8ToBase64(user.publicKey)],
+                    // certificates: [CryptService.uint8ToBase64(user.publicKey!)],
+                    certificates: [user.publicKeyPem!],
                     titles: {}
                 };
             }));
@@ -90,7 +91,8 @@ export class CustomerService {
 
         chatParticipants.forEach(participant => {
             const globalUser = globalUsers[participant.id];
-            const actualParticipantPublicKey = CryptService.uint8ToBase64(participant.publicKey);
+            // const actualParticipantPublicKey = CryptService.uint8ToBase64(participant.publicKey!);
+            const actualParticipantPublicKey = participant.publicKeyPem!;
 
             if (!globalUser) {
                 globalUsers[participant.id] = {
