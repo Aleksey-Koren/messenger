@@ -5,13 +5,13 @@ import style from "./LoginModal.module.css";
 import globalStyles from '../../../global-styles/ModalWindow.module.css'
 import {AppState} from "../../../index";
 import {
+    authenticateRSA,
     authenticateTF,
     setIsLoginModalOpen,
     setIsWelcomeModalOpen
 } from "../../../redux/authorization/authorizationActions";
 import {Field, Form, Formik} from "formik";
 import * as Yup from 'yup';
-import {authorizationReducer} from "../../../redux/authorization/authorizationReducer";
 
 const LoginModal: React.FC<Props> = (props) => {
 
@@ -29,7 +29,7 @@ const LoginModal: React.FC<Props> = (props) => {
             <Formik
                 initialValues={{id: '', pKey: ''}}
                 validationSchema={loginSchema}
-                onSubmit={(values) => props.authenticateTF(values.id, values.pKey)}
+                onSubmit={(values) => props.authenticateRSA(values.id, values.pKey)}
                 validateOnChange
             >
                 {formik => (
@@ -56,7 +56,8 @@ const LoginModal: React.FC<Props> = (props) => {
                                 >
                                     <div className={style.dialog__content_row}>
                                         <strong className={style.dialog__content_row_label}>Private Key</strong>
-                                        <Field as={"textarea"} name={"pKey"} rows={10} className={style.dialog__input_field}
+                                        <Field as={"textarea"} name={"pKey"} rows={10}
+                                               className={style.dialog__input_field}
                                                placeholder={"Your private key"}/>
                                         {/*<textarea rows={8} readOnly className={style.dialog__content_row_input}/>*/}
                                     </div>
@@ -85,11 +86,11 @@ const LoginModal: React.FC<Props> = (props) => {
     );
 }
 
-const mapStateToProps = (state: AppState) => ({
-})
+const mapStateToProps = (state: AppState) => ({})
 
 const mapDispatchToProps = {
     authenticateTF,
+    authenticateRSA,
     setIsWelcomeModalOpen,
     setIsLoginModalOpen
 }

@@ -16,7 +16,6 @@ import {
 import React from "react";
 import {MessagesListService} from "../../service/messenger/messagesListService";
 import {Message} from "../../model/messenger/message";
-import {CryptService} from "../../service/cryptService";
 import {MessageService} from "../../service/messenger/messageService";
 import {Chat} from "../../model/messenger/chat";
 import {Builder} from "builder-pattern";
@@ -149,11 +148,11 @@ export function getLastMessage(payload: any) {
             created: new Date(payload.created!),
             data: payload.data,
             attachmentsFilenames: !!payload.attachments ? payload.attachments?.split(";") : undefined,
-            // nonce: payload.nonce ? CryptService.base64ToUint8(payload.nonce!) : undefined,
             nonce: payload.nonce ? payload.nonce! : undefined,
             decrypted: false
         };
 
+        console.log("type: " + message.type)
         MessageService.decryptMessageDataByIterateOverPublicKeys(message, payload.sender)
             .then(() => {
                 switch (message.type) {
@@ -162,9 +161,9 @@ export function getLastMessage(payload: any) {
                         break
                     case MessageType.hello:
                         handleHelloMessage(message, dispatch, getState)
+                        processChatParticipants(message, dispatch, getState)
                         break
                     case MessageType.iam:
-                        handleAimMessage(message, dispatch, getState)
                         processChatParticipants(message, dispatch, getState);
                         break
                     case MessageType.who:
@@ -188,22 +187,7 @@ function processChatParticipants(message: Message, dispatch: ThunkDispatch<AppSt
             dispatch(setLastMessagesFetch(nextMessageFetch));
             MessageProcessingService.processMessages(dispatch, getState, [message]);
         });
-}
 
-function handleAimMessage(message: Message, dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) {
-    const state = getState();
-    const currentMessages = state.messenger.messages;
-    let updateMessages: Message[] = []
-    const found = currentMessages.find(item => item.type === MessageType.iam && item.sender === message.sender)
-
-    if (found !== undefined) {
-        for (let i = 0; i < currentMessages.length; i++) {
-            if (currentMessages[i].id !== found!.id) {
-                updateMessages.push(currentMessages[i])
-            }
-        }
-        dispatch(setMessages(updateMessages))
-    }
 }
 
 
@@ -235,13 +219,12 @@ function handleHelloMessage(message: Message, dispatch: ThunkDispatch<AppState, 
     dispatch(setCurrentChat(newChat.id));
 
 
-
-    ChatService.processChatParticipants(dispatch, newChat.id, globalUsers, user!.id, getState)
-        .then(() => {
-            let nextMessageFetch: Date = new Date();
-            dispatch(setLastMessagesFetch(nextMessageFetch));
-            MessageProcessingService.processMessages(dispatch, getState, [message]);
-        });
+    // ChatService.processChatParticipants(dispatch, newChat.id, globalUsers, user!.id, getState)
+    //     .then(() => {
+    //         let nextMessageFetch: Date = new Date();
+    //         dispatch(setLastMessagesFetch(nextMessageFetch));
+    //         MessageProcessingService.processMessages(dispatch, getState, [message]);
+    //     });
 
     dispatch(setIsNewPrivateModalOpened(false));
     AdministratorApi.getAllAdministratorsByChatId(message.chat)

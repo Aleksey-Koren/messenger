@@ -8,7 +8,7 @@ import {
 import {IPlainDataAction} from "../redux-types";
 import {AppState} from "../../index";
 import {CustomerApi} from "../../api/customerApi";
-import {connectStompClient, setUser} from "../messenger/messengerActions";
+import {connectStompClient, fetchMessengerStateTF, setUser} from "../messenger/messengerActions";
 import {LocalStorageService} from "../../service/local-data/localStorageService";
 import Notification from '../../Notification';
 import {Builder} from "builder-pattern";
@@ -17,6 +17,7 @@ import {Action} from "redux";
 import {ThunkDispatch} from "redux-thunk";
 import {User} from "../../model/messenger/user";
 import {v4} from "uuid";
+import {AuthorizationService} from "../../service/authorizationService";
 
 
 export function setIsWelcomeModalOpen(isOpen: boolean): IPlainDataAction<boolean> {
@@ -52,6 +53,7 @@ export function authenticateTF(id: string, privateKeyStr: string) {
         //     .then(user => {
         //         const publicKey = user.publicKey!;
         //         const privateKey = CryptService.JSONByteStringToUint8(privateKeyStr);
+        //
         //         if (AuthorizationService.areKeysValid(publicKey, privateKey)) {
         //             user.privateKey = privateKey;
         //             dispatch(setUser(user));
@@ -67,6 +69,30 @@ export function authenticateTF(id: string, privateKeyStr: string) {
         // })
     }
 }
+
+
+export function authenticateRSA(id: string, privateKeyPem: string) {
+    return (dispatch: ThunkDispatch<AppState, void, Action>) => {
+        CustomerApi.getCustomer(id)
+            .then(user => {
+                const publicKeyPem = user.publicKeyPem!;
+
+                if (AuthorizationService.areRSAKeysValid(publicKeyPem, privateKeyPem)) {
+                    user.privateKeyPem = privateKeyPem;
+                    dispatch(setUser(user));
+                    dispatch(fetchMessengerStateTF(user.id!));
+                    dispatch(setIsLoginModalOpen(false));
+                    LocalStorageService.userToStorage(user);
+                    dispatch(connectStompClient(user.id!));
+                } else {
+                    Notification.add({message: 'ID or PRIVATE KEY is incorrect', severity: 'error'});
+                }
+            }).catch((e) => {
+            Notification.add({error: e, message: 'ID or PRIVATE KEY is incorrect', severity: 'error'});
+        })
+    }
+}
+
 
 // ПАРА КЛЮЧЕЙ
 export function registerTF(isGhost?: boolean) {
@@ -103,15 +129,10 @@ export function registerTF(isGhost?: boolean) {
 export function registerRSA(isGhost?: boolean) {
     return (dispatch: ThunkDispatch<AppState, void, Action>) => {
         const forge = require("node-forge");
-        const rsa = forge.pki.rsa;
 
-
-        const keypair = rsa.generateKeyPair({bits: 2048});
+        const keypair = forge.pki.rsa.generateKeyPair({bits: 2048});
         const privateKeyPem = forge.pki.privateKeyToPem(keypair.privateKey)
         const publicKeyPem = forge.pki.publicKeyToPem(keypair.publicKey)
-
-        console.log(privateKeyPem)
-        console.log(publicKeyPem)
 
         const customer = Builder(Customer)
             .pk(publicKeyPem)

@@ -66,8 +66,10 @@ const MessageItem: React.FC<TProps> = (props) => {
                     props.setIsEditUserTitleModalOpen(true);
                 }}>Change name</Button></span>
                 :
-                <span>User&nbsp;<Uuid
-                    data={message.sender}/>&nbsp;now known as '{message.data}'</span>}
+                <span>
+                    User&nbsp;<Uuid data={message.sender}/>&nbsp;now known as '{message.data}'
+                </span>}
+
         </div>
         }
 

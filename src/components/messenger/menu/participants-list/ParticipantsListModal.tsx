@@ -26,8 +26,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import {AppState} from "../../../../index";
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import {
-    addUserToRoomTF,
-    removeCustomerFromChat,
+    addUserToRoomTF, removeCustomerFromChat,
     setIsMembersModalOpened
 } from "../../../../redux/messenger-menu/messengerMenuActions";
 import {Form, Formik} from "formik";
@@ -47,6 +46,7 @@ const ParticipantsListModal: React.FC<Props> = (props) => {
     const dispatch = useDispatch();
     const [deleteConfirm, setDeleteConfirm] = useState<boolean>(false);
     const [removeMemberConfirm, setRemoveMemberConfirm] = useState<boolean>(false);
+    const [currentMember, setCurrentMember] = useState<User | null>(null);
 
     const chatParticipants = useMemo(() => {
         const out: User[] = [];
@@ -74,6 +74,7 @@ const ParticipantsListModal: React.FC<Props> = (props) => {
 
     return (<>
             <Dialog open={true} maxWidth="sm" fullWidth>
+                {removeDialog()}
                 <AppBar classes={{root: style.dialog__app_bar}}>
                     <Toolbar>
                         <Typography variant="h4" component="div" flex={1} mx={3} align={"center"}>
@@ -120,7 +121,10 @@ const ParticipantsListModal: React.FC<Props> = (props) => {
                 </Formik>
                 <List dense sx={{width: '100%'}} className={style.dialog__participants_list}>
                     {chatParticipants?.map((member, index) => (
-                        <Item key={index} member={member} user={props.user}/>
+                        // <Item key={index} member={member} user={props.user}/>
+                        <>
+                    {Item(member)}
+                        </>
                     ))}
                 </List>
             </Dialog>
@@ -149,13 +153,37 @@ const ParticipantsListModal: React.FC<Props> = (props) => {
         </>
     );
 
-    function Item(props: any) {
-        const member = props.member;
+    function removeDialog() {
+        return (
+            <Dialog open={removeMemberConfirm}>
+                <DialogTitle>Remove member</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        You are really want to remove member from chat?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setRemoveMemberConfirm(false)}>
+                        No
+                    </Button>
+                    <Button onClick={() => {
+                        props.removeCustomerFromChat(currentMember!.id, props.currentChat!);
+                        setRemoveMemberConfirm(false);
+                    }}>
+                        Yes
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        )
+    }
+
+    function Item(member: User) {
         const roleItem = chatAdministrators?.find(admin => admin.userId === member.id)?.userType || UserType.NO_ROLE
         const userRole = chatAdministrators?.find(admin => admin.userId === props.user?.id)?.userType || UserType.NO_ROLE
 
         return (
             <ListItem
+                key={member.id}
                 secondaryAction={
                     member.id === props.user?.id ?
                         <IconButton
@@ -170,6 +198,7 @@ const ParticipantsListModal: React.FC<Props> = (props) => {
                                 userRole !== UserType.NO_ROLE &&
                                 <IconButton
                                     onClick={() => {
+                                        setCurrentMember(member)
                                         setRemoveMemberConfirm(true);
                                     }}
                                 >
@@ -213,29 +242,9 @@ const ParticipantsListModal: React.FC<Props> = (props) => {
                         </FormControl>
                     </div>
                 </ListItemText>
-                <Dialog open={removeMemberConfirm}>
-                    <DialogTitle>Remove member</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText>
-                            You are really want to remove member from chat?
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={() => setRemoveMemberConfirm(false)}>
-                            No
-                        </Button>
-                        <Button onClick={() => {
-                            props.removeCustomerFromChat(member.id, props.currentChat!);
-                            setRemoveMemberConfirm(false);
-                        }}>
-                            Yes
-                        </Button>
-                    </DialogActions>
-                </Dialog>
             </ListItem>
         )
     }
-
 }
 
 const mapStateToProps = (state: AppState) => ({
@@ -247,11 +256,11 @@ const mapStateToProps = (state: AppState) => ({
 
 const mapDispatchToProps = {
     addUserToRoomTF,
+    removeCustomerFromChat,
     leaveChatTF,
     setIsMembersModalOpened,
     assignRoleToCustomer,
     denyRoleFromCustomer,
-    removeCustomerFromChat,
 }
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

@@ -55,7 +55,6 @@ export class MessageMapper {
         if (message.data) {
             // const data = CryptService.encrypt(CryptService.plainStringToUint8(message.data), CryptService.base64ToUint8(receiver.certificates[0]), nonce);
             // dto.data = CryptService.uint8ToBase64(data.data);
-            console.log(receiver.certificates[0])
             const data = CryptService.encryptRSA(message.data, receiver.certificates[0]);
             dto.data = data.data;
             dto.nonce = data.nonce;

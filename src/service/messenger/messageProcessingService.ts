@@ -91,7 +91,7 @@ export class MessageProcessingService {
                         isCurrentUserUpdated = true;
                     }
                     if (message.chat === currentChat) {
-                        incoming.push(message);
+                       incoming.push(message);
 
                         users[message.sender].title = message.data;
                         isUsersUpdated = true;
@@ -99,7 +99,7 @@ export class MessageProcessingService {
                     }
                     break;
                 case MessageType.who:
-
+                    console.log("CASE WHO")
                     const iamMessageToSend = Builder<Message>()
                         .chat(message.chat)
                         .data(globalUsers[currentUser!.id].titles[message.chat] || currentUser!.id)

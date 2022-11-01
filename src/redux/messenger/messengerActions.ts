@@ -202,7 +202,7 @@ export function assignRoleToCustomer(customerId: string, chatId: string, role: s
                 const message = {
                     sender: state.messenger.user!.id,
                     receiver: serverUser.id,
-                     data: user!.id,
+                    data: user!.id,
                     decrypted: false
                 } as Message
 

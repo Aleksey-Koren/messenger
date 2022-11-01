@@ -83,7 +83,6 @@ export class CryptService {
 
 
     static encryptRSA(message: string | Uint8Array, publicKeyToEncrypt: string, privateKeyToSign?: string, nonce?: string) {
-        console.log(publicKeyToEncrypt)
         const messenger = store.getState().messenger;
 
         const privateKey = forge.pki.privateKeyFromPem(privateKeyToSign || messenger.user?.privateKeyPem);
@@ -95,11 +94,16 @@ export class CryptService {
 
         // sign data with a private key and output DigestInfo DER-encoded bytes
         const md = forge.md.sha1.create();
-        md.update((Math.random() + 1).toString(36).substring(2), 'utf8');
+
+        const plainText = (Math.random() + 1).toString(36).substring(2);
+        md.update(plainText, 'utf8');
+
+        const nonceValue = forge.util.encode64(privateKey.sign(md)) + ":" + forge.util.encode64(plainText);
+        const data = forge.util.encode64(publicKey.encrypt(message))
 
         return {
-            nonce: nonce || forge.util.encode64(privateKey.sign(md)) + ":" + forge.util.encode64(md.digest().bytes()),
-            data: forge.util.encode64(publicKey.encrypt(message))
+            nonce: nonce || nonceValue,
+            data: data,
         }
     }
 
@@ -115,10 +119,10 @@ export class CryptService {
         if (nonce !== null) {
             const values = nonce.split(':');
             const sign = forge.util.decode64(values[0]);
-            const bytes = forge.util.decode64(values[1]);
+            const digest = forge.util.decode64(values[1]);
 
             try {
-                publicKey.verify(bytes, sign);
+                publicKey.verify(digest, sign);
             } catch (e) {
                 console.error("error: ", e)
             }
@@ -126,9 +130,6 @@ export class CryptService {
 
         return privateKey.decrypt(forge.util.decode64(message))
     }
-
-
-    //==================================================================================================================
 
 }
 
