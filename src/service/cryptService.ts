@@ -3,7 +3,6 @@ import nacl from "tweetnacl";
 import naclUtil from "tweetnacl-util";
 
 const forge = require("node-forge");
-const rsa = forge.pki.rsa;
 
 export class CryptService {
 
@@ -78,11 +77,10 @@ export class CryptService {
         );
     }
 
-    //==================================================================================================================
-
-
+    //===============================================RSA================================================================
 
     static encryptRSA(message: string | Uint8Array, publicKeyToEncrypt: string, privateKeyToSign?: string, nonce?: string) {
+        console.log(message)
         const messenger = store.getState().messenger;
 
         const privateKey = forge.pki.privateKeyFromPem(privateKeyToSign || messenger.user?.privateKeyPem);
@@ -129,6 +127,43 @@ export class CryptService {
         }
 
         return privateKey.decrypt(forge.util.decode64(message))
+    }
+
+    //===============================================AES================================================================
+
+    static generateKeyAES(size: number) {
+        return forge.random.getBytesSync(size);
+    }
+
+
+    static encryptAES(message: string | Uint8Array, key: string, nonce?: string) {
+        console.log("---------------")
+        console.log(key)
+        console.log(key.length)
+        const cipher = forge.cipher.createCipher('AES-CBC', key);
+        const nonceValue = nonce || forge.random.getBytesSync(key.length);
+
+        cipher.start({iv: nonceValue});
+        cipher.update(forge.util.createBuffer(message));
+        cipher.finish();
+
+        const encodedNonce = forge.util.encode64(nonceValue)
+        const data = forge.util.encode64(cipher.output.data);
+
+        return {
+            nonce: encodedNonce,
+            data: data,
+        }
+    }
+
+    static decryptAES(message: string | Uint8Array, key: string, nonce: string) {
+        const decipher = forge.cipher.createDecipher('AES-CBC', key);
+        decipher.start({iv: forge.util.decode64(nonce)});
+        decipher.update(forge.util.createBuffer(forge.util.decode64(message)));
+
+        const result = decipher.finish(); // check 'result' for true/false
+
+        return decipher.output.data;
     }
 
 }

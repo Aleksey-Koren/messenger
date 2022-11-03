@@ -33,7 +33,8 @@ export class MessageService {
     }
 
     static async tryDecryptUndecryptableMessages(messages: Message[]) {
-        const messagesSenders: Map<string, Uint8Array> = new Map();
+        // const messagesSenders: Map<string, Uint8Array> = new Map();
+        const messagesSenders: Map<string, string> = new Map();
         const globalUsers = {...store.getState().messenger.globalUsers}
 
         await Promise.all(messages.map(async message => {
@@ -43,7 +44,8 @@ export class MessageService {
 
                 await CustomerApi.getCustomer(senderId)
                     .then(user => {
-                        const foundedPublicKey = CryptService.uint8ToBase64(user.publicKey!);
+                        // const foundedPublicKey = CryptService.uint8ToBase64(user.publicKey!);
+                        const foundedPublicKey = user.publicKeyPem!;
                         const decryptedMessageData = decryptMessageData(message, foundedPublicKey);
 
                         console.log('DECRYPT UNDECRYPTABLE MESSAGES. DECRYPTED DATA --- ' + decryptedMessageData)
@@ -63,7 +65,7 @@ export class MessageService {
                             globalUsers[senderId].certificates.unshift(foundedPublicKey);
                         }
 
-                        messagesSenders.set(senderId, user.publicKey!);
+                        messagesSenders.set(senderId, user.publicKeyPem!);
                     })
                     .catch((e) => {      // User is a ghost || Server Error
                         message.data = undefined;
@@ -72,7 +74,8 @@ export class MessageService {
                     })
 
             } else {
-                const foundedPublicKey = CryptService.uint8ToBase64(messagesSenders.get(senderId)!);
+                // const foundedPublicKey = CryptService.uint8ToBase64(messagesSenders.get(senderId)!);
+                const foundedPublicKey = messagesSenders.get(senderId)!;
                 const decryptedMessageData = decryptMessageData(message, foundedPublicKey);
                 message.data = decryptedMessageData;
                 message.decrypted = !!decryptedMessageData;
@@ -93,10 +96,15 @@ export class MessageService {
 
 function decryptMessageData(message: Message, publicKeyToVerify: string, privateKeyToDecrypt?: string) {
     privateKeyToDecrypt = privateKeyToDecrypt || store.getState().messenger.user?.privateKeyPem;
+    const currentChat = store.getState().messenger.chats[store.getState().messenger.currentChat!];
+
     if (!privateKeyToDecrypt) {
         throw new Error("user is not logged in")
     }
 
+    if (message.type === MessageType.whisper) {
+        return CryptService.decryptAES(message.data!, currentChat.keyAES, message.nonce!)
+    }
     return CryptService.decryptRSA(message.data!, publicKeyToVerify, privateKeyToDecrypt, message.nonce!);
 
 }

@@ -17,6 +17,7 @@ import {MessagesListService} from "./messagesListService";
 import {MessageMapper} from "../../mapper/messageMapper";
 import {UserMapper} from "../../mapper/userMapper";
 import {Builder} from "builder-pattern";
+import forge from "node-forge";
 
 export class MessageProcessingService {
 
@@ -45,17 +46,25 @@ export class MessageProcessingService {
         newMessages.forEach(message => {
             switch (message.type) {
                 case MessageType.hello:
+                    console.log(message.data!)
+                    const values = message.data!.split("__");
+                    const title = values[0];
+                    const keyAES = values[1];
+
                     if (!chats[message.chat]) {
                         chats[message.chat] = {
                             id: message.chat,
-                            title: message.data!,
+                            title: title,
                             confirmed: false,
                             isUnreadMessagesExist: true,
-                            lastSeenAt: new Date()
+                            lastSeenAt: new Date(),
+                            keyAES: keyAES,
                         }
                         isChatsUpdated = true;
                     } else if (chats[message.chat] && message.data) {
-                        chats[message.chat].title = message.data;
+
+                        chats[message.chat].title = title;
+                        chats[message.chat].keyAES = keyAES;
                         isChatsUpdated = true;
                     }
 

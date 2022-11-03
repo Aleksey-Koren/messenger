@@ -55,7 +55,7 @@ const MessageItem: React.FC<TProps> = (props) => {
 
         {message.type === MessageType.hello &&
         <div className={style.system_message}>
-            <span>Room title has been set to '{message.data}'</span>
+            <span>Room title has been set to '{message.data!.substring(0, message.data!.indexOf('_'))}'</span>
         </div>
         }
 

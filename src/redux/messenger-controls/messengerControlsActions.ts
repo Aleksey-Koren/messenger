@@ -18,6 +18,7 @@ import {GlobalUser} from "../../model/local-storage/localStorageTypes";
 import {CustomerApi} from "../../api/customerApi";
 import {MessageMapper} from "../../mapper/messageMapper";
 import {ChatApi} from "../../api/chatApi";
+import {CryptService} from "../../service/cryptService";
 
 export function setIsNewPrivateModalOpened(isOpened: boolean): IPlainDataAction<boolean> {
     return {
@@ -76,7 +77,7 @@ export function removeGlobalUserPublicKeyTF(publicKey: string, globalUser: Globa
     }
 }
 
-
+//!!!
 export function createNewRoomTF(title: string, userTitle: string) {
     return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
         const user = getState().messenger.user;
@@ -86,11 +87,13 @@ export function createNewRoomTF(title: string, userTitle: string) {
             throw new Error("User is not logged in");
         }
 
+        const keyAES = CryptService.generateKeyAES(16);
+
         const message = {
             type: MessageType.hello,
             sender: user.id!,
             receiver: user.id!,
-            data: title
+            data: title + "__" + keyAES
         } as Message
 
         Promise.all([message].map(message => MessageMapper.toDto(message, globalUsers[message.receiver])))
@@ -147,34 +150,6 @@ export function leaveChatTF() {
                             })
 
                     })
-
-
-                // Promise.all([message].map(message => MessageMapper.toDto(message, globalUsers[message.receiver])))
-                //     .then(dto => {
-                //         getState().messenger.stompClient
-                //             .send(`/app/chat/send-message/${user?.id}`, {}, JSON.stringify(dto));
-                //
-                //         const messagesLeaveChatToSend: Message[] = [];
-                //
-                //         for (let id in users) {
-                //             const receiver = users[id];
-                //             const messageLeaveChat = {
-                //                 type: MessageType.LEAVE_CHAT,
-                //                 sender: state.messenger.user!.id,
-                //                 receiver: receiver.id!,
-                //                 data: state.messenger.user!.id,
-                //                 chat: state.messenger.currentChat!,
-                //                 decrypted: false
-                //             } as Message
-                //             messagesLeaveChatToSend.push(messageLeaveChat)
-                //         }
-                //
-                //         Promise.all(messagesLeaveChatToSend.map(message => MessageMapper.toDto(message, globalUsers[message.receiver])))
-                //             .then(dto => {
-                //                 getState().messenger.stompClient
-                //                     .send(`/app/chat/send-message/${user?.id}`, {}, JSON.stringify(dto))
-                //             })
-                //     })
             })
     }
 }

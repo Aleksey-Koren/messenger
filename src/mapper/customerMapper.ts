@@ -9,7 +9,8 @@ export class CustomerMapper {
     static toDto(customer: Customer) {
         return Builder(CustomerDto)
             .id(customer.id)
-            .pk(CryptService.uint8ToBase64(customer.pk!))
+            // .pk(CryptService.uint8ToBase64(customer.pk!))
+            .pk(customer.pk!)
             .build()
     }
 

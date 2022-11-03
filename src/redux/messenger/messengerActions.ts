@@ -162,7 +162,9 @@ export function sendMessageNewVersion(messageText: string,
 
 export function sendMessage(messageText: string, messageType: MessageType, attachments?: FileList) {
     return async (dispatch: AppDispatch, getState: () => AppState) => {
-        const currentChat = getState().messenger.currentChat;
+        const currentChatId = getState().messenger.currentChat;
+        const currentChat = getState().messenger.chats[getState().messenger.currentChat!];
+
         const user = getState().messenger.user;
         const globalUsers = getState().messenger.globalUsers;
         const users = getState().messenger.users;
@@ -172,7 +174,7 @@ export function sendMessage(messageText: string, messageType: MessageType, attac
         for (let id in users) {
             const member = users[id];
             const message = {
-                chat: currentChat!,
+                chat: currentChatId!,
                 data: messageText,
                 attachments: attachArrays,
                 type: messageType,
@@ -183,7 +185,7 @@ export function sendMessage(messageText: string, messageType: MessageType, attac
             messagesToSend.push(message);
         }
 
-        Promise.all(messagesToSend.map(message => MessageMapper.toDto(message, globalUsers[message.receiver])))
+        Promise.all(messagesToSend.map(message => MessageMapper.toDto(message, globalUsers[message.receiver], currentChat)))
             .then(dto => {
                 getState().messenger.stompClient
                     .send(`/app/chat/send-message/${user?.id}`, {}, JSON.stringify(dto))
@@ -297,7 +299,6 @@ export function fetchMessagesTF() {
                         created: state.messenger.lastMessagesFetch!,
                         before: nextMessageFetch
                     }).then(messagesResp => {
-                        // console.log(messagesResp)
                         dispatch(setLastMessagesFetch(nextMessageFetch));
                         MessageProcessingService.processMessages(dispatch, getState, messagesResp);
                     });

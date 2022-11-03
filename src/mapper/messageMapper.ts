@@ -4,6 +4,9 @@ import {CryptService} from "../service/cryptService";
 import {MessageService} from "../service/messenger/messageService";
 import {CustomerApi} from "../api/customerApi";
 import {GlobalUser} from "../model/local-storage/localStorageTypes";
+import {MessageType} from "../model/messenger/messageType";
+import {Chat} from "../model/messenger/chat";
+import {store} from "../index";
 
 export class MessageMapper {
 
@@ -29,7 +32,10 @@ export class MessageMapper {
         return message;
     }
 
-    static async toDto(message: Message, receiver: GlobalUser) {
+    static async toDto(message: Message, receiver: GlobalUser, currentChat? : Chat) {
+        // store.getState().messenger.currentChat
+        const chat = store.getState().messenger.chats[message.chat];
+
         const dto = {
             id: message.id,
             sender: message.sender,
@@ -43,7 +49,6 @@ export class MessageMapper {
             const user = await CustomerApi.getCustomer(message.receiver).then(user => user);
             receiver = {
                 userId: user.id,
-                // certificates: [CryptService.uint8ToBase64(user.publicKey!)],
                 certificates: [user.publicKeyPem!],
                 titles: {}
             }
@@ -53,11 +58,17 @@ export class MessageMapper {
         // dto.nonce = CryptService.uint8ToBase64(nonce);
 
         if (message.data) {
-            // const data = CryptService.encrypt(CryptService.plainStringToUint8(message.data), CryptService.base64ToUint8(receiver.certificates[0]), nonce);
-            // dto.data = CryptService.uint8ToBase64(data.data);
-            const data = CryptService.encryptRSA(message.data, receiver.certificates[0]);
-            dto.data = data.data;
-            dto.nonce = data.nonce;
+            if (message.type === MessageType.whisper) {
+                const result = CryptService.encryptAES(message.data, chat.keyAES!);
+                dto.data = result.data
+                dto.nonce = result.nonce
+
+            } else {
+                const result = CryptService.encryptRSA(message.data, receiver.certificates[0]);
+                dto.data = result.data;
+                dto.nonce = result.nonce;
+            }
+
         }
         const nonce = dto.nonce;
 
@@ -66,9 +77,14 @@ export class MessageMapper {
             let data: {nonce: Uint8Array, data: Uint8Array};
             for(let attachment of message.attachments) {
                 // data = CryptService.encrypt(attachment, CryptService.base64ToUint8(receiver.certificates[0]), nonce);
-                data = CryptService.encryptRSA(attachment, receiver.certificates[0], nonce).data;
-                files.push(CryptService.uint8ToBase64(data.data));
+
+                const result = CryptService.encryptAES(attachment, chat.keyAES!, nonce);
+
+                // data = CryptService.encryptAES(attachment, receiver.certificates[0], nonce).data;
+                files.push(result.data);
+                dto.nonce = result.nonce
             }
+
             dto.attachments = files.join(";");
         }
         return dto;

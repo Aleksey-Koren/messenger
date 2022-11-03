@@ -13,6 +13,7 @@ import {LocalStorageService} from "../local-data/localStorageService";
 
 export class ChatService {
 
+    //!!!
     static async tryDecryptChatsTitles(chats: MessageDto[], globalUsers: StringIndexArray<GlobalUser>) {
         const chatsLastSeen = LocalStorageService.chatsLastSeenFromLocalStorage() || {};
 
@@ -20,20 +21,30 @@ export class ChatService {
             const sender = globalUsers[chatDto.sender];
             if (sender) {
                 const chat = await MessageMapper.toEntity(chatDto, sender.userId);
+                const values = chat.data!.split("__");
+                const title = values[0];
+                const keyAES = values[1];
+
                 return {
                     id: chat.chat!,
-                    title: chat.data!,
+                    title: title,
                     confirmed: false, //TODO: FLAG DECRYPTED / NON-DECRYPTED??
                     isUnreadMessagesExist: chatsLastSeen[chat.chat] ? chatsLastSeen[chat.chat] < new Date(chatDto.created!) : false,
                     lastSeenAt: chatsLastSeen[chat.chat] ? chatsLastSeen[chat.chat] : new Date(),
+                    keyAES: keyAES,
                 }
             }
+            const values = chatDto.chat!.split("__");
+            const title = values[0];
+            const keyAES = values[1];
+
             return {
                 id: chatDto.chat!,
-                title: chatDto.chat!,
+                title: title,
                 confirmed: false,
                 isUnreadMessagesExist: false,
-                lastSeenAt: new Date()
+                lastSeenAt: new Date(),
+                keyAES: keyAES,
             }
         }))
     }
@@ -47,8 +58,6 @@ export class ChatService {
                     chat: chatId,
                     type: MessageType.iam,
                 }).then(s => {
-                    console.log("--------------")
-                    console.log(s)
                     return {
                         knownParticipants: s,
                         chatParticipants: chatParticipants
