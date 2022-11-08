@@ -5,7 +5,6 @@ import {MessageService} from "../service/messenger/messageService";
 import {CustomerApi} from "../api/customerApi";
 import {GlobalUser} from "../model/local-storage/localStorageTypes";
 import {MessageType} from "../model/messenger/messageType";
-import {Chat} from "../model/messenger/chat";
 import {store} from "../index";
 
 export class MessageMapper {
@@ -20,7 +19,6 @@ export class MessageMapper {
             created: new Date(dto.created!),
             data: dto.data,
             attachmentsFilenames: !!dto.attachments ? dto.attachments?.split(";") : undefined,
-            // nonce: dto.nonce ? CryptService.base64ToUint8(dto.nonce!) : undefined,
             nonce: dto.nonce ? dto.nonce! : undefined,
             decrypted: false
         };
@@ -32,8 +30,7 @@ export class MessageMapper {
         return message;
     }
 
-    static async toDto(message: Message, receiver: GlobalUser, currentChat? : Chat) {
-        // store.getState().messenger.currentChat
+    static async toDto(message: Message, receiver: GlobalUser) {
         const chat = store.getState().messenger.chats[message.chat];
 
         const dto = {
@@ -54,9 +51,6 @@ export class MessageMapper {
             }
         }
 
-        // const nonce: Uint8Array = crypto.getRandomValues(new Uint8Array(24));
-        // dto.nonce = CryptService.uint8ToBase64(nonce);
-
         if (message.data) {
             if (message.type === MessageType.whisper) {
                 const result = CryptService.encryptAES(message.data, chat.keyAES!);
@@ -74,13 +68,9 @@ export class MessageMapper {
 
         if (message.attachments) {
             const files: string[] = [];
-            let data: {nonce: Uint8Array, data: Uint8Array};
-            for(let attachment of message.attachments) {
-                // data = CryptService.encrypt(attachment, CryptService.base64ToUint8(receiver.certificates[0]), nonce);
-
+            for (let attachment of message.attachments) {
                 const result = CryptService.encryptAES(attachment, chat.keyAES!, nonce);
 
-                // data = CryptService.encryptAES(attachment, receiver.certificates[0], nonce).data;
                 files.push(result.data);
                 dto.nonce = result.nonce
             }

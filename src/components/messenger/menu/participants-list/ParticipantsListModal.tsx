@@ -6,10 +6,14 @@ import {
     DialogActions,
     DialogContent,
     DialogContentText,
-    DialogTitle, FormControl,
-    IconButton, InputLabel,
+    DialogTitle,
+    FormControl,
+    IconButton,
+    InputLabel,
     ListItem,
-    ListItemIcon, MenuItem, Select,
+    ListItemIcon,
+    MenuItem,
+    Select,
     TextField,
     Toolbar,
     Typography
@@ -26,7 +30,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import {AppState} from "../../../../index";
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import {
-    addUserToRoomTF, removeCustomerFromChat,
+    addUserToRoomTF,
+    removeCustomerFromChat,
     setIsMembersModalOpened
 } from "../../../../redux/messenger-menu/messengerMenuActions";
 import {Form, Formik} from "formik";
@@ -121,10 +126,7 @@ const ParticipantsListModal: React.FC<Props> = (props) => {
                 </Formik>
                 <List dense sx={{width: '100%'}} className={style.dialog__participants_list}>
                     {chatParticipants?.map((member, index) => (
-                        // <Item key={index} member={member} user={props.user}/>
-                        <>
-                    {Item(member)}
-                        </>
+                        <Item key={index} member={member} user={props.user}/>
                     ))}
                 </List>
             </Dialog>
@@ -177,7 +179,8 @@ const ParticipantsListModal: React.FC<Props> = (props) => {
         )
     }
 
-    function Item(member: User) {
+    function Item(props: any) {
+        const member = props.member;
         const roleItem = chatAdministrators?.find(admin => admin.userId === member.id)?.userType || UserType.NO_ROLE
         const userRole = chatAdministrators?.find(admin => admin.userId === props.user?.id)?.userType || UserType.NO_ROLE
 

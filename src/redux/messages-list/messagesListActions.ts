@@ -210,21 +210,12 @@ function handleHelloMessage(message: Message, dispatch: ThunkDispatch<AppState, 
         .lastSeenAt(new Date())
         .build()
 
-
     chats[newChat.id] = newChat;
     globalUsers[user!.id].titles[newChat.id] = state.messenger.user!.title || state.messenger.user!.id;
 
     dispatch(setChats(chats));
     dispatch(setGlobalUsers(globalUsers));
     dispatch(setCurrentChat(newChat.id));
-
-
-    // ChatService.processChatParticipants(dispatch, newChat.id, globalUsers, user!.id, getState)
-    //     .then(() => {
-    //         let nextMessageFetch: Date = new Date();
-    //         dispatch(setLastMessagesFetch(nextMessageFetch));
-    //         MessageProcessingService.processMessages(dispatch, getState, [message]);
-    //     });
 
     dispatch(setIsNewPrivateModalOpened(false));
     AdministratorApi.getAllAdministratorsByChatId(message.chat)
@@ -237,6 +228,9 @@ function handleHelloMessage(message: Message, dispatch: ThunkDispatch<AppState, 
 
     if (message.sender === message.receiver || message.receiver === user?.id) {
         dispatch(setHasMore(false))
+    }
+    if (message.sender === message.receiver) {
+        dispatch(setIsMembersModalOpened(true))
     }
 }
 

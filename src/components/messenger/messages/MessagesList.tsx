@@ -41,7 +41,7 @@ const MessagesList: React.FC<Props> = (props) => {
                           className={style.messages_list}
 
                           style={{
-                              maxHeight: "75vh",
+                              maxHeight: "70vh",
                               minHeight: 100,
                               overflow: 'auto',
                               display: 'flex',

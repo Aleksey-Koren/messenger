@@ -5,7 +5,6 @@ import {MessageType} from "../../model/messenger/messageType";
 import {Message} from "../../model/messenger/message";
 import {
     openChatTF,
-    sendMessageNewVersion,
     setChats,
     setGlobalUsers,
     setMessages,
@@ -15,9 +14,7 @@ import {
 import {setLastRead} from "../../redux/messages-list/messagesListActions";
 import {MessagesListService} from "./messagesListService";
 import {MessageMapper} from "../../mapper/messageMapper";
-import {UserMapper} from "../../mapper/userMapper";
 import {Builder} from "builder-pattern";
-import forge from "node-forge";
 
 export class MessageProcessingService {
 
@@ -33,6 +30,7 @@ export class MessageProcessingService {
         const globalUsers = {...state.messenger.globalUsers};
         const users = {...state.messenger.users}
         const isAtTheBottom = state.messagesList.isAtTheBottom;
+        const currentMessages = state.messenger.messages;
 
         let isChatsUpdated = false;
         let isGlobalUsersUpdated = false;
@@ -100,7 +98,12 @@ export class MessageProcessingService {
                         isCurrentUserUpdated = true;
                     }
                     if (message.chat === currentChat) {
-                       incoming.push(message);
+                        const found = currentMessages.find(item => item.type === MessageType.iam
+                            && item.sender === message.sender)
+
+                        if (found === undefined) {
+                            incoming.push(message);
+                        }
 
                         users[message.sender].title = message.data;
                         isUsersUpdated = true;
@@ -137,7 +140,7 @@ export class MessageProcessingService {
         }
         if (isMessagesUpdated) {
             dispatch(setMessages(appendMessages(existing, incoming)));
-            if(isAtTheBottom) {
+            if (isAtTheBottom) {
                 const appended = appendMessages(existing, incoming);
                 dispatch(setMessages(appended));
                 dispatch(setLastRead(MessagesListService.mapMessageToHTMLId(appended[0])));
@@ -172,9 +175,9 @@ function appendMessages(existing: Message[], incoming: Message[]) {
 }
 
 function sortByCreatedAtDesc(a: Message, b: Message) {
-    if(a.created!.getTime() > b.created!.getTime()) {
+    if (a.created!.getTime() > b.created!.getTime()) {
         return -1;
-    } else if(a.created!.getTime() < b.created!.getTime()) {
+    } else if (a.created!.getTime() < b.created!.getTime()) {
         return 1;
     } else {
         return 0;

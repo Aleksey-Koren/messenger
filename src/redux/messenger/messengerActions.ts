@@ -163,7 +163,6 @@ export function sendMessageNewVersion(messageText: string,
 export function sendMessage(messageText: string, messageType: MessageType, attachments?: FileList) {
     return async (dispatch: AppDispatch, getState: () => AppState) => {
         const currentChatId = getState().messenger.currentChat;
-        const currentChat = getState().messenger.chats[getState().messenger.currentChat!];
 
         const user = getState().messenger.user;
         const globalUsers = getState().messenger.globalUsers;
@@ -185,7 +184,7 @@ export function sendMessage(messageText: string, messageType: MessageType, attac
             messagesToSend.push(message);
         }
 
-        Promise.all(messagesToSend.map(message => MessageMapper.toDto(message, globalUsers[message.receiver], currentChat)))
+        Promise.all(messagesToSend.map(message => MessageMapper.toDto(message, globalUsers[message.receiver])))
             .then(dto => {
                 getState().messenger.stompClient
                     .send(`/app/chat/send-message/${user?.id}`, {}, JSON.stringify(dto))

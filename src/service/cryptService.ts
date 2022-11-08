@@ -1,6 +1,7 @@
 import {store} from "../index";
 import nacl from "tweetnacl";
 import naclUtil from "tweetnacl-util";
+import {Bytes} from "node-forge";
 
 const forge = require("node-forge");
 
@@ -77,6 +78,10 @@ export class CryptService {
         );
     }
 
+    static BytesToBase64(data: Bytes) {
+        return forge.util.encode64(data);
+    }
+
     //===============================================RSA================================================================
 
     static encryptRSA(message: string | Uint8Array, publicKeyToEncrypt: string, privateKeyToSign?: string, nonce?: string) {
@@ -137,9 +142,6 @@ export class CryptService {
 
 
     static encryptAES(message: string | Uint8Array, key: string, nonce?: string) {
-        console.log("---------------")
-        console.log(key)
-        console.log(key.length)
         const cipher = forge.cipher.createCipher('AES-CBC', key);
         const nonceValue = nonce || forge.random.getBytesSync(key.length);
 
@@ -156,14 +158,14 @@ export class CryptService {
         }
     }
 
-    static decryptAES(message: string | Uint8Array, key: string, nonce: string) {
+    static decryptAES(message: string | Uint8Array | ArrayBuffer, key: string, nonce: string) {
         const decipher = forge.cipher.createDecipher('AES-CBC', key);
         decipher.start({iv: forge.util.decode64(nonce)});
         decipher.update(forge.util.createBuffer(forge.util.decode64(message)));
 
-        const result = decipher.finish(); // check 'result' for true/false
+        const result = decipher.finish();
 
-        return decipher.output.data;
+        return result ? decipher.output.data : "not decrypted";
     }
 
 }

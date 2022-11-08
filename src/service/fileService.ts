@@ -40,6 +40,7 @@ export class FileService {
 }
 
 function identifyMimeType(array: Uint8Array) {
+    console.log(array[0])
     switch (array[0]) {
         case MimeType.IMAGE: return MimeType.IMAGE;
         case MimeType.VIDEO: return MimeType.VIDEO;

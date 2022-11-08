@@ -5,28 +5,23 @@ import {FileService} from "../service/fileService";
 
 export class AttachmentMapper {
 
-    static toAttachmentFile(array: ArrayBuffer, senderId: string, nonce: Uint8Array): TAttachmentFile {
-        const cryptFile = new Uint8Array(array);
-        const state = store.getState();
-        const senderPublicKeys = state.messenger.globalUsers[senderId]?.certificates;
-        const privateKey = state.messenger.user?.privateKey;
+    static toAttachmentFile(array: ArrayBuffer, senderId: string, nonce: string): TAttachmentFile {
+        const chat = store.getState().messenger.chats[store.getState().messenger.currentChat!];
 
-        let encryptedFile: Uint8Array | null = null;
+        const encryptedFile = new Uint8Array(array);
+        const encryptedBase64 = CryptService.uint8ToBase64(encryptedFile);
 
-        for (let pKey of senderPublicKeys) {
-            encryptedFile = CryptService.decrypt(cryptFile, CryptService.base64ToUint8(pKey), nonce, privateKey!);
-            if(encryptedFile !== null) {
-                break;
-            }
-        }
+        const decryptedBytes = CryptService.decryptAES(encryptedBase64, chat.keyAES, nonce)
+        const decryptedBase64 = CryptService.BytesToBase64(decryptedBytes);
+        const decryptedFile = CryptService.base64ToUint8(decryptedBase64);
 
-        if(encryptedFile === null) {
+        if (decryptedFile === null) {
             return {
                 isDecrypted: false
             }
         }
 
-        const arrayAndType = FileService.identifyMimeTypeAndUnmarkArray(encryptedFile);
+        const arrayAndType = FileService.identifyMimeTypeAndUnmarkArray(decryptedFile);
 
         return {
             isDecrypted: true,

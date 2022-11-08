@@ -8,10 +8,9 @@ import {IPlainDataAction} from "../../../redux/redux-types";
 import {AppState, useAppDispatch} from "../../../index";
 import {
     setIsEditGlobalUsersModalOpened,
-    setIsEditRoomTitleModalOpen
+    setIsEditRoomTitleModalOpen,
+    setIsMembersModalOpened
 } from "../../../redux/messenger-menu/messengerMenuActions";
-import {setIsMembersModalOpened} from "../../../redux/messenger-menu/messengerMenuActions";
-import CreateNewPublicButton from "../new-public/CreateNewPublicButton";
 import EditUserTitleButton from "../edit-user-title/EditUserTitleButton";
 import IconedButton from "../../button/IconedButton";
 import {connect, ConnectedProps} from "react-redux";
@@ -47,27 +46,27 @@ function MessengerMenu(props: TProps) {
 
                 <div>
                     {props.chatSelected &&
-                    <>
-                        <MenuItem>
-                            <EditUserTitleButton/>
-                        </MenuItem>
-                        <MenuItem>
-                            <IconedButton onClick={() => onMenuItemClick(props.setIsEditRoomTitleModalOpen)}
-                                          icon={<EditIcon style={{marginRight: '10px'}} fontSize={"medium"}/>}
-                                          text={"Rename chat"}/>
-                        </MenuItem>
-                        <MenuItem>
-                            <IconedButton onClick={() => onMenuItemClick(props.setIsMembersModalOpened)}
-                                          icon={<Groups style={{marginRight: '10px'}} fontSize={"medium"}/>}
-                                          text={"Members"}/>
-                        </MenuItem>
-                        <MenuItem>
-                            <IconedButton onClick={() => onMenuItemClick(props.setIsLeaveChatConfirmModalOpened)}
-                                          icon={<ExitToAppIcon style={{marginRight: '10px'}} fontSize={'medium'}/>}
-                                          text={"Leave chat"}/>
-                        </MenuItem>
-                        <Divider/>
-                    </>
+                        <>
+                            <MenuItem>
+                                <EditUserTitleButton/>
+                            </MenuItem>
+                            <MenuItem>
+                                <IconedButton onClick={() => onMenuItemClick(props.setIsEditRoomTitleModalOpen)}
+                                              icon={<EditIcon style={{marginRight: '10px'}} fontSize={"medium"}/>}
+                                              text={"Rename chat"}/>
+                            </MenuItem>
+                            <MenuItem>
+                                <IconedButton onClick={() => onMenuItemClick(props.setIsMembersModalOpened)}
+                                              icon={<Groups style={{marginRight: '10px'}} fontSize={"medium"}/>}
+                                              text={"Members"}/>
+                            </MenuItem>
+                            <MenuItem>
+                                <IconedButton onClick={() => onMenuItemClick(props.setIsLeaveChatConfirmModalOpened)}
+                                              icon={<ExitToAppIcon style={{marginRight: '10px'}} fontSize={'medium'}/>}
+                                              text={"Leave chat"}/>
+                            </MenuItem>
+                            <Divider/>
+                        </>
                     }
                     <MenuItem>
                         <IconedButton onClick={() => onMenuItemClick(props.setIsEditGlobalUsersModalOpened)}
@@ -76,9 +75,9 @@ function MessengerMenu(props: TProps) {
                     </MenuItem>
                     <MenuItem>
                         {/*<CreateNewPublicButton/>*/}
-                        <IconedButton icon={<Chat style={{marginRight: '10px'}} />}
+                        <IconedButton icon={<Chat style={{marginRight: '10px'}}/>}
                                       text={"New chat"}
-                                      onClick={() => onMenuItemClick(props.setIsNewRoomModalOpened)} />
+                                      onClick={() => onMenuItemClick(props.setIsNewRoomModalOpened)}/>
                     </MenuItem>
                     <MenuItem>
                         <IconedButton onClick={() => onMenuItemClick(props.logout)}

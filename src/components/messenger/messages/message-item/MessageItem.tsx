@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 import {AppState} from "../../../../index";
 import {connect, ConnectedProps} from "react-redux";
 import {MessagesListService} from "../../../../service/messenger/messagesListService";
@@ -28,49 +28,48 @@ const MessageItem: React.FC<TProps> = (props) => {
                      }}>
 
         {message.type === MessageType.whisper &&
-        <Paper color={"primary"} className={style.message_container} style={{
-            minWidth: "40%",
-            backgroundColor: "#182533"
-        }}>
-            <ListItemText>
-                <Typography color={"primary"} className={style.message_info}>
-                    {message.sender !== userId &&
-                    <SenderName title={props.chatParticipants[message.sender!]?.title}
-                                id={message.sender}/>}
-                    {message.sender !== userId && <span>&nbsp;|&nbsp;</span>}
-                    <TimeSince time={message.created}/>
-                </Typography>
-            </ListItemText>
+            <Paper color={"primary"} className={style.message_container} style={{
+                minWidth: "40%",
+                backgroundColor: "#182533"
+            }}>
+                <ListItemText>
+                    <Typography color={"primary"} className={style.message_info}>
+                        {message.sender !== userId &&
+                            <SenderName title={props.chatParticipants[message.sender!]?.title}
+                                        id={message.sender}/>}
+                        {message.sender !== userId && <span>&nbsp;|&nbsp;</span>}
+                        <TimeSince time={message.created}/>
+                    </Typography>
+                </ListItemText>
 
-            <ListItemText>
-                <>
-                    {message.attachmentsFilenames && <AttachmentsBlock message={message}/>}
-                    <Typography color={""} className={style.message}>{message.data}</Typography>
-                    <Typography color={"green"}
-                                className={style.message}>{MessagesListService.mapMessageToHTMLId(message)}</Typography>
-                </>
-            </ListItemText>
-        </Paper>
+                <ListItemText>
+                    <>
+                        {message.attachmentsFilenames && <AttachmentsBlock message={message}/>}
+                        <Typography color={""} className={style.message}>{message.data}</Typography>
+                        <Typography color={"green"}
+                                    className={style.message}>{MessagesListService.mapMessageToHTMLId(message)}</Typography>
+                    </>
+                </ListItemText>
+            </Paper>
         }
 
         {message.type === MessageType.hello &&
-        <div className={style.system_message}>
-            <span>Room title has been set to '{message.data!.substring(0, message.data!.indexOf('_'))}'</span>
-        </div>
+            <div className={style.system_message}>
+                <span>Room title has been set to '{message.data!.substring(0, message.data!.indexOf('_'))}'</span>
+            </div>
         }
 
         {message.type === MessageType.iam &&
-        <div className={style.system_message}>
-            {userId === message.sender
-                ? <span>Your name is '{message.data}'. <Button onClick={() => {
-                    props.setIsEditUserTitleModalOpen(true);
-                }}>Change name</Button></span>
-                :
-                <span>
+            <div className={style.system_message}>
+                {userId === message.sender
+                    ? <span>Your name is '{message.data}'. <Button onClick={() => {
+                        props.setIsEditUserTitleModalOpen(true);
+                    }}>Change name</Button></span>
+                    :
+                    <span>
                     User&nbsp;<Uuid data={message.sender}/>&nbsp;now known as '{message.data}'
                 </span>}
-
-        </div>
+            </div>
         }
 
     </ListItem>
