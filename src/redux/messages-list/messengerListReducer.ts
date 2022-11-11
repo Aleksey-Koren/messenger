@@ -22,6 +22,7 @@ export function messagesListReducer(state: IMessagesListState = initialState, ac
         case MessagesListActionType.HAS_MORE:
             return {...state, hasMore: action.payload.hasMore}
 
-        default: return state
+        default:
+            return state
     }
 }

@@ -1,4 +1,5 @@
 import {axiosApi} from "../http/axios";
+
 export class AttachmentApi {
 
     static getAttachments(messageId: string, attachmentFilenames: string[]) {
@@ -11,7 +12,7 @@ export class AttachmentApi {
             messageId: messageId,
             attachment: attachment
         }
-        return  axiosApi.get<ArrayBuffer>("attachments", {params: requestParams, responseType: 'arraybuffer'})
+        return axiosApi.get<ArrayBuffer>("attachments", {params: requestParams, responseType: 'arraybuffer'})
             .then(response => response.data)
     }
 }

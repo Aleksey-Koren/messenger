@@ -3,14 +3,12 @@ import {connect, ConnectedProps} from "react-redux";
 import React from "react";
 import ReportIcon from '@mui/icons-material/Report';
 import style from './ConfirmModal.module.css';
-import {setIsConfirmModalOpen} from "../../redux/messenger-controls/messengerControlsActions";
 
 interface IOwnProps {
     confirmFunction: () => void,
     text: string,
     closeFunction: () => void
 }
-
 
 const ConfirmModal: React.FC<Props> = (props) => {
 

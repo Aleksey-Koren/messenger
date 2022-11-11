@@ -65,7 +65,6 @@ export function setHasMore(hasMore: boolean) {
 
 export function fetchNextPageTF() {
     return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
-        console.log("fetchNextPageTF")
         const state = getState();
         const currentMessages = state.messenger.messages;
         const oldestCreated = currentMessages[currentMessages.length - 1].created;
@@ -76,7 +75,6 @@ export function fetchNextPageTF() {
             size: 15,
             before: oldestCreated
         }).then(messages => {
-            console.log("NEXT PAGE")
             if (messages.length > 0) {
                 messages = messages.filter(message => message.type !== MessageType.who);
                 dispatch(setMessages([...currentMessages, ...messages]));
@@ -221,7 +219,7 @@ function handleHelloMessage(message: Message, dispatch: ThunkDispatch<AppState, 
     AdministratorApi.getAllAdministratorsByChatId(message.chat)
         .then(administrators => {
             dispatch(setAdministrators(administrators))
-            if (message.sender == user!.id && found === undefined) {
+            if (message.sender === user!.id && found === undefined) {
                 dispatch(setIsMembersModalOpened(true));
             }
         })

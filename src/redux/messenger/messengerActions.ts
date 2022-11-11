@@ -100,7 +100,7 @@ export function setUserTitle(title: string): IPlainDataAction<IMessengerStateOpt
     return {
         type: SET_USER_TITLE,
         payload: {
-            user: {title: title, id: '', publicKey: new Uint8Array()}
+            user: {title: title, id: '', publicKeyPem: ''}
         }
     }
 }
@@ -234,7 +234,6 @@ export function assignRoleToCustomer(customerId: string, chatId: string, role: s
 }
 
 export function denyRoleFromCustomer(customerId: string, chatId: string) {
-    console.log("denyRoleFromCustomer")
     return async (dispatch: AppDispatch, getState: () => AppState) => {
         const state = getState();
         const user = getState().messenger.user;
@@ -279,7 +278,6 @@ export function denyRoleFromCustomer(customerId: string, chatId: string) {
 
 export function fetchMessagesTF() {
     return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
-        console.log("fetchMessagesTF")
         const state = getState();
         const currentChatId = state.messenger.currentChat;
         let currentUser = state.messenger.user;
@@ -302,15 +300,6 @@ export function fetchMessagesTF() {
                         MessageProcessingService.processMessages(dispatch, getState, messagesResp);
                     });
                 });
-        } else {
-            // MessageApi.getMessages({
-            //     receiver: currentUser.id!,
-            //     created: state.messenger.lastMessagesFetch!,
-            //     before: nextMessageFetch
-            // }).then(messagesResp => {
-            //     MessageProcessingService.processMessages(dispatch, getState, messagesResp);
-            //     dispatch(setLastMessagesFetch(nextMessageFetch));
-            // });
         }
     }
 }
@@ -370,7 +359,6 @@ export function openChatTF(chatId: string) {
             size: 20,
             before: getState().messenger.lastMessagesFetch!
         }).then(messages => {
-            console.log(messages)
             messages = messages.filter(message => message.type !== MessageType.who);
             if (messages.length < 20) {
                 dispatch(setHasMore(false))
@@ -400,7 +388,6 @@ export function openChatTF(chatId: string) {
 }
 
 export function updateUserTitle(title: string) {
-
     return (dispatch: ThunkDispatch<AppState, any, Action>, getState: () => AppState) => {
         const user = getState().messenger.user;
         if (!user) {
@@ -432,7 +419,6 @@ export function updateUserTitle(title: string) {
                         getState().messenger.stompClient
                             .send(`/app/chat/send-message/${user?.id}`, {}, JSON.stringify(dto))
                     })
-                // dispatch(setMessages(appendMessages(getState().messenger.messages, response.filter(message => message.receiver === user.id))));
             })
             .catch((e) => Notification.add({message: 'Fail to update user title', error: e, severity: "error"}));
     }

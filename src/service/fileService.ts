@@ -7,9 +7,9 @@ export class FileService {
             const reader = new FileReader();
             reader.onload = e => {
                 const arr = new Uint8Array(e.target!.result as ArrayBuffer);
-                if(file.type.match(/^image\//)) {
+                if (file.type.match(/^image\//)) {
                     resolve(this.addByteMarker(arr, 1));
-                } else if (file.type.match(/^video\//)){
+                } else if (file.type.match(/^video\//)) {
                     resolve(this.addByteMarker(arr, 2));
                 } else {
                     throw new Error('Unknown MIME type');
@@ -40,11 +40,14 @@ export class FileService {
 }
 
 function identifyMimeType(array: Uint8Array) {
-    console.log(array[0])
     switch (array[0]) {
-        case MimeType.IMAGE: return MimeType.IMAGE;
-        case MimeType.VIDEO: return MimeType.VIDEO;
-        case MimeType.AUDIO: return MimeType.AUDIO;
-        default: return MimeType.UNKNOWN;
+        case MimeType.IMAGE:
+            return MimeType.IMAGE;
+        case MimeType.VIDEO:
+            return MimeType.VIDEO;
+        case MimeType.AUDIO:
+            return MimeType.AUDIO;
+        default:
+            return MimeType.UNKNOWN;
     }
 }

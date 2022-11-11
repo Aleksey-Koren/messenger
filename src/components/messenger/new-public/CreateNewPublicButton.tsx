@@ -5,9 +5,9 @@ import IconedButton from "../../button/IconedButton";
 import Chat from '@mui/icons-material/Chat';
 
 const CreateNewPublicButton: React.FC<TProps> = (props) => {
-    return <IconedButton icon={<Chat style={{marginRight: '10px'}} />}
+    return <IconedButton icon={<Chat style={{marginRight: '10px'}}/>}
                          text={"New chat"}
-                         onClick={() => props.setIsNewRoomModalOpened(true)} />
+                         onClick={() => props.setIsNewRoomModalOpened(true)}/>
 }
 
 const mapDispatchToProps = {

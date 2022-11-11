@@ -15,7 +15,6 @@ const IconedButton: React.FC<IconedButtonProps> = (props) => {
             <Button className={style.controls_button}
                     onClick={() => props.onClick()}
             >
-
                 <div className={style.button_content}>
                     {props.icon}
                     <div className={style.button_content_spacer}/>

@@ -6,7 +6,6 @@ import globalStyles from '../../../global-styles/ModalWindow.module.css'
 import {AppState} from "../../../index";
 import {setIsRegistrationModalOpen} from "../../../redux/authorization/authorizationActions";
 
-
 const RegistrationModal: React.FC<Props> = (props) => {
 
     return (

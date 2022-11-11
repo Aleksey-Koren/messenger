@@ -20,7 +20,7 @@ const Attachment: React.FC<TProps> = (props) => {
         return <>
             <video height={"300"} width={"300"} controls style={{margin: "5px"}}>
                 <source src={url} type={"video/mp4"}/>
-                </video>
+            </video>
         </>
     } else if (props.file.mimeType === MimeType.AUDIO) {
         return <>

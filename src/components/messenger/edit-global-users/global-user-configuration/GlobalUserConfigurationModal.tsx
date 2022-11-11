@@ -10,7 +10,8 @@ import {
     IconButton,
     List,
     ListItem,
-    ListItemText, Tooltip
+    ListItemText,
+    Tooltip
 } from "@mui/material";
 import style from "./GlobalUserConfigurationModal.module.css"
 import globalModalStyles from '../../../../global-styles/ModalWindow.module.css'
@@ -24,7 +25,6 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 import {addGhostUserTF, addPkToGlobalUserTF} from "../../../../redux/messenger/messengerActions";
 import ConfirmModal from "../../../confirm-modal/ConfirmModal";
 import {Field, Form, Formik} from "formik";
-import * as Yup from "yup";
 import * as yup from "yup";
 
 const validationSchema = yup.object().shape({
@@ -49,7 +49,6 @@ const GlobalUserConfigurationModal: React.FC<TProps> = (props) => {
             </DialogTitle>
 
             <DialogContent className={globalModalStyles.dialog__content}>
-
                 {!isGlobalUserToEditExist &&
                     <Formik
                         initialValues={{userId: ''}}
@@ -70,7 +69,6 @@ const GlobalUserConfigurationModal: React.FC<TProps> = (props) => {
                                             <Field className={style.id_input} name={'userId'}/>
                                         </label>
                                     </Tooltip>
-
                                     <button type={'submit'} className={style.add_key_button}
                                             disabled={!formik.isValid}>ADD
                                     </button>
@@ -134,9 +132,9 @@ const GlobalUserConfigurationModal: React.FC<TProps> = (props) => {
 
             {props.isConfirmModalOpen
                 && <ConfirmModal
-                confirmFunction={() => props.removeGlobalUserPublicKeyTF(publicKeyToDelete!, props.globalUserToEdit!)}
-                text={"Are you sure that you want to delete public key?"}
-                closeFunction={() => props.setIsConfirmModalOpen(false)}/>
+                    confirmFunction={() => props.removeGlobalUserPublicKeyTF(publicKeyToDelete!, props.globalUserToEdit!)}
+                    text={"Are you sure that you want to delete public key?"}
+                    closeFunction={() => props.setIsConfirmModalOpen(false)}/>
             }
         </Dialog>
     );

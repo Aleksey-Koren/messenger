@@ -6,7 +6,6 @@ import globalStyles from '../../../global-styles/ModalWindow.module.css'
 import {AppState} from "../../../index";
 import {
     authenticateRSA,
-    authenticateTF,
     setIsLoginModalOpen,
     setIsWelcomeModalOpen
 } from "../../../redux/authorization/authorizationActions";
@@ -59,9 +58,7 @@ const LoginModal: React.FC<Props> = (props) => {
                                         <Field as={"textarea"} name={"pKey"} rows={10}
                                                className={style.dialog__input_field}
                                                placeholder={"Your private key"}/>
-                                        {/*<textarea rows={8} readOnly className={style.dialog__content_row_input}/>*/}
                                     </div>
-
                                 </Tooltip>
                             </div>
                         </DialogContent>
@@ -89,7 +86,6 @@ const LoginModal: React.FC<Props> = (props) => {
 const mapStateToProps = (state: AppState) => ({})
 
 const mapDispatchToProps = {
-    authenticateTF,
     authenticateRSA,
     setIsWelcomeModalOpen,
     setIsLoginModalOpen

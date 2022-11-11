@@ -1,5 +1,3 @@
-import {Message} from "../../model/messenger/message";
-
 export interface IMessagesListState {
     isOnscrollMuted: boolean;
     isAtTheBottom: boolean;

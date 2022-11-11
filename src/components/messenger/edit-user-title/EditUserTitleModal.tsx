@@ -24,7 +24,6 @@ const EditUserTitleModal: React.FC<Props> = (props) => {
                 {formik => (
                     <div>
                         <Form>
-
                             <DialogContent className={style.dialog__content}>
                                 <TextField
                                     autoFocus margin="dense" type="text"
@@ -39,7 +38,6 @@ const EditUserTitleModal: React.FC<Props> = (props) => {
                                 <Button onClick={() => props.setIsEditUserTitleModalOpen(false)}>Cancel</Button>
                                 <Button type={"submit"} disabled={!formik.isValid}>Save</Button>
                             </DialogActions>
-
                         </Form>
                     </div>
                 )}

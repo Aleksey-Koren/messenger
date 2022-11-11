@@ -47,30 +47,6 @@ export function setIsRegistrationModalOpen(isOpen: boolean, isGhost: boolean): I
     }
 }
 
-export function authenticateTF(id: string, privateKeyStr: string) {
-    return (dispatch: ThunkDispatch<AppState, void, Action>) => {
-        // CustomerApi.getCustomer(id)
-        //     .then(user => {
-        //         const publicKey = user.publicKey!;
-        //         const privateKey = CryptService.JSONByteStringToUint8(privateKeyStr);
-        //
-        //         if (AuthorizationService.areKeysValid(publicKey, privateKey)) {
-        //             user.privateKey = privateKey;
-        //             dispatch(setUser(user));
-        //             dispatch(fetchMessengerStateTF(user.id!));
-        //             dispatch(setIsLoginModalOpen(false));
-        //             LocalStorageService.userToStorage(user);
-        //             dispatch(connectStompClient(user.id!));
-        //         } else {
-        //             Notification.add({message: 'ID or PRIVATE KEY is incorrect', severity: 'error'});
-        //         }
-        //     }).catch((e) => {
-        //     Notification.add({error: e, message: 'ID or PRIVATE KEY is incorrect', severity: 'error'});
-        // })
-    }
-}
-
-
 export function authenticateRSA(id: string, privateKeyPem: string) {
     return (dispatch: ThunkDispatch<AppState, void, Action>) => {
         CustomerApi.getCustomer(id)
@@ -93,39 +69,6 @@ export function authenticateRSA(id: string, privateKeyPem: string) {
     }
 }
 
-
-// ПАРА КЛЮЧЕЙ
-export function registerTF(isGhost?: boolean) {
-    return (dispatch: ThunkDispatch<AppState, void, Action>) => {
-        // const keyPair = nacl.box.keyPair();
-        //
-        // const customer = Builder(Customer)
-        //     .pk(keyPair.publicKey)
-        //     .build();
-        //
-        // (isGhost ? new Promise<User>(resolve => {
-        //         resolve({
-        //             id: v4(),
-        //             privateKey: keyPair.secretKey,
-        //             publicKey: keyPair.publicKey
-        //         })
-        //     }
-        // ) : CustomerApi.register(customer))
-        //     .then((user: User) => {
-        //         user.privateKey = keyPair.secretKey
-        //         dispatch(setIsRegistrationModalOpen(true, !!isGhost));
-        //         dispatch(setIsWelcomeModalOpen(false));
-        //         dispatch(setUser(user));
-        //         dispatch(connectStompClient(user.id!));
-        //         LocalStorageService.userToStorage(user);
-        //     }).catch((e) => {
-        //     dispatch(setIsWelcomeModalOpen(true));
-        //     Notification.add({message: 'Something went wrong.', severity: 'error', error: e})
-        // })
-    }
-}
-
-
 export function registerRSA(isGhost?: boolean) {
     return (dispatch: ThunkDispatch<AppState, void, Action>) => {
         const forge = require("node-forge");
@@ -141,8 +84,8 @@ export function registerRSA(isGhost?: boolean) {
         (isGhost ? new Promise<User>(resolve => {
                 resolve({
                     id: v4(),
-                    privateKey: privateKeyPem,
-                    publicKey: publicKeyPem
+                    privateKeyPem: privateKeyPem,
+                    publicKeyPem: publicKeyPem
                 })
             }
         ) : CustomerApi.register(customer))
@@ -168,22 +111,3 @@ export function logout(): IPlainDataAction<boolean> {
         payload: true
     }
 }
-
-/*
-const keyPair = nacl.box.keyPair();
-var uuid = "45322f4d-dc28-4af3-9f09-b98678e16727";
-var nonce = crypto.getRandomValues(new Uint8Array(24));
-var out = nacl.box(CryptService.plainStringToUint8(uuid), nonce, keyPair.publicKey, keyPair.secretKey);
-var data = [];
-data.push(CryptService.uint8ToBase64(out));
-data.push(CryptService.uint8ToBase64(nonce));
-data.push(CryptService.uint8ToBase64(keyPair.publicKey));
-data.push(CryptService.uint8ToBase64(keyPair.secretKey));
-var decrypt = CryptService.uint8ToBase64(nacl.box.open(
-    CryptService.base64ToUint8(data[0]),
-    CryptService.base64ToUint8(data[1]),
-    CryptService.base64ToUint8(data[2]),
-    CryptService.base64ToUint8(data[3])
-)!);
-console.log(data, Buffer.from(decrypt, 'base64').toString('utf-8'));
-*/

@@ -5,7 +5,6 @@ import {ChatApi} from "../../api/chatApi";
 import {MessageApi} from "../../api/messageApi";
 import {MessageType} from "../../model/messenger/messageType";
 import {CustomerService} from "./customerService";
-import {connectStompClient, setUsers} from "../../redux/messenger/messengerActions";
 import {AppDispatch, AppState} from "../../index";
 import {StringIndexArray} from "../../model/stringIndexArray";
 import {GlobalUser} from "../../model/local-storage/localStorageTypes";
@@ -50,7 +49,6 @@ export class ChatService {
     }
 
     static processChatParticipants(dispatch: AppDispatch, chatId: string, globalUsers: StringIndexArray<GlobalUser>, currentUserId: string, getState: () => AppState) {
-        console.log("processChatParticipants")
         return ChatApi.getParticipants(chatId)
             .then((chatParticipants) => {
                 return MessageApi.getMessages({

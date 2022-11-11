@@ -1,7 +1,8 @@
 import {
     IRegistrationModalPayload,
     LOGOUT,
-    SET_IS_LOGIN_MODAL_OPEN, SET_IS_REGISTRATION_MODAL_OPEN,
+    SET_IS_LOGIN_MODAL_OPEN,
+    SET_IS_REGISTRATION_MODAL_OPEN,
     SET_IS_WELCOME_MODAL_OPEN,
     TAuthorizationAction,
     TAuthorizationState

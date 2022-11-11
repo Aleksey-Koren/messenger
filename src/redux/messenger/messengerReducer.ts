@@ -1,17 +1,18 @@
 import {
     IMessengerState,
-    SET_CURRENT_CHAT, SET_CHATS, SET_USERS,
+    SET_ADMINISTRATORS,
+    SET_CHATS,
+    SET_CURRENT_CHAT,
+    SET_GLOBAL_USERS,
+    SET_LAST_MESSAGES_FETCH,
     SET_MESSAGES,
     SET_USER,
-    TMessengerAction,
     SET_USER_TITLE,
-    SET_LAST_MESSAGES_FETCH,
-    SET_GLOBAL_USERS, SET_ADMINISTRATORS
+    SET_USERS,
+    TMessengerAction
 } from "./messengerTypes";
 import {User} from "../../model/messenger/user";
-import {CryptService} from "../../service/cryptService";
 import {LOGOUT} from "../authorization/authorizationTypes";
-import {SchedulerService} from "../../service/schedulerService";
 import {LocalStorageService} from "../../service/local-data/localStorageService";
 import {StringIndexArray} from "../../model/stringIndexArray";
 import {GlobalUser} from "../../model/local-storage/localStorageTypes";
@@ -87,7 +88,7 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
             return {...state, globalUsers: action.payload.globalUsers};
         case LOGOUT:
             localStorage.clear();
-            SchedulerService.stopScheduler();
+            // SchedulerService.stopScheduler();
             return {...initialState, globalUsers: {}};
         case SET_LAST_MESSAGES_FETCH:
             LocalStorageService.lastMessagesFetchToStorage(action.payload.lastMessagesFetch!)

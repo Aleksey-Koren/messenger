@@ -1,4 +1,4 @@
-import {connect, ConnectedProps, useDispatch} from "react-redux";
+import {connect, ConnectedProps} from "react-redux";
 import * as Yup from "yup";
 import SendIcon from "@mui/icons-material/Send";
 import TextField from "@mui/material/TextField/TextField";
@@ -10,9 +10,10 @@ import {sendMessage} from "../../../redux/messenger/messengerActions";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import {MessageType} from "../../../model/messenger/messageType";
 import AttachFileIcon from '@mui/icons-material/AttachFile';
-import MicIcon from '@mui/icons-material/Mic';
-import {AttachmentsServiceUpload, IAttachmentsState} from "../../../service/messenger/attachments/attachmentsServiceUpload";
-import {VoiceMessagesService} from "../../../service/messenger/voiceMessagesService";
+import {
+    AttachmentsServiceUpload,
+    IAttachmentsState
+} from "../../../service/messenger/attachments/attachmentsServiceUpload";
 import {AppState} from "../../../index";
 import {prepareAudioRecorderTF} from "../../../redux/voiceMessages/voiceMessagesActions";
 import {MessageService} from "../../../service/messenger/messageService";
@@ -20,7 +21,7 @@ import VoiceMessage from "./VoiceMessage";
 
 
 interface MessengerFooterProps {
-    currentChat: string|undefined|null;
+    currentChat: string | undefined | null;
 }
 
 export interface IFormikValues {
@@ -31,8 +32,8 @@ export interface IFormikValues {
 
 const MessengerFooter: React.FC<TProps> = (props) => {
 
-    function send(text:string, attachments: FileList) {
-        if(MessageService.isMessageNotEmpty(text, attachments)) {
+    function send(text: string, attachments: FileList) {
+        if (MessageService.isMessageNotEmpty(text, attachments)) {
             //SEND
             props.sendMessage(text, MessageType.whisper, attachments);
             formik.setFieldValue('message', '', false);
@@ -66,12 +67,19 @@ const MessengerFooter: React.FC<TProps> = (props) => {
     }, [props.currentChat])
 
     return (
-        <div style={{display: "flex", height: 110, paddingBottom: 10, flexDirection: "row", alignItems: "center", borderTop: '1px solid#90caf9'}}>
+        <div style={{
+            display: "flex",
+            height: 110,
+            paddingBottom: 10,
+            flexDirection: "row",
+            alignItems: "center",
+            borderTop: '1px solid#90caf9'
+        }}>
             <div style={{display: "flex", flexDirection: "column", minHeight: '90%', marginRight: "10px"}}>
                 <label>
                     <AttachFileIcon style={{color: "white"}}/>
                     <input type={"file"} style={{display: "none"}} accept="image/*,video/*" multiple
-                    onChange={e => AttachmentsServiceUpload.processUploading(e, attachmentsState, setAttachmentsState, formik)}
+                           onChange={e => AttachmentsServiceUpload.processUploading(e, attachmentsState, setAttachmentsState, formik)}
                     />
                 </label>
 
@@ -80,9 +88,16 @@ const MessengerFooter: React.FC<TProps> = (props) => {
                 }
             </div>
             {attachmentsState.fileNames.length !== 0 &&
-            <div style={{display: "flex", flexDirection: "column", marginRight: "10px", color: "white", maxHeight: "110"}}>
-                {attachmentsState.fileNames.map(filename => <span key={filename} style={{fontSize: "10px"}}>{filename}</span>)}
-            </div>
+                <div style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    marginRight: "10px",
+                    color: "white",
+                    maxHeight: "110"
+                }}>
+                    {attachmentsState.fileNames.map(filename => <span key={filename}
+                                                                      style={{fontSize: "10px"}}>{filename}</span>)}
+                </div>
             }
             <PerfectScrollbar style={{height: 110, flex: 1}}>
                 <form
@@ -98,7 +113,7 @@ const MessengerFooter: React.FC<TProps> = (props) => {
                                value={formik.values.message}
                                error={formik.touched.message && Boolean(formik.errors.message)}
                                onKeyUp={e => {
-                                   if(e.ctrlKey && e.key === 'Enter') {
+                                   if (e.ctrlKey && e.key === 'Enter') {
                                        formik.submitForm()
                                    }
                                }}
@@ -106,7 +121,7 @@ const MessengerFooter: React.FC<TProps> = (props) => {
                                    formik.handleChange(event)
                                    //props.setMessageText(event.target.value)
                                }}
-                     />
+                    />
 
                 </form>
             </PerfectScrollbar>

@@ -7,10 +7,6 @@ import {User} from "../model/messenger/user";
 export class CustomerApi {
 
     static register(customer: Customer): Promise<User> {
-        console.log(customer.pk)
-        // return axiosApi.post<CustomerDto>('customers', CustomerMapper.toDto(customer)).then(response => {
-        //     return CustomerMapper.toEntity(response.data);
-        // })
         return axiosApi.post<any>('customers/', customer)
             .then(response => {
                 return CustomerMapper.toEntity(response.data);

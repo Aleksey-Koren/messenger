@@ -12,7 +12,6 @@ export class ChatApi {
     }
 
     static async getParticipants(chatId: string) {
-        console.log("getParticipants")
         return axiosApi.get<CustomerDto[]>(`chats/${chatId}/participants`).then(response => {
             return response.data.map(dto => CustomerMapper.toEntity(dto))
         });

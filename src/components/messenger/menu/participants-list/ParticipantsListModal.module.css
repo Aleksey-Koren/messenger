@@ -3,8 +3,8 @@
     background: #262424 !important;
 }
 
-.dialog__participants_list{
+.dialog__participants_list {
     max-height: 400px;
-    background: #262424 ;
+    background: #262424;
     overflow-y: auto;
 }

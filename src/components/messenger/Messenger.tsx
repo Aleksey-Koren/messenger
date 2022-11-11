@@ -22,7 +22,6 @@ import MessengerModalWindows from "./modal-windows/MessengerModalWindows";
 import {Box, Typography} from "@mui/material";
 import PerfectScrollbar from 'react-perfect-scrollbar'
 import {LocalStorageService} from "../../service/local-data/localStorageService";
-import {SchedulerService} from "../../service/schedulerService";
 import {Chat} from "../../model/messenger/chat";
 import {StringIndexArray} from "../../model/stringIndexArray";
 
@@ -36,7 +35,7 @@ const scrollContext: { container: HTMLElement | null, scrolled: boolean, charged
 const Messenger: React.FC<TProps> = (props) => {
 
     useEffect(() => {
-        if (LocalStorageService.isLocalStorageExists() && !SchedulerService.isSchedulerStarted()) {
+        if (LocalStorageService.isLocalStorageExists()) {
             const data = LocalStorageService.loadDataFromLocalStorage();
             props.setUser(data!.user);
             props.connectStompClient(data!.user.id);

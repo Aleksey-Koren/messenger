@@ -89,7 +89,6 @@ export function sendVoiceMessage(attachment: Uint8Array) {
             sender: user?.id!,
             receiver: member.id!
         } as Message;
-        console.log(message.attachments)
         messagesToSend.push(message);
     }
 

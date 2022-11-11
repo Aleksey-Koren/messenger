@@ -3,7 +3,6 @@ import {MessageType} from "../../model/messenger/messageType";
 import {User} from "../../model/messenger/user";
 import {StringIndexArray} from "../../model/stringIndexArray";
 import {CustomerApi} from "../../api/customerApi";
-import {CryptService} from "../cryptService";
 import {MessageDto} from "../../dto/messageDto";
 import {ThunkDispatch} from "redux-thunk";
 import {AppDispatch, AppState} from "../../index";
@@ -33,7 +32,7 @@ export class CustomerService {
             array[participant.id] = {
                 id: participant?.id!,
                 title: knownParticipantsTitles[participant.id],
-                publicKey: participant?.publicKey
+                publicKeyPem: participant?.publicKeyPem
             }
             return array;
         }, {} as StringIndexArray<User>);
@@ -50,8 +49,6 @@ export class CustomerService {
             })
 
         if (whoMessages.length !== 0) {
-            console.log("sendMessages = WHO")
-
             const user = getState().messenger.user;
 
             Promise.all(whoMessages.map(message => MessageMapper

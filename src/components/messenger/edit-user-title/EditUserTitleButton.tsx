@@ -8,8 +8,8 @@ function EditUserTitleButton() {
     const dispatch = useAppDispatch();
 
     return <IconedButton onClick={() => dispatch(setIsEditUserTitleModalOpen(true))}
-                         icon={<Person  style={{marginRight: '10px'}} />}
-                         text={"Change my name"} />;
+                         icon={<Person style={{marginRight: '10px'}}/>}
+                         text={"Change my name"}/>;
 }
 
 export default EditUserTitleButton;

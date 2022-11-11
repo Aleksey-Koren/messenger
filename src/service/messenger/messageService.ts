@@ -85,7 +85,7 @@ export class MessageService {
         })
     }
 
-    static isMessageNotEmpty(text:string, attachments: FileList) {
+    static isMessageNotEmpty(text: string, attachments: FileList) {
         return (text !== '' || attachments.length > 0);
     }
 

@@ -43,7 +43,6 @@ function MessengerMenu(props: TProps) {
                 open={!!anchorEl}
                 onClose={() => setAnchorEl(null)}
             >
-
                 <div>
                     {props.chatSelected &&
                         <>

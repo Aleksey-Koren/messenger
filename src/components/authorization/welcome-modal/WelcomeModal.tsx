@@ -4,11 +4,10 @@ import React from "react";
 import {AppState} from "../../../index";
 import {
     registerRSA,
-    registerTF,
     setIsLoginModalOpen,
     setIsWelcomeModalOpen
 } from "../../../redux/authorization/authorizationActions";
-import {connect, ConnectedProps, useDispatch} from "react-redux";
+import {connect, ConnectedProps} from "react-redux";
 
 function WelcomeModal(props: Props) {
 
@@ -32,7 +31,7 @@ function WelcomeModal(props: Props) {
                     I'm already registered
                 </Button>
                 <Button onClick={() => {
-                    props.registerTF(true);
+                    props.registerRSA(true);
                 }}
                 >
                     Ghost registration
@@ -43,13 +42,12 @@ function WelcomeModal(props: Props) {
 }
 
 const mapStateToProps = (state: AppState) => ({
-        isOpen: state.authorizationReducer.isWelcomeModalOpen,
+    isOpen: state.authorizationReducer.isWelcomeModalOpen,
 })
 
 const mapDispatchToProps = {
     setIsWelcomeModalOpen,
     setIsLoginModalOpen,
-    registerTF,
     registerRSA,
 }
 

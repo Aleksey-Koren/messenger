@@ -1,27 +1,12 @@
 import {User} from "../../model/messenger/user";
 import {GlobalUser, LocalStorageData, StateData} from "../../model/local-storage/localStorageTypes";
 import {Builder} from "builder-pattern";
-import {CryptService} from "../cryptService";
 import {StringIndexArray} from "../../model/stringIndexArray";
 import {Chat} from "../../model/messenger/chat";
 
 export class LocalStorageService {
 
     static userToStorage(user: User) {
-        // const parsedLocalStorageData = retrieveParsedLocalStorageData();
-        //
-        // const localStorageState = {
-        //     user: {
-        //         id: user.id,
-        //         publicKey: CryptService.uint8ToBase64(user.publicKey!),
-        //         privateKey: CryptService.uint8ToBase64(user.privateKey!),
-        //         title: user.title!
-        //     },
-        //     globalUsers: parsedLocalStorageData ? parsedLocalStorageData.globalUsers : {}
-        // };
-        //
-        // localStorage.setItem('whisper', JSON.stringify(localStorageState));
-
         const parsedLocalStorageData = retrieveParsedLocalStorageData();
 
         const localStorageState = {

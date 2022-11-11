@@ -11,7 +11,7 @@ export class GlobalUsersSearchService {
 
 function isUserMatchToSearchParams(user: GlobalUser, params: ISearchParams) {
 
-    const idRegExp  = new RegExp(params.id ? '^' + params.id : '^', 'i');
+    const idRegExp = new RegExp(params.id ? '^' + params.id : '^', 'i');
     const titleRegExp = new RegExp(params.title ? '^' + params.title : '^', 'i');
     return idRegExp.test(user.userId) && (params.title === '' ? true : stringIndexArrayToArray(user.titles).some(title => titleRegExp.test(title)));
 }

@@ -1,6 +1,5 @@
 import {StringIndexArray} from "../stringIndexArray";
 import {User} from "../messenger/user";
-import {Chat} from "../messenger/chat";
 
 export interface GlobalUser {
     userId: string,
@@ -10,8 +9,6 @@ export interface GlobalUser {
 
 export interface LocalStorageUser {
     id: string,
-    publicKey: string,
-    privateKey: string,
     publicKeyPem: string,
     privateKeyPem: string,
     title: string

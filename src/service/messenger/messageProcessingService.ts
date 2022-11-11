@@ -44,7 +44,6 @@ export class MessageProcessingService {
         newMessages.forEach(message => {
             switch (message.type) {
                 case MessageType.hello:
-                    console.log(message.data!)
                     const values = message.data!.split("__");
                     const title = values[0];
                     const keyAES = values[1];
@@ -79,7 +78,6 @@ export class MessageProcessingService {
                     }
                     break;
                 case MessageType.whisper:
-                    console.log("CASE WHISPER")
                     if (message.chat === currentChat) {
                         incoming.push(message);
                         isMessagesUpdated = true;
@@ -89,7 +87,6 @@ export class MessageProcessingService {
                     }
                     break;
                 case MessageType.iam:
-                    console.log("CASE IAM")
                     globalUsers[message.sender].titles[message.chat] = message.data!;
 
                     isGlobalUsersUpdated = true;
@@ -111,7 +108,6 @@ export class MessageProcessingService {
                     }
                     break;
                 case MessageType.who:
-                    console.log("CASE WHO")
                     const iamMessageToSend = Builder<Message>()
                         .chat(message.chat)
                         .data(globalUsers[currentUser!.id].titles[message.chat] || currentUser!.id)
