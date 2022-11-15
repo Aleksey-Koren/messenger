@@ -1,5 +1,6 @@
 .container {
     position: fixed;
+    /*@TODO WARN use theme colors*/
     color: white;
     height: fit-content;
     width: fit-content;
@@ -9,10 +10,12 @@
 }
 
 .quantity {
+    /*@TODO WARN use theme colors*/
     color: red;
     font-weight: bold;
 }
 
 .icon {
+    /*@TODO WARN use theme colors*/
     color: deepskyblue;
 }

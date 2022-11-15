@@ -45,6 +45,7 @@ export class MessageProcessingService {
             switch (message.type) {
                 case MessageType.hello:
                     const values = message.data!.split("__");
+                    //@TODO ERROR can't work with "__HELLO__TITLE__"
                     const title = values[0];
                     const keyAES = values[1];
 

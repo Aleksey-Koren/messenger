@@ -10,6 +10,7 @@ const AddUserSelect: React.FC<TProps> = (props: TProps) => {
     const [isSearchable, setIsSearchable] = useState<boolean>(true)
 
     return (
+        //@TODO WARN check theme colors
         <AsyncSelect styles={{
             control: (base, state) => ({...base, borderRadius: '20px', backgroundColor: "grey"}),
             input: (base, state) => ({...base, color: "white"}),

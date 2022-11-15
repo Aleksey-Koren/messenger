@@ -124,6 +124,8 @@ export function setGlobalUsers(globalUsers: StringIndexArray<GlobalUser>): IPlai
 export function connectStompClient(UUID: string) {
     return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
         let stompClient = getState().messenger.stompClient;
+        //@TODO WARN replace "ERROR TO CONNECT" with notification
+        //@TODO WARN disable log into console
         stompClient = over(new SockJS('//localhost:8080/ws'))
         stompClient.connect({},
             () => {
@@ -137,6 +139,7 @@ export function connectStompClient(UUID: string) {
     }
 }
 
+//@TODO WARN unused method?
 export function sendMessageNewVersion(messageText: string,
                                       messageType: MessageType,
                                       chatId: string,
@@ -184,6 +187,7 @@ export function sendMessage(messageText: string, messageType: MessageType, attac
             messagesToSend.push(message);
         }
 
+//@TODO WARN no catch clause
         Promise.all(messagesToSend.map(message => MessageMapper.toDto(message, globalUsers[message.receiver])))
             .then(dto => {
                 getState().messenger.stompClient
@@ -199,6 +203,7 @@ export function assignRoleToCustomer(customerId: string, chatId: string, role: s
         const globalUsers = getState().messenger.globalUsers;
 
         CustomerApi.getServerUser()
+            //@TODO WARN no catch clause
             .then(serverUser => {
                 const message = {
                     sender: state.messenger.user!.id,
@@ -206,7 +211,7 @@ export function assignRoleToCustomer(customerId: string, chatId: string, role: s
                     data: user!.id,
                     decrypted: false
                 } as Message
-
+//@TODO WARN no catch clause
                 Promise.all([message].map(message => MessageMapper.toDto(message, globalUsers[message.receiver])))
                     .then(dto => {
                         const request = {
@@ -239,6 +244,7 @@ export function denyRoleFromCustomer(customerId: string, chatId: string) {
         const user = getState().messenger.user;
         const globalUsers = getState().messenger.globalUsers;
 
+        //@TODO WARN no catch clause
         CustomerApi.getServerUser()
             .then(serverUser => {
 
@@ -250,6 +256,7 @@ export function denyRoleFromCustomer(customerId: string, chatId: string) {
                 } as Message
 
                 Promise.all([message].map(message => MessageMapper.toDto(message, globalUsers[message.receiver])))
+                    //@TODO WARN no catch clause
                     .then(dto => {
                         const token = `${dto[0].data}_${dto[0].nonce}_${dto[0].sender}`
                         AdministratorApi.denyRole(customerId, chatId, token)
@@ -290,7 +297,9 @@ export function fetchMessagesTF() {
         if (currentChatId) {
             ChatService.processChatParticipants(dispatch, currentChatId,
                 {...state.messenger.globalUsers}, currentUser.id, getState)
+                //@TODO WARN no catch clause
                 .then(() => {
+                    //@TODO WARN no catch clause
                     MessageApi.getMessages({
                         receiver: currentUser?.id!,
                         created: state.messenger.lastMessagesFetch!,
@@ -314,12 +323,14 @@ export function fetchMessengerStateTF(loggedUserId: string) {
 
         const globalUsers = {...getState().messenger.globalUsers};
         ChatApi.getChats(loggedUserId)
+            //@TODO WARN no catch clause
             .then(chatResp => {
                 if (chatResp.length === 0) {
                     return;
                 }
 
                 CustomerService.addUnknownUsersToGlobalUsers(chatResp, globalUsers)
+                    //@TODO WARN no catch clause
                     .then(() => ChatService.tryDecryptChatsTitles(chatResp, globalUsers))
                     .then(chats => {
                         const currentChat = chats[0];
@@ -346,12 +357,12 @@ export function openChatTF(chatId: string) {
 
         dispatch(setChats(chats))
         dispatch(setCurrentChat(chatId));
-
+//@TODO WARN no catch clause
         AdministratorApi.getAllAdministratorsByChatId(chatId)
             .then(administrators => {
                 dispatch(setAdministrators(administrators))
             })
-
+//@TODO WARN no catch clause
         MessageApi.getMessages({
             receiver: currentUser.id,
             chat: chatId,
@@ -365,9 +376,10 @@ export function openChatTF(chatId: string) {
             }
             dispatch(setMessages(messages));
             dispatch(setLastRead(MessagesListService.mapMessageToHTMLId(messages[0])));
-
+//@TODO WARN no catch clause
             ChatApi.getParticipants(chatId)
                 .then((chatParticipants) => {
+                    //@TODO WARN no catch clause
                     return MessageApi.getMessages({
                         receiver: currentUser.id,
                         chat: chatId,
@@ -379,6 +391,7 @@ export function openChatTF(chatId: string) {
                         }
                     })
                 }).then(s => {
+                //@TODO INFO - it could be done without 'then'?
                 CustomerService.processUnknownChatParticipants(s.chatParticipants, s.knownParticipants,
                     chatId, currentUser.id, dispatch, getState);
                 CustomerService.updateChatParticipantsCertificates(globalUsers, s.chatParticipants, dispatch);
@@ -391,12 +404,14 @@ export function updateUserTitle(title: string) {
     return (dispatch: ThunkDispatch<AppState, any, Action>, getState: () => AppState) => {
         const user = getState().messenger.user;
         if (!user) {
+            //@TODO WARN no error handling, add notification
             throw new Error("User is not logged in");
         }
         const users = getState().messenger.users!;
         const currentChat = getState().messenger.currentChat!
         const globalUsers = getState().messenger.globalUsers
         if (!currentChat) {
+            //@TODO WARN no error handling, add notification
             throw new Error("Chat is not selected");
         }
         const messages: Message[] = []
@@ -414,6 +429,7 @@ export function updateUserTitle(title: string) {
         return MessageApi.updateUserTitle(messages, globalUsers)
             .then((response) => {
                 dispatch(setIsEditUserTitleModalOpen(false));
+                //@TODO WARN no catch clause
                 Promise.all(messages.map(message => MessageMapper.toDto(message, globalUsers[message.receiver])))
                     .then(dto => {
                         getState().messenger.stompClient

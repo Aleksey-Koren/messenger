@@ -4,6 +4,7 @@ import {Bytes} from "node-forge";
 
 const forge = require("node-forge");
 
+//@TODO ERROR please cover it with tests, positive and negative for each (used) method
 export class CryptService {
 
     static uint8ToBase64(array: Uint8Array) {
@@ -85,7 +86,8 @@ export class CryptService {
 
     //===============================================AES================================================================
 
-    static generateKeyAES(size: number) {
+
+    static generateKeyAES(size: number):Bytes {
         return forge.random.getBytesSync(size);
     }
 

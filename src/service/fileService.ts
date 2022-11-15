@@ -7,6 +7,10 @@ export class FileService {
             const reader = new FileReader();
             reader.onload = e => {
                 const arr = new Uint8Array(e.target!.result as ArrayBuffer);
+                //@TODO WARN need to check how images work for
+                //jpg, jpeg, gif, png
+                ////@TODO WARN need to check how video work for
+                //mp4 and webm
                 if (file.type.match(/^image\//)) {
                     resolve(this.addByteMarker(arr, 1));
                 } else if (file.type.match(/^video\//)) {
@@ -40,6 +44,7 @@ export class FileService {
 }
 
 function identifyMimeType(array: Uint8Array) {
+    //@TODO WARN look like piece of shit
     switch (array[0]) {
         case MimeType.IMAGE:
             return MimeType.IMAGE;

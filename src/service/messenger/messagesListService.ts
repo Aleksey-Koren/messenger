@@ -42,6 +42,7 @@ export class MessagesListService {
         return lastReadUuid !== messages[0].id!;
     }
 
+    //@TODO WARN unused, but it would be nice to use it
     static calculateUnreadAmount(messages: Message[], messageId: string) {
 
     }

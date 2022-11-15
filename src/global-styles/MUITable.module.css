@@ -6,32 +6,40 @@
 
 .tableCell_head {
     font-size: 20px !important;
+    /*@TODO WARN theme color*/
     border: 2px #60ad60 solid !important;
+    /*@TODO WARN theme color*/
     color: #fec720 !important;
     text-align: center !important;
 }
 
 .tableCell_body {
+    /*@TODO WARN theme color*/
     border: 2px #60ad60 solid !important;
+    /*@TODO WARN theme color*/
     color: white !important;
 }
 
 .tablePagination_root {
     box-sizing: border-box;
     height: 50px !important;
+    /*@TODO WARN theme color*/
     color: white !important;
 }
 
 .tablePagination_root button {
+    /*@TODO WARN theme color*/
     color: white;
 }
 
 /* DISABLED PAGINATION BUTTONS */
 .tablePagination_root button:disabled {
+    /*@TODO WARN theme color*/
     color: grey;
 }
 
 .actions {
+    /*@TODO WARN theme color*/
     color: white !important;
 }
 

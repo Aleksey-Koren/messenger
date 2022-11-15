@@ -9,13 +9,17 @@ interface IOwnProps {
     text: string,
     closeFunction: () => void
 }
-
+//@TODO INFO make sense to accept additional optional properties, such as TEXT, YES_BUTTON and NO_BUTTON
 const ConfirmModal: React.FC<Props> = (props) => {
 
     return (
         <Dialog open={true}>
             <DialogTitle className={style.dialog__title}>
                 <ReportIcon fontSize={'medium'} className={style.dialog__title_icon}/>
+                {/*@TODO WARN check GLobalUserConfigurationModal, it pass
+                Are you sure to ...
+                As result user will see 'Are you sure' two times. Better replace it with something like
+                "Please confirm following action"*/}
                 Are you sure?
             </DialogTitle>
 
@@ -28,7 +32,11 @@ const ConfirmModal: React.FC<Props> = (props) => {
                     No
                 </Button>
                 <Button className={style.dialog__agree_button} onClick={() => {
+                    {/*@TODO WARN sometimes 'closeFunction' may perform 'no-operation' which will
+                    make conflict with 'confirmFunction'*/}
                     props.confirmFunction();
+                    {/*@TODO ERROR press esc button, and check did it call for closeFunction.
+                     Add property onClose to <Dialog> component */}
                     props.closeFunction();
                 }}>
                     Yes

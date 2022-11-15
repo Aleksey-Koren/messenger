@@ -19,6 +19,7 @@ function WelcomeModal(props: Props) {
 
             <DialogActions className={style.dialog__actions}>
                 <Button onClick={() => {
+                    //@TODO ERROR block all buttons while action is not done
                     props.registerRSA();
                 }}
                 >
@@ -31,6 +32,7 @@ function WelcomeModal(props: Props) {
                     I'm already registered
                 </Button>
                 <Button onClick={() => {
+                    //@TODO ERROR block all buttons while action is not done
                     props.registerRSA(true);
                 }}
                 >

@@ -5,12 +5,14 @@
 
 .chatSection {
     height: 100%;
+    /*@TODO WARN theme color*/
     background: #0E1621 !important;
 }
 
 /* LEFT PART */
 
 .room_container {
+    /*@TODO WARN theme color*/
     border-right: 1px solid #90caf9;
     height: 100%;
     position: relative;
@@ -37,6 +39,7 @@
 /* RIGHT PART */
 
 .room_title_container {
+    /*@TODO WARN theme color*/
     border-bottom: 1px #90caf9 solid;
     height: 50px;
     max-height: 50px;
@@ -76,8 +79,10 @@
     word-break: break-all;
     margin: auto;
     border-radius: 10px;
+    /*@TODO WARN theme color*/
     border: 1px #90caf9 dashed;
     padding: 10px;
+    /*@TODO WARN theme color*/
     color: #90caf9;
     font-weight: bold;
     font-size: 18px;

@@ -5,5 +5,6 @@ export enum MessageType {
     who = 'who',
     server = 'server',
     LEAVE_CHAT = 'LEAVE_CHAT',
+    //@TODO WARN unused? checkackend
     CHANGE_NAME = 'CHANGE_NAME'
 }

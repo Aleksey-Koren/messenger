@@ -64,8 +64,8 @@ export function authenticateRSA(id: string, privateKeyPem: string) {
                     Notification.add({message: 'ID or PRIVATE KEY is incorrect', severity: 'error'});
                 }
             }).catch((e) => {
-            Notification.add({error: e, message: 'ID or PRIVATE KEY is incorrect', severity: 'error'});
-        })
+                Notification.add({error: e, message: 'ID or PRIVATE KEY is incorrect', severity: 'error'});
+            })
     }
 }
 
@@ -98,9 +98,9 @@ export function registerRSA(isGhost?: boolean) {
                 dispatch(connectStompClient(user.id!));
                 LocalStorageService.userToStorage(user);
             }).catch((e) => {
-            dispatch(setIsWelcomeModalOpen(true));
-            Notification.add({message: 'Something went wrong. ', severity: 'error', error: e})
-        })
+                dispatch(setIsWelcomeModalOpen(true));
+                Notification.add({message: 'Something went wrong. ', severity: 'error', error: e})
+            })
     }
 }
 

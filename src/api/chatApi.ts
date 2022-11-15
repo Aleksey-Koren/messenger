@@ -17,6 +17,7 @@ export class ChatApi {
         });
     }
 
+    //@TODO WARN write appropriate return type
     static removeCustomerFromChat(customerId: string, chatId: string, token: string) {
         return axiosApi.delete<any>(`chats/${chatId}/customers/${customerId}`, {
             headers: {
@@ -24,7 +25,7 @@ export class ChatApi {
             }
         }).then(response => response.data)
     }
-
+//@TODO WARN unused method
     static quitFromChat(chatId: string, myId: string, data: { data: string, nonce: string }) {
         return axiosApi.delete(`chats/${chatId}`, {
             params: {
@@ -34,7 +35,7 @@ export class ChatApi {
             }
         });
     }
-
+//@TODO WARN return type
     static leaveChat(chatId: string, customerId: string, token: string) {
         return axiosApi.delete<any>(`chats/${chatId}/customers/${customerId}/leave-chat`, {
             headers: {

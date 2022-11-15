@@ -12,6 +12,7 @@ import {
 import {Field, Form, Formik} from "formik";
 import * as Yup from 'yup';
 
+//@TODO ERROR how to login as ghost? You need public key field as well
 const LoginModal: React.FC<Props> = (props) => {
 
     const loginSchema = Yup.object().shape({
@@ -70,6 +71,7 @@ const LoginModal: React.FC<Props> = (props) => {
                             }}>
                                 Back</Button>
                             <Button type={"submit"}
+                                    //@TODO WARN should be also disabled during request
                                     disabled={!formik.isValid}
                             >
                                 Login

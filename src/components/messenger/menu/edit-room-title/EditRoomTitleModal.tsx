@@ -18,12 +18,14 @@ const EditRoomTitleModal: React.FC<Props> = (props) => {
     const chat = props.chats[props.currentChat!] || {};
 
     return (
+        //@TODO WARN not sure, but seems maxWidth and fullWidth is not compatible
         <Dialog open={true} onClose={() => {
         }} maxWidth={"sm"} fullWidth>
             <DialogTitle className={style.dialog__title}>Enter room title</DialogTitle>
             <Formik
                 initialValues={{title: chat?.title}}
                 onSubmit={(values) => {
+                    //@TODO disable button, do not close popup until action is done
                     props.sendMessage(values.title! + "__" + chat.keyAES, MessageType.hello);
                     props.setIsEditRoomTitleModalOpen(false);
                 }}

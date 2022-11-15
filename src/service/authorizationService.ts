@@ -1,6 +1,7 @@
 import {CryptService} from "./cryptService";
 
 export class AuthorizationService {
+    //@TODO WARN unused
     static areKeysValid(publicKey: Uint8Array, privateKey: Uint8Array): boolean {
         // const nonce = new Uint8Array(24);
         // crypto.getRandomValues(nonce);

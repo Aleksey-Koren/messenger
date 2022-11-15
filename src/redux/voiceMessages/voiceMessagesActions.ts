@@ -38,6 +38,7 @@ export function prepareAudioRecorderTF() {
     return (dispatch: AppDispatch, getState: () => AppState) => {
         const state = getState();
         if (!state.voiceMessages.audioRecorder) {
+            //@TODO WARN no catch clause
             navigator.mediaDevices.getUserMedia({audio: true, video: false})
                 .then(mediaStream => {
                     const recorder = new MediaRecorder(mediaStream);
@@ -92,6 +93,7 @@ export function sendVoiceMessage(attachment: Uint8Array) {
         messagesToSend.push(message);
     }
 
+    //@TODO WARN no catch clause
     Promise.all(messagesToSend.map(message => MessageMapper.toDto(message, globalUsers[message.receiver])))
         .then(dto => {
             state.messenger.stompClient

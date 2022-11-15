@@ -114,6 +114,6 @@ function mapLocalStorageToState(localStorageData: LocalStorageData): StateData {
 
 function retrieveParsedLocalStorageData(): LocalStorageData | null {
     const localStorageData = localStorage.getItem('whisper');
-
+//@TODO WARN JSON.parse throws exception in case if not possible to parse
     return localStorageData && JSON.parse(localStorageData);
 }

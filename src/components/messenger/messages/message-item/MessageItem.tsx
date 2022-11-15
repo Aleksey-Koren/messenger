@@ -30,6 +30,7 @@ const MessageItem: React.FC<TProps> = (props) => {
         {message.type === MessageType.whisper &&
             <Paper color={"primary"} className={style.message_container} style={{
                 minWidth: "40%",
+                //@TODO WARN theme color
                 backgroundColor: "#182533"
             }}>
                 <ListItemText>
@@ -55,6 +56,7 @@ const MessageItem: React.FC<TProps> = (props) => {
 
         {message.type === MessageType.hello &&
             <div className={style.system_message}>
+                {/*@TODO ERROR try to set room name to "ROOM_NAME" */}
                 <span>Room title has been set to '{message.data!.substring(0, message.data!.indexOf('_'))}'</span>
             </div>
         }

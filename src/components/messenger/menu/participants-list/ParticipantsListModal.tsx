@@ -78,6 +78,7 @@ const ParticipantsListModal: React.FC<Props> = (props) => {
     }
 
     return (<>
+            {/*@TODO WARN maxWidth vs fullWidth*/}
             <Dialog open={true} maxWidth="sm" fullWidth>
                 {removeDialog()}
                 <AppBar classes={{root: style.dialog__app_bar}}>
@@ -169,6 +170,7 @@ const ParticipantsListModal: React.FC<Props> = (props) => {
                         No
                     </Button>
                     <Button onClick={() => {
+                        //@TODO WARN disable button, wait response from server
                         props.removeCustomerFromChat(currentMember!.id, props.currentChat!);
                         setRemoveMemberConfirm(false);
                     }}>

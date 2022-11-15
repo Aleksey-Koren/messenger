@@ -4,5 +4,6 @@
 }
 
 .text {
+    /*@TODO WARN use theme colors*/
     color: white;
 }

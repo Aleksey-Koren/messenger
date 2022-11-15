@@ -5,7 +5,7 @@ import {CustomerMapper} from "../mapper/customerMapper";
 import {User} from "../model/messenger/user";
 
 export class CustomerApi {
-
+//@TODO WARN return type
     static register(customer: Customer): Promise<User> {
         return axiosApi.post<any>('customers/', customer)
             .then(response => {

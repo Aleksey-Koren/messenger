@@ -4,6 +4,7 @@ import style from "../Messenger.module.css";
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 import {setIsNewPrivateModalOpened} from "../../../redux/messenger-controls/messengerControlsActions";
 
+//@TODO WARN We have private rooms?
 const CreateNewPrivateButton: React.FC<TProps> = (props) => {
 
     return (
@@ -14,7 +15,7 @@ const CreateNewPrivateButton: React.FC<TProps> = (props) => {
 
                 <div className={style.button_content}>
                     <PersonAddAlt1Icon/>
-                    <div className={style.button_content_spacer}></div>
+                    <div className={style.button_content_spacer}/>
                     <span>New private room</span>
                 </div>
             </button>
