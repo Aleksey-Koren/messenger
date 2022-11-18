@@ -10,7 +10,6 @@ import {
 } from "../../../redux/messenger-controls/messengerControlsActions";
 import InfiniteScroll from "react-infinite-scroll-component";
 import {fetchNextPageTF, onScrollTF} from "../../../redux/messages-list/messagesListActions";
-import {EndMessage} from "./EndMessage";
 import {MessagesListService} from "../../../service/messenger/messagesListService";
 import ScrollToUnreadButton from "./ScrollToUnreadButton";
 import MessageItem from "./message-item/MessageItem";
@@ -55,7 +54,7 @@ const MessagesList: React.FC<Props> = (props) => {
                                         style={{display: 'flex', flexDirection: 'column-reverse'}}
                                         inverse={true}
                                         scrollableTarget={"list"}
-                                        endMessage={<EndMessage/>}
+                                        endMessage={null}
                         >
                             {/* This place should start a loop for room messages and create Message for each message */}
                             {messages.map((message, index) => {
@@ -86,7 +85,8 @@ const mapStateToProps = (state: AppState, ownState: { setScroll: (div: HTMLEleme
     messages: state.messenger.messages,
     chatParticipants: state.messenger.users,
     user: state.messenger.user,
-    currentChat: state.messenger.currentChat,
+    chats: state.messenger.chats,
+    currentChat: state.messenger.currentChat || '',
     hasMore: state.messagesList.hasMore,
     lastRead: state.messagesList.lastRead
 })

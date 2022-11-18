@@ -27,7 +27,7 @@ const MessageItem: React.FC<TProps> = (props) => {
                          flexDirection: (message.sender === userId ? 'row-reverse' : 'row'), /* my messages - right, others - left*/
                      }}>
 
-        {message.type === MessageType.whisper &&
+        {message.type === MessageType.WHISPER &&
             <Paper color={"primary"} className={style.message_container} style={{
                 minWidth: "40%",
                 backgroundColor: "#182533"
@@ -46,25 +46,23 @@ const MessageItem: React.FC<TProps> = (props) => {
                     <>
                         {message.attachmentsFilenames && <AttachmentsBlock message={message}/>}
                         <Typography color={""} className={style.message}>{message.data}</Typography>
-                        <Typography color={"green"}
-                                    className={style.message}>{MessagesListService.mapMessageToHTMLId(message)}</Typography>
                     </>
                 </ListItemText>
             </Paper>
         }
 
-        {message.type === MessageType.hello &&
+        {message.type === MessageType.HELLO &&
             <div className={style.system_message}>
                 <span>Room title has been set to '{message.data!.substring(0, message.data!.indexOf('_'))}'</span>
             </div>
         }
 
-        {message.type === MessageType.iam &&
+        {message.type === MessageType.IAM &&
             <div className={style.system_message}>
                 {userId === message.sender
                     ? <span>Your name is '{message.data}'. <Button onClick={() => {
                         props.setIsEditUserTitleModalOpen(true);
-                    }}>Change name</Button></span>
+                    }}>Change</Button></span>
                     :
                     <span>
                     User&nbsp;<Uuid data={message.sender}/>&nbsp;now known as '{message.data}'

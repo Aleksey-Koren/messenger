@@ -7,8 +7,8 @@ export class AdministratorApi {
             .then(response => response.data)
     }
 
-    static assignRole(request: any, token: string) {
-        return axiosApi.post<any>('administrators/', request, {
+    static assignRole(customerId: string, chatId: string, request: any, token: string) {
+        return axiosApi.post<any>(`administrators/customers/${customerId}/chats/${chatId}`, request, {
             headers: {
                 Token: token,
             }

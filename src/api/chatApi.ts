@@ -12,7 +12,7 @@ export class ChatApi {
     }
 
     static async getParticipants(chatId: string) {
-        return axiosApi.get<CustomerDto[]>(`chats/${chatId}/participants`).then(response => {
+        return axiosApi.get<CustomerDto[]>(`chats/${chatId}/customers`).then(response => {
             return response.data.map(dto => CustomerMapper.toEntity(dto))
         });
     }

@@ -41,7 +41,7 @@ export class CustomerService {
             .forEach(unknownParticipant => {
                 whoMessages.push({
                     chat: currentChatId,
-                    type: MessageType.who,
+                    type: MessageType.WHO,
                     sender: senderId,
                     receiver: unknownParticipant!.id,
                     data: ""

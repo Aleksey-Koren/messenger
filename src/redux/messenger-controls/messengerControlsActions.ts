@@ -90,7 +90,7 @@ export function createNewRoomTF(title: string, userTitle: string) {
         const keyAES = CryptService.generateKeyAES(16);
 
         const message = {
-            type: MessageType.hello,
+            type: MessageType.HELLO,
             sender: user.id!,
             receiver: user.id!,
             data: title + "__" + keyAES
@@ -114,7 +114,7 @@ export function leaveChatTF() {
             .then(serverUser => {
                 const state = getState();
                 const message = {
-                    type: MessageType.server,
+                    type: MessageType.SERVER,
                     sender: state.messenger.user!.id,
                     receiver: serverUser.id,
                     data: user?.id,

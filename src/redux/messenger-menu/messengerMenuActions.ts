@@ -47,7 +47,7 @@ export function addUserToRoomTF(me: User, customer: User, otherId: string) {
         dispatch(setUsers(users, currentChat.id));
 
         const messageToSend = {
-            type: MessageType.hello,
+            type: MessageType.HELLO,
             receiver: otherId,
             sender: me.id,
             chat: currentChat?.id,

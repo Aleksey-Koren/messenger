@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {connect, ConnectedProps} from "react-redux";
 import {Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip} from "@mui/material";
 import style from "./LoginModal.module.css";
@@ -19,6 +19,23 @@ const LoginModal: React.FC<Props> = (props) => {
         pKey: Yup.string().required("Can't be empty")
     });
 
+    const [id, setId] = useState('')
+    const [privateKey, setPrivateKey] = useState('')
+
+    const credentialsFromFile = (input: any) => {
+        const file = input.target.files[0];
+
+        let fr = new FileReader();
+        fr.readAsText(file);
+        fr.onload = function () {
+            if (fr.result !== null && typeof fr.result == "string") {
+                const values = fr.result.split('\n\n')
+                setId(values[0])
+                setPrivateKey(values[1])
+            }
+        };
+    }
+
     return (
         <Dialog open={true}>
             <DialogTitle className={globalStyles.dialog__title}>
@@ -26,7 +43,8 @@ const LoginModal: React.FC<Props> = (props) => {
             </DialogTitle>
 
             <Formik
-                initialValues={{id: '', pKey: ''}}
+                enableReinitialize={true}
+                initialValues={{id: id, pKey: privateKey}}
                 validationSchema={loginSchema}
                 onSubmit={(values) => props.authenticateRSA(values.id, values.pKey)}
                 validateOnChange
@@ -69,6 +87,17 @@ const LoginModal: React.FC<Props> = (props) => {
                                 props.setIsLoginModalOpen(false);
                             }}>
                                 Back</Button>
+
+
+                            <Button component="label">
+                                Credentials from file
+                                <input
+                                    accept={".txt"}
+                                    hidden
+                                    type="file"
+                                    onChange={credentialsFromFile}
+                                />
+                            </Button>
                             <Button type={"submit"}
                                     disabled={!formik.isValid}
                             >

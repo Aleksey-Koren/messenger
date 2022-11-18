@@ -31,6 +31,7 @@ export class MessageMapper {
     }
 
     static async toDto(message: Message, receiver: GlobalUser) {
+        console.log(message)
         const chat = store.getState().messenger.chats[message.chat];
 
         const dto = {
@@ -52,7 +53,7 @@ export class MessageMapper {
         }
 
         if (message.data) {
-            if (message.type === MessageType.whisper) {
+            if (message.type === MessageType.WHISPER) {
                 const result = CryptService.encryptAES(message.data, chat.keyAES!);
                 dto.data = result.data
                 dto.nonce = result.nonce

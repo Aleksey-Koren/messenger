@@ -54,7 +54,7 @@ export class ChatService {
                 return MessageApi.getMessages({
                     receiver: currentUserId,
                     chat: chatId,
-                    type: MessageType.iam,
+                    type: MessageType.IAM,
                 }).then(s => {
                     return {
                         knownParticipants: s,

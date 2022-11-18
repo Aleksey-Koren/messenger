@@ -28,10 +28,17 @@ export class MessageApi {
         return await Promise.all(dto.content.map(async dto => await MessageMapper.toEntity(dto, dto.sender)));
     }
 
-    static async updateUserTitle(messages: Message[], users: StringIndexArray<GlobalUser>): Promise<Message[]> {
-        const dto = await Promise.all(messages.map(async message => await MessageMapper.toDto(message, users[message.receiver])));
-        return await axiosApi.put<MessageDto[]>('messages/title?iam=' + messages[0].sender, dto).then(async response => {
-            return await Promise.all(response.data.map(async dto => await MessageMapper.toEntity(dto, users[dto.sender].userId)));
+    static async updateUserTitle(messages: Message[], users: StringIndexArray<GlobalUser>, token: string): Promise<Message[]> {
+        const dto = await Promise.all(
+            messages.map(async message => await MessageMapper.toDto(message, users[message.receiver])));
+
+        return await axiosApi.put<MessageDto[]>('messages/title?iam=' + messages[0].sender, dto, {
+            headers: {
+                Token: token,
+            }
+        }).then(async response => {
+            return await Promise.all(
+                response.data.map(async dto => await MessageMapper.toEntity(dto, users[dto.sender].userId)));
         })
     }
 }

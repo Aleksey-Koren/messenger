@@ -21,12 +21,11 @@ export class MessageProcessingService {
     static processMessages(dispatch: ThunkDispatch<AppState, void, Action>,
                            getState: () => AppState,
                            newMessages: Message[]) {
-        // console.log("processMessages")
         const state = getState();
         const currentChat = state.messenger.currentChat;
         let currentUser = {...state.messenger.user!};
         const chats = {...state.messenger.chats};
-        const existing = [...state.messenger.messages];
+        let existing = [...state.messenger.messages];
         const globalUsers = {...state.messenger.globalUsers};
         const users = {...state.messenger.users}
         const isAtTheBottom = state.messagesList.isAtTheBottom;
@@ -43,7 +42,7 @@ export class MessageProcessingService {
 
         newMessages.forEach(message => {
             switch (message.type) {
-                case MessageType.hello:
+                case MessageType.HELLO:
                     const values = message.data!.split("__");
                     const title = values[0];
                     const keyAES = values[1];
@@ -77,7 +76,7 @@ export class MessageProcessingService {
                         isMessagesUpdated = true;
                     }
                     break;
-                case MessageType.whisper:
+                case MessageType.WHISPER:
                     if (message.chat === currentChat) {
                         incoming.push(message);
                         isMessagesUpdated = true;
@@ -86,7 +85,7 @@ export class MessageProcessingService {
                         isChatsUpdated = true;
                     }
                     break;
-                case MessageType.iam:
+                case MessageType.IAM:
                     globalUsers[message.sender].titles[message.chat] = message.data!;
 
                     isGlobalUsersUpdated = true;
@@ -95,10 +94,15 @@ export class MessageProcessingService {
                         isCurrentUserUpdated = true;
                     }
                     if (message.chat === currentChat) {
-                        const found = currentMessages.find(item => item.type === MessageType.iam
+                        const found = currentMessages.find(item => item.type === MessageType.IAM
                             && item.sender === message.sender)
 
+                        console.log(found)
+
                         if (found === undefined) {
+                            incoming.push(message);
+                        } else {
+                            existing = currentMessages.filter(item => item.id !== found.id)
                             incoming.push(message);
                         }
 
@@ -107,11 +111,11 @@ export class MessageProcessingService {
                         isMessagesUpdated = true;
                     }
                     break;
-                case MessageType.who:
+                case MessageType.WHO:
                     const iamMessageToSend = Builder<Message>()
                         .chat(message.chat)
                         .data(globalUsers[currentUser!.id].titles[message.chat] || currentUser!.id)
-                        .type(MessageType.iam)
+                        .type(MessageType.IAM)
                         .sender(getState().messenger.user?.id!)
                         .receiver(message.sender)
                         .build();

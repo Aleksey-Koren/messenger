@@ -107,13 +107,6 @@ function renderChats(chats: StringIndexArray<Chat>, openChatTF: (chatId: string)
     return out;
 }
 
-// function scrollTo(force: boolean) {
-//     if (force || !scrollContext.scrolled) {
-//         scrollContext.charged = true;
-//     }
-// }
-
-
 const mapStateToProps = (state: AppState) => ({
     chats: state.messenger.chats,
     messages: state.messenger.messages,

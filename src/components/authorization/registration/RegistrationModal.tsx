@@ -4,7 +4,7 @@ import {Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography} f
 import style from "./RegistrationModal.module.css";
 import globalStyles from '../../../global-styles/ModalWindow.module.css'
 import {AppState} from "../../../index";
-import {setIsRegistrationModalOpen} from "../../../redux/authorization/authorizationActions";
+import {saveCredentials, setIsRegistrationModalOpen} from "../../../redux/authorization/authorizationActions";
 
 const RegistrationModal: React.FC<Props> = (props) => {
 
@@ -53,6 +53,8 @@ const RegistrationModal: React.FC<Props> = (props) => {
                 <Button onClick={() => {
                     props.setIsRegistrationModalOpen(false, false)
                 }}>I save it, go to the chats</Button>
+                <Button onClick={props.saveCredentials}>
+                    Download file with credentials</Button>
             </DialogActions>
         </Dialog>
     );
@@ -69,7 +71,8 @@ const mapStateToProps = (state: AppState) => {
 }
 
 const mapDispatchToProps = {
-    setIsRegistrationModalOpen
+    setIsRegistrationModalOpen,
+    saveCredentials
 }
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

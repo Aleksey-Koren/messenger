@@ -6,7 +6,7 @@ import {
     SET_IS_WELCOME_MODAL_OPEN
 } from "./authorizationTypes";
 import {IPlainDataAction} from "../redux-types";
-import {AppState} from "../../index";
+import {AppDispatch, AppState} from "../../index";
 import {CustomerApi} from "../../api/customerApi";
 import {connectStompClient, fetchMessengerStateTF, setUser} from "../messenger/messengerActions";
 import {LocalStorageService} from "../../service/local-data/localStorageService";
@@ -18,7 +18,7 @@ import {ThunkDispatch} from "redux-thunk";
 import {User} from "../../model/messenger/user";
 import {v4} from "uuid";
 import {AuthorizationService} from "../../service/authorizationService";
-
+import {saveAs} from 'file-saver';
 
 export function setIsWelcomeModalOpen(isOpen: boolean): IPlainDataAction<boolean> {
 
@@ -104,6 +104,13 @@ export function registerRSA(isGhost?: boolean) {
     }
 }
 
+export function saveCredentials() {
+    return async (dispatch: AppDispatch, getState: () => AppState) => {
+        const user = getState().messenger.user;
+        const text = user?.id + '\n\n' + user?.privateKeyPem + '\n\n' + user?.publicKeyPem;
+        saveAs(new Blob([text], {type: 'text/plain'}), user?.id + '.txt');
+    }
+}
 
 export function logout(): IPlainDataAction<boolean> {
     return {

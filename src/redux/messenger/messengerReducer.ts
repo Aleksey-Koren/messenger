@@ -29,7 +29,8 @@ const initialState: IMessengerState = {
     globalUsers: {},
     currentChat: null,
     lastMessagesFetch: null,
-    stompClient: over(new SockJS('//localhost:8080/ws')),
+    stompClient: over(new SockJS(`//${document.location.hostname}:8080/ws`)),
+    // stompClient: over(new SockJS('//46.101.136.62:8080/ws')),
 }
 
 export function messengerReducer(state: IMessengerState = initialState, action: TMessengerAction): IMessengerState {

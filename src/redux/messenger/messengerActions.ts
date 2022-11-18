@@ -124,7 +124,8 @@ export function setGlobalUsers(globalUsers: StringIndexArray<GlobalUser>): IPlai
 export function connectStompClient(UUID: string) {
     return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
         let stompClient = getState().messenger.stompClient;
-        stompClient = over(new SockJS('//localhost:8080/ws'))
+        // stompClient = over(new SockJS('//46.101.136.62:8080/ws'))
+        stompClient = over(new SockJS(`//${document.location.hostname}:8080/ws`))
         stompClient.connect({},
             () => {
                 if (stompClient.connected) {
@@ -210,13 +211,11 @@ export function assignRoleToCustomer(customerId: string, chatId: string, role: s
                 Promise.all([message].map(message => MessageMapper.toDto(message, globalUsers[message.receiver])))
                     .then(dto => {
                         const request = {
-                            chatId: chatId,
-                            customerId: customerId,
                             role: role,
                         }
                         const token = `${dto[0].data}_${dto[0].nonce}_${dto[0].sender}`
 
-                        AdministratorApi.assignRole(request, token)
+                        AdministratorApi.assignRole(customerId, chatId, request, token)
                             .then((newAdmin) => {
                                 const administrators = getState().messenger.administrators;
                                 administrators[newAdmin.id] = newAdmin
@@ -359,7 +358,7 @@ export function openChatTF(chatId: string) {
             size: 20,
             before: getState().messenger.lastMessagesFetch!
         }).then(messages => {
-            messages = messages.filter(message => message.type !== MessageType.who);
+            messages = messages.filter(message => message.type !== MessageType.WHO);
             if (messages.length < 20) {
                 dispatch(setHasMore(false))
             }
@@ -371,7 +370,7 @@ export function openChatTF(chatId: string) {
                     return MessageApi.getMessages({
                         receiver: currentUser.id,
                         chat: chatId,
-                        type: MessageType.iam,
+                        type: MessageType.IAM,
                     }).then(s => {
                         return {
                             knownParticipants: s,
@@ -399,28 +398,48 @@ export function updateUserTitle(title: string) {
         if (!currentChat) {
             throw new Error("Chat is not selected");
         }
-        const messages: Message[] = []
 
-        for (let key in users) {
-            messages.push({
-                sender: user.id as string,
-                receiver: users[key].id as string,
-                chat: currentChat as string,
-                type: MessageType.iam,
-                data: title
-            } as Message);
-        }
+        CustomerApi.getServerUser()
+            .then(serverUser => {
+                const messageForToken = {
+                    sender: getState().messenger.user!.id,
+                    receiver: serverUser.id,
+                    data: user!.id,
+                    decrypted: false
+                } as Message
 
-        return MessageApi.updateUserTitle(messages, globalUsers)
-            .then((response) => {
-                dispatch(setIsEditUserTitleModalOpen(false));
-                Promise.all(messages.map(message => MessageMapper.toDto(message, globalUsers[message.receiver])))
+                Promise.all([messageForToken].map(message => MessageMapper.toDto(message, globalUsers[message.receiver])))
                     .then(dto => {
-                        getState().messenger.stompClient
-                            .send(`/app/chat/send-message/${user?.id}`, {}, JSON.stringify(dto))
+                        const token = `${dto[0].data}_${dto[0].nonce}_${dto[0].sender}`
+
+                        const messages: Message[] = []
+                        for (let key in users) {
+                            messages.push({
+                                sender: user.id as string,
+                                receiver: users[key].id as string,
+                                chat: currentChat as string,
+                                type: MessageType.IAM,
+                                data: title
+                            } as Message);
+                        }
+
+                        MessageApi.updateUserTitle(messages, globalUsers, token)
+                            .then((response) => {
+                                dispatch(setIsEditUserTitleModalOpen(false));
+                                Promise.all(messages.map(message => MessageMapper.toDto(message, globalUsers[message.receiver])))
+                                    .then(dto => {
+                                        getState().messenger.stompClient
+                                            .send(`/app/chat/send-message/${user?.id}`, {}, JSON.stringify(dto))
+                                    })
+                            })
+                            .catch((e) => Notification.add({
+                                message: 'Fail to update user title',
+                                error: e,
+                                severity: "error"
+                            }));
                     })
+
             })
-            .catch((e) => Notification.add({message: 'Fail to update user title', error: e, severity: "error"}));
     }
 }
 

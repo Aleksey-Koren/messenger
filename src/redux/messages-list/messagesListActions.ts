@@ -76,7 +76,7 @@ export function fetchNextPageTF() {
             before: oldestCreated
         }).then(messages => {
             if (messages.length > 0) {
-                messages = messages.filter(message => message.type !== MessageType.who);
+                messages = messages.filter(message => message.type !== MessageType.WHO);
                 dispatch(setMessages([...currentMessages, ...messages]));
             } else {
                 dispatch(setHasMore(false));
@@ -154,17 +154,17 @@ export function getLastMessage(payload: any) {
         MessageService.decryptMessageDataByIterateOverPublicKeys(message, payload.sender)
             .then(() => {
                 switch (message.type) {
-                    case MessageType.whisper:
+                    case MessageType.WHISPER:
                         MessageProcessingService.processMessages(dispatch, getState, [message]);
                         break
-                    case MessageType.hello:
+                    case MessageType.HELLO:
                         handleHelloMessage(message, dispatch, getState)
                         processChatParticipants(message, dispatch, getState)
                         break
-                    case MessageType.iam:
+                    case MessageType.IAM:
                         processChatParticipants(message, dispatch, getState);
                         break
-                    case MessageType.who:
+                    case MessageType.WHO:
                         processChatParticipants(message, dispatch, getState);
                         break;
                     case MessageType.LEAVE_CHAT:
@@ -197,8 +197,8 @@ function handleHelloMessage(message: Message, dispatch: ThunkDispatch<AppState, 
     const globalUsers = {...getState().messenger.globalUsers};
     const currentMessages = getState().messenger.messages;
 
-    const found = currentMessages.find(item => item.type === MessageType.hello);
-    const updatedMessage = currentMessages.filter(item => item.type !== MessageType.hello)
+    const found = currentMessages.find(item => item.type === MessageType.HELLO);
+    const updatedMessage = currentMessages.filter(item => item.type !== MessageType.HELLO)
     dispatch(setMessages(updatedMessage))
 
     const newChat: Chat = Builder<Chat>()
@@ -259,7 +259,7 @@ function handleLeaveChatMessage(message: Message, dispatch: ThunkDispatch<AppSta
 
         const currentMessages = getState().messenger.messages;
         let updateMessages: Message[] = []
-        const found = currentMessages.find(item => item.type === MessageType.iam && item.sender === message.sender)
+        const found = currentMessages.find(item => item.type === MessageType.IAM && item.sender === message.sender)
 
         if (found !== undefined) {
             for (let i = 0; i < currentMessages.length; i++) {

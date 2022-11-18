@@ -38,34 +38,38 @@ export function prepareAudioRecorderTF() {
     return (dispatch: AppDispatch, getState: () => AppState) => {
         const state = getState();
         if (!state.voiceMessages.audioRecorder) {
-            navigator.mediaDevices.getUserMedia({audio: true, video: false})
-                .then(mediaStream => {
-                    const recorder = new MediaRecorder(mediaStream);
-                    let intervalId: NodeJS.Timer;
-                    recorder.onstart = () => {
-                        document.getElementById("mic")!.style.color = "red";
-                        const start = Date.now();
-                        intervalId = setInterval(function () {
-                            const currentDelta = Math.floor((Date.now() - start) / 1000);
-                            dispatch(setDuration(currentDelta));
-                        }, 1000);
-                        dispatch(setIsRecording(true));
-                    }
+            try {
+                navigator.mediaDevices.getUserMedia({audio: true, video: false})
+                    .then(mediaStream => {
+                        const recorder = new MediaRecorder(mediaStream);
+                        let intervalId: NodeJS.Timer;
+                        recorder.onstart = () => {
+                            document.getElementById("mic")!.style.color = "red";
+                            const start = Date.now();
+                            intervalId = setInterval(function () {
+                                const currentDelta = Math.floor((Date.now() - start) / 1000);
+                                dispatch(setDuration(currentDelta));
+                            }, 1000);
+                            dispatch(setIsRecording(true));
+                        }
 
-                    recorder.onstop = () => {
-                        document.getElementById("mic")!.style.color = "white";
-                        clearInterval(intervalId);
-                        dispatch(setDuration(0));
-                        dispatch(setIsRecording(false));
-                    }
+                        recorder.onstop = () => {
+                            document.getElementById("mic")!.style.color = "white";
+                            clearInterval(intervalId);
+                            dispatch(setDuration(0));
+                            dispatch(setIsRecording(false));
+                        }
 
-                    recorder.ondataavailable = event => {
-                        event.data.arrayBuffer()
-                            .then(arrayBuffer => sendVoiceMessage(new Uint8Array(arrayBuffer)));
-                    }
+                        recorder.ondataavailable = event => {
+                            event.data.arrayBuffer()
+                                .then(arrayBuffer => sendVoiceMessage(new Uint8Array(arrayBuffer)));
+                        }
 
-                    dispatch(setAudioRecorder(recorder));
-                });
+                        dispatch(setAudioRecorder(recorder));
+                    });
+            } catch (e) {
+                console.log("AUDIO NOT SUPPORTED")
+            }
         }
     }
 }
@@ -85,7 +89,7 @@ export function sendVoiceMessage(attachment: Uint8Array) {
             chat: currentChatId!,
             data: '',
             attachments: attachArrays,
-            type: MessageType.whisper,
+            type: MessageType.WHISPER,
             sender: user?.id!,
             receiver: member.id!
         } as Message;

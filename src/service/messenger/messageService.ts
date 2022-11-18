@@ -27,13 +27,12 @@ export class MessageService {
             }
         }
 
-        if (message.type === MessageType.hello) {
+        if (message.type === MessageType.HELLO) {
             await MessageService.tryDecryptUndecryptableMessages([message])
         }
     }
 
     static async tryDecryptUndecryptableMessages(messages: Message[]) {
-        // const messagesSenders: Map<string, Uint8Array> = new Map();
         const messagesSenders: Map<string, string> = new Map();
         const globalUsers = {...store.getState().messenger.globalUsers}
 
@@ -102,7 +101,7 @@ function decryptMessageData(message: Message, publicKeyToVerify: string, private
         throw new Error("user is not logged in")
     }
 
-    if (message.type === MessageType.whisper) {
+    if (message.type === MessageType.WHISPER) {
         return CryptService.decryptAES(message.data!, currentChat.keyAES, message.nonce!)
     }
     return CryptService.decryptRSA(message.data!, publicKeyToVerify, privateKeyToDecrypt, message.nonce!);
