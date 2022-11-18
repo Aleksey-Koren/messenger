@@ -31,6 +31,7 @@ export function TimeSince(props: { time?: Date }) {
 }
 
 export function UnreadDelimiter() {
+    /*@TODO WARN please check on small screen (chat is not adapted to small screens, make "message list" small"*/
     return <div>
         <h3 style={{textAlign: 'center', color: 'yellow'}}>----------------- unread messages -----------------</h3>
     </div>

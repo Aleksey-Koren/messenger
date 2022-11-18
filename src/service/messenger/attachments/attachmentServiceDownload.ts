@@ -10,6 +10,7 @@ export class AttachmentServiceDownload {
     static fetchAttachments(message: Message,
                             setComponentState: React.Dispatch<React.SetStateAction<IAttachmentsBlockState>>) {
 
+        //@TODO WARN no catch clause
         AttachmentApi.getAttachments(message.id!, message.attachmentsFilenames!)
             .then(dto => {
                 const attachmentFiles: TAttachmentFile[] =

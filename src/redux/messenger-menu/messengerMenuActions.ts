@@ -51,10 +51,12 @@ export function addUserToRoomTF(me: User, customer: User, otherId: string) {
             receiver: otherId,
             sender: me.id,
             chat: currentChat?.id,
+            //@TODO WARN why you need aes key
             data: currentChat?.title + "__" + currentChat?.keyAES
         } as Message
 
         //!!!
+        //@TODO WARN no catch clause
         Promise.all([messageToSend].map(message => MessageMapper
             .toDto(message, getState().messenger.globalUsers[message.receiver])))
             .then(dto => {
@@ -71,6 +73,7 @@ export function removeCustomerFromChat(customerId: string, chatId: string) {
         const globalUsers = getState().messenger.globalUsers;
 
         CustomerApi.getServerUser()
+            //@TODO WARN no catch clause
             .then(serverUser => {
                 const message = {
                     sender: state.messenger.user!.id,
@@ -79,6 +82,7 @@ export function removeCustomerFromChat(customerId: string, chatId: string) {
                     decrypted: false
                 } as Message
 
+                //@TODO WARN no catch clause
                 Promise.all([message].map(message => MessageMapper.toDto(message, globalUsers[message.receiver])))
                     .then(dto => {
                         const token = `${dto[0].data}_${dto[0].nonce}_${dto[0].sender}`
@@ -100,7 +104,7 @@ export function removeCustomerFromChat(customerId: string, chatId: string) {
                                     } as Message
                                     messagesLeaveChatToSend.push(messageLeaveChat)
                                 }
-
+                                //@TODO WARN no catch clause
                                 Promise.all(messagesLeaveChatToSend.map(message => MessageMapper.toDto(message, globalUsers[message.receiver])))
                                     .then(dto => {
                                         getState().messenger.stompClient

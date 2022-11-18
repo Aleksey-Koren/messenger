@@ -82,6 +82,7 @@ export function fetchNextPageTF() {
                 dispatch(setHasMore(false));
             }
         })
+        //@TODO WARN no catch clause
     }
 }
 
@@ -95,14 +96,14 @@ export function onScrollTF(event: React.UIEvent<HTMLUListElement, UIEvent>) {
             const target = document.elementFromPoint(x, y);
             if (target) {
                 if (MessagesListService.isAfter(target.id, state.messagesList.lastRead)) {
-                    console.log('setLastRead  :  ' + target.id)
+//                    console.log('setLastRead  :  ' + target.id)
                     dispatch(setLastRead(target.id));
                 }
             }
         }
 
         if (scrollRef.scrollTop > -1 && !state.messagesList.isAtTheBottom) {
-            console.log("AT THE BOTTOM");
+//            console.log("AT THE BOTTOM");
             dispatch(setAtTheBottom(true));
             const messages = state.messenger.messages;
             if (messages.length > 0) {
@@ -111,7 +112,7 @@ export function onScrollTF(event: React.UIEvent<HTMLUListElement, UIEvent>) {
         }
 
         if (scrollRef.scrollTop < -1 && state.messagesList.isAtTheBottom) {
-            console.log("GO UP");
+//            console.log("GO UP");
             dispatch(setAtTheBottom(false));
         }
     }
@@ -130,6 +131,7 @@ export function scrollToUnreadTF(lastReadHtmlId: string, scrollRef: HTMLUListEle
                 return;
             }
         }
+        //@TODO WARN no any handler for that error
         throw new Error('Error while scrolling to first unread message');
     }
 }
@@ -150,7 +152,7 @@ export function getLastMessage(payload: any) {
             decrypted: false
         };
 
-        console.log("type: " + message.type)
+        //console.log("type: " + message.type)
         MessageService.decryptMessageDataByIterateOverPublicKeys(message, payload.sender)
             .then(() => {
                 switch (message.type) {
@@ -185,7 +187,7 @@ function processChatParticipants(message: Message, dispatch: ThunkDispatch<AppSt
             dispatch(setLastMessagesFetch(nextMessageFetch));
             MessageProcessingService.processMessages(dispatch, getState, [message]);
         });
-
+//@TODO WARN no catch clause
 }
 
 
@@ -216,6 +218,7 @@ function handleHelloMessage(message: Message, dispatch: ThunkDispatch<AppState, 
     dispatch(setCurrentChat(newChat.id));
 
     dispatch(setIsNewPrivateModalOpened(false));
+    //@TODO WARN no catch clause
     AdministratorApi.getAllAdministratorsByChatId(message.chat)
         .then(administrators => {
             dispatch(setAdministrators(administrators))
@@ -242,6 +245,7 @@ function handleLeaveChatMessage(message: Message, dispatch: ThunkDispatch<AppSta
         dispatch(setCurrentChat(null))
         dispatch(setChats(chats));
     } else {
+        //@TODO WARN no catch clause
         AdministratorApi.getAllAdministratorsByChatId(message.chat)
             .then(administrators => {
                 dispatch(setAdministrators(administrators))

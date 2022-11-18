@@ -1,5 +1,6 @@
 
 .dialog__content {
+    /*@TODO WARN theme color*/
     background: #262424;
 }
 
@@ -11,5 +12,6 @@
 .dialog__actions {
     display: flex !important;
     justify-content: space-around !important;
+    /*@TODO WARN theme color*/
     background: #262424;
 }

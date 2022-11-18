@@ -1,3 +1,4 @@
+//@TODO ERROR it is not mime types
 export enum MimeType {
     IMAGE = 1,
     VIDEO = 2,

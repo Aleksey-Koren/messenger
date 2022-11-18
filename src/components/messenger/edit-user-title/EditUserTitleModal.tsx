@@ -36,6 +36,7 @@ const EditUserTitleModal: React.FC<Props> = (props) => {
 
                             <DialogActions className={style.dialog__actions}>
                                 <Button onClick={() => props.setIsEditUserTitleModalOpen(false)}>Cancel</Button>
+                                {/*@TODO WARN disable till action finished*/}
                                 <Button type={"submit"} disabled={!formik.isValid}>Save</Button>
                             </DialogActions>
                         </Form>

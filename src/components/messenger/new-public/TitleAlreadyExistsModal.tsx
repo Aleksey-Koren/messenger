@@ -6,7 +6,7 @@ import style from "../../../global-styles/ModalWindow.module.css";
 interface IProps {
     title: string
 }
-
+//@TODO WARN unused component. Rooms with non-unique title are allowed
 function TitleAlreadyExistsModal(props: IProps) {
 
     // const isOpened = useAppSelector(state => state.messenger.isTitleAlreadyExistsModalOpened);

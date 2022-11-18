@@ -15,22 +15,25 @@ const RegistrationModal: React.FC<Props> = (props) => {
             </DialogTitle>
             <DialogContent className={globalStyles.dialog__content}>
                 <Typography style={{paddingTop: "5px"}}>
-                    {props.isGhost
-                        ?
+                    {props.isGhost &&
                         <>
-                            You have registered as ghost user.
+                            You have been registered as a ghost user.
                             <br/>
-                            To make other users be able to chat with you, let them know not only ID but and Public Key
-                            too.
+                            To make other users be able to chat with you, let them know your ID and Public Key.
                             <br/>
+                            Everybody may kick you from the chat, and everybody may see list of your chats
+                            <br/>
+                            You can't be admin or moderator
+                            <br/>
+                            {/*@TODO ERROR that is why you can't login as ghost. delete that line*/}
                             You are not saved in database. If you log out, your ghost account will be lost.
-                        </>
-                        :
-                        <>
-                            Please save your id and private key, it's your credentials.
-                        </>
-                    }
+                            <br/>
+                        </>}
+                    Please save your id and private key, it's your credentials.
                 </Typography>
+                {/*@TODO WARN create component for same for LoginModal.
+                 Replace <div> with <table><tbody><tr><td>, on small screen it is shown not as expected
+                */}
                 <div className={style.dialog__info_container}>
                     <div className={style.dialog__content_row}>
                         <strong className={style.dialog__content_row_label}>ID: </strong>

@@ -20,6 +20,10 @@ export class ChatService {
             const sender = globalUsers[chatDto.sender];
             if (sender) {
                 const chat = await MessageMapper.toEntity(chatDto, sender.userId);
+                //@TODO ERROR how it will work with title "__HAPPY__TREE__FRIENDS__"
+                //you need to do something like
+                //keyAes = values.pop();
+                //titles = values.join("__");
                 const values = chat.data!.split("__");
                 const title = values[0];
                 const keyAES = values[1];
@@ -33,6 +37,7 @@ export class ChatService {
                     keyAES: keyAES,
                 }
             }
+            //@TODO ERROR same as in previous
             const values = chatDto.chat!.split("__");
             const title = values[0];
             const keyAES = values[1];
@@ -49,8 +54,10 @@ export class ChatService {
     }
 
     static processChatParticipants(dispatch: AppDispatch, chatId: string, globalUsers: StringIndexArray<GlobalUser>, currentUserId: string, getState: () => AppState) {
+        //@TODO WARN no catch clause
         return ChatApi.getParticipants(chatId)
             .then((chatParticipants) => {
+                //@TODO WARN no catch clause
                 return MessageApi.getMessages({
                     receiver: currentUserId,
                     chat: chatId,

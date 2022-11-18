@@ -24,6 +24,7 @@ const CreateNewRoomModal: React.FC<TProps> = (props) => {
             <Formik
                 initialValues={{title: '', userTitle: props.userTitle}}
                 onSubmit={(values) => {
+                    /*@TODO WARN block button, wait for response*/
                     props.createNewRoomTF(values.title, values.userTitle || props.user!.id);
                     props.setUserTitle(values.userTitle)
                 }}

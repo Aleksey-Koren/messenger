@@ -84,6 +84,7 @@ export function createNewRoomTF(title: string, userTitle: string) {
         const globalUsers = {...getState().messenger.globalUsers};
 
         if (!user) {
+            //@TODO WARN no error handling
             throw new Error("User is not logged in");
         }
 
@@ -93,9 +94,10 @@ export function createNewRoomTF(title: string, userTitle: string) {
             type: MessageType.HELLO,
             sender: user.id!,
             receiver: user.id!,
+            //@TODO WARN why you need aes key here?
             data: title + "__" + keyAES
         } as Message
-
+        //@TODO WARN no catch clause
         Promise.all([message].map(message => MessageMapper.toDto(message, globalUsers[message.receiver])))
             .then(dto => {
                 getState().messenger.stompClient
@@ -109,7 +111,7 @@ export function leaveChatTF() {
         const user = getState().messenger.user;
         const globalUsers = {...getState().messenger.globalUsers};
         const users = getState().messenger.users;
-
+//@TODO WARN no catch clause
         CustomerApi.getServerUser()
             .then(serverUser => {
                 const state = getState();
@@ -121,11 +123,12 @@ export function leaveChatTF() {
                     chat: state.messenger.currentChat!,
                     decrypted: false
                 } as Message
-
+//@TODO WARN no catch clause
                 Promise.all([message].map(message => MessageMapper.toDto(message, globalUsers[message.receiver])))
                     .then(dto => {
                         const token = `${dto[0].data}_${dto[0].nonce}_${dto[0].sender}`
                         ChatApi.leaveChat(state.messenger.currentChat!, dto[0].sender, token)
+                            //@TODO WARN no catch clause
                             .then(() => {
                                 const messagesLeaveChatToSend: Message[] = [];
 
@@ -141,7 +144,7 @@ export function leaveChatTF() {
                                     } as Message
                                     messagesLeaveChatToSend.push(messageLeaveChat)
                                 }
-
+//@TODO WARN no catch clause
                                 Promise.all(messagesLeaveChatToSend.map(message => MessageMapper.toDto(message, globalUsers[message.receiver])))
                                     .then(dto => {
                                         getState().messenger.stompClient

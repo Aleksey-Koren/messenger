@@ -1,4 +1,5 @@
 .dialog__info_container {
+    /*@TODO WARN use theme colors*/
     background: #262424;
     display: flex;
     flex-direction: column;
@@ -29,11 +30,14 @@
 .dialog__actions {
     display: flex !important;
     justify-content: space-around !important;
+    /*@TODO WARN use theme colors*/
     background: #262424;
 }
 
 .dialog__actions button {
     border-radius: 2px;
+    /*@TODO WARN use theme colors*/
+    /*@TODO WARN why dotted? It should be everywhere?*/
     border: 1px dotted #90caf9;
 }
 

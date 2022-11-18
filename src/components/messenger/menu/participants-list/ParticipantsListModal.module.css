@@ -1,10 +1,12 @@
 .dialog__app_bar {
     position: relative !important;
+    /*TODO WARN THEME COLORS*/
     background: #262424 !important;
 }
 
 .dialog__participants_list {
     max-height: 400px;
+    /*TODO WARN THEME COLORS*/
     background: #262424;
     overflow-y: auto;
 }

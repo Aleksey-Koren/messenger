@@ -5,6 +5,7 @@
     align-items: center;
     height: 100px;
     margin: 0 20px;
+    /*@TODO WARN use theme colors*/
     border-bottom: 4px white solid;
     border-top: 4px white solid;
 }
@@ -28,6 +29,7 @@
 
 .dialog__app_bar {
     position: relative !important;
+    /*@TODO WARN use theme colors*/
     background: #262424 !important;
 }
 
@@ -41,6 +43,7 @@
 
 .list_element_container {
     display: flex;
+    /*@TODO WARN use theme colors*/
     border-bottom: 2px deepskyblue dashed;
 }
 
@@ -54,12 +57,15 @@
 }
 
 .list_id:hover {
+    /*@TODO WARN use theme colors*/
     color: royalblue;
     cursor: pointer;
+    /*@TODO WARN use theme colors*/
     text-decoration: 2px underline royalblue;
 }
 
 .list_id:after {
     content: '*';
+    /*@TODO WARN use theme colors*/
     color: red;
 }

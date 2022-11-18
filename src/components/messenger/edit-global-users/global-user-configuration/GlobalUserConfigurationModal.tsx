@@ -53,6 +53,7 @@ const GlobalUserConfigurationModal: React.FC<TProps> = (props) => {
                     <Formik
                         initialValues={{userId: ''}}
                         validationSchema={validationSchema}
+                        //@TODO WARN check if submit button is blocked untill current request is done
                         onSubmit={(values) => props.addGhostUserTF(values.userId)}
                         validateOnChange
                     >
@@ -113,6 +114,7 @@ const GlobalUserConfigurationModal: React.FC<TProps> = (props) => {
 
                     <button className={style.add_key_button}
                             onClick={() => {
+                                //@TODO make button disabled until request is done
                                 props.addPkToGlobalUserTF(props.globalUserToEdit!, pkInputValue);
                                 setPkInputValue('');
                             }}

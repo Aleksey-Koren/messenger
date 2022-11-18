@@ -47,6 +47,7 @@ const MessengerSelect: React.FC<TProps> = (props) => {
             onChange={onChange}
             blurOnSelect
             clearOnBlur
+            //@TODO WARN check message, may be something better could be used
             renderInput={(params) => <TextField {...params} label="Search existing chats"/>}
         />
     );

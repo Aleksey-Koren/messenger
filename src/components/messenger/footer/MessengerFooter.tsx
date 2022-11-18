@@ -128,6 +128,7 @@ const MessengerFooter: React.FC<TProps> = (props) => {
 
             {<Fab className={style.send_icon} size={"large"} disabled={!props.currentChat}
                   onClick={() => {
+                      //@TODO WARN disable till end of action
                       formik.submitForm().then();
                   }}
             >
