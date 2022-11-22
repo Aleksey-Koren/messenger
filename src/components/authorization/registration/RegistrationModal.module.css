@@ -15,30 +15,21 @@
     align-items: center;
 }
 
-.dialog__content_row_label {
-    margin-right: 10px;
+.dialog__no_margin {
+    margin: 0 !important;;
+    padding: 0 !important;
 }
 
 .dialog__content_row_input {
     /*width: 550px;*/
-    width: 35.5vw;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0;
     border-radius: 2px;
     padding: 10px 10px;
     font-size: 15px;
     resize: none;
-}
-
-.dialog__actions {
-    display: flex !important;
-    justify-content: space-around !important;
-    /*@TODO WARN use theme colors*/
-    background: #262424;
-}
-
-.dialog__actions button {
-    border-radius: 2px;
-    /*@TODO WARN use theme colors*/
-    border: 1px solid #90caf9;
 }
 
 .dialog__actions button:hover {

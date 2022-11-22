@@ -20,7 +20,7 @@ import {saveCredentials, setIsRegistrationModalOpen} from "../../../redux/author
 
 const RegistrationModal: React.FC<Props> = (props) => {
     return (
-        <Dialog open={true} maxWidth={'md'}>
+        <Dialog className="dialog__full_width_small" open={true}>
             <DialogTitle className={globalStyles.dialog__title}>
                 Done!
             </DialogTitle>
@@ -43,29 +43,29 @@ const RegistrationModal: React.FC<Props> = (props) => {
                  Replace <div> with <table><tbody><tr><td>, on small screen it is shown not as expected
                 */}
                 <TableContainer>
-                    <Table sx={{maxWidth: 250}} aria-label="simple table">
+                    <Table aria-label="simple table">
                         <TableBody>
-                            <TableRow sx={{'&:last-child td, &:last-child th': {border: 0}}}>
-                                <TableCell component="th" scope="row">
-                                    <strong className={style.dialog__content_row_label}>ID: </strong>
+                            <TableRow>
+                                <TableCell className={style.dialog__no_margin}>
+                                    <strong>ID: </strong>
                                 </TableCell>
-                                <TableCell component="th" scope="row">
+                                <TableCell>
                                     <textarea rows={1} readOnly className={style.dialog__content_row_input}
                                               defaultValue={props.userId!}/>
                                 </TableCell>
                             </TableRow>
-                            <TableRow sx={{'&:last-child td, &:last-child th': {border: 0}}}>
-                                <TableCell>
-                                    <strong className={style.dialog__content_row_label}>Private Key:</strong>
+                            <TableRow>
+                                <TableCell className={style.dialog__no_margin}>
+                                    <strong>Private Key:</strong>
                                 </TableCell>
                                 <TableCell>
                                     <textarea rows={8} readOnly className={style.dialog__content_row_input}
                                               defaultValue={props.privateKey!}/>
                                 </TableCell>
                             </TableRow>
-                            <TableRow sx={{'&:last-child td, &:last-child th': {border: 0}}}>
-                                <TableCell>
-                                    <strong className={style.dialog__content_row_label}>Public Key:</strong>
+                            <TableRow>
+                                <TableCell className={style.dialog__no_margin}>
+                                    <strong>Public Key:</strong>
                                 </TableCell>
                                 <TableCell>
                                 <textarea rows={10} readOnly className={style.dialog__content_row_input}

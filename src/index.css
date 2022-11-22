@@ -11,3 +11,38 @@ code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+@media (max-width: 600px) {
+    .dialog__full_width_small > .MuiDialog-container {
+        align-items: initial !important;
+    }
+    .dialog__full_width_small .MuiDialog-paper {
+        /*make dialog window 100% width on screen < 600px*/
+        margin: 0 !important;
+        width: 100%;
+    }
+}
+
+.MuiDialogActions-root {
+    display: flex !important;
+    justify-content: space-around !important;
+    /*@TODO WARN use theme colors*/
+    flex-direction: column;
+}
+@media screen and (min-width: 600px) {
+    .MuiDialogActions-root {
+        flex-direction: row;
+    }
+    .MuiDialogActions-root button {
+        width: auto;
+        margin: 16px !important;
+    }
+}
+
+.MuiDialogActions-root button.MuiButton-root {
+    border-radius: 2px;
+    width: 90%;
+    margin: 0 0 10px 0;
+    /*@TODO WARN use theme colors*/
+    border: 1px solid #90caf9;
+}
