@@ -31,9 +31,3 @@
     font-size: 15px;
     resize: none;
 }
-
-.dialog__input_field:focus {
-    /*@TODO WARN use theme colors*/
-    /*@TODO WARN not sure we need box-shadow*/
-    box-shadow: #90caf9 2px 2px 10px;
-}

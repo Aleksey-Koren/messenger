@@ -1,22 +1,22 @@
-import {MimeType, TArrayWithMimeType} from "../redux/attachments/attachmentsTypes";
+import {FileType, TArrayWithMimeType} from "../model/messenger/file";
 
 export class FileService {
 
     static readBytesAndMarkMimeType(file: File): Promise<Uint8Array> {
         return new Promise((resolve, reject) => {
+            console.log("readBytesAndMarkMimeType")
             const reader = new FileReader();
             reader.onload = e => {
                 const arr = new Uint8Array(e.target!.result as ArrayBuffer);
-                //@TODO WARN need to check how images work for
-                //jpg, jpeg, gif, png
-                ////@TODO WARN need to check how video work for
-                //mp4 and webm
                 if (file.type.match(/^image\//)) {
                     resolve(this.addByteMarker(arr, 1));
                 } else if (file.type.match(/^video\//)) {
                     resolve(this.addByteMarker(arr, 2));
+                } else if (file.type.match(/^audio\//)) {
+                    resolve(this.addByteMarker(arr, 3));
                 } else {
-                    throw new Error('Unknown MIME type');
+                    resolve(this.addByteMarker(arr, 4));
+                    // throw new Error('Unknown MIME type');
                 }
             }
 
@@ -26,11 +26,11 @@ export class FileService {
         })
     }
 
-    static identifyMimeTypeAndUnmarkArray(array: Uint8Array): TArrayWithMimeType {
-        const mimeType = identifyMimeType(array);
+    static identifyFileTypeAndUnmarkArray(array: Uint8Array): TArrayWithMimeType {
+        const fileType = identifyFileType(array);
         const unmarkedArray = array.slice(1);
         return {
-            mimeType: mimeType,
+            fileType: fileType,
             unmarkedArray: unmarkedArray
         }
     }
@@ -43,16 +43,9 @@ export class FileService {
     }
 }
 
-function identifyMimeType(array: Uint8Array) {
-    //@TODO WARN look like piece of shit
-    switch (array[0]) {
-        case MimeType.IMAGE:
-            return MimeType.IMAGE;
-        case MimeType.VIDEO:
-            return MimeType.VIDEO;
-        case MimeType.AUDIO:
-            return MimeType.AUDIO;
-        default:
-            return MimeType.UNKNOWN;
-    }
+function identifyFileType(array: Uint8Array) {
+    console.log(array)
+    let name = FileType[array[0]];
+    const type = name as keyof typeof FileType;
+    return FileType[type]
 }

@@ -44,22 +44,19 @@ export class MessageProcessingService {
             switch (message.type) {
                 case MessageType.HELLO:
                     const values = message.data!.split("__");
-                    //@TODO ERROR can't work with "__HELLO__TITLE__"
-                    const title = values[0];
-                    const keyAES = values[1];
+                    const keyAES = values.pop() || "";
+                    const title = values.join("__");
 
                     if (!chats[message.chat]) {
                         chats[message.chat] = {
                             id: message.chat,
                             title: title,
-                            confirmed: false,
                             isUnreadMessagesExist: true,
                             lastSeenAt: new Date(),
                             keyAES: keyAES,
                         }
                         isChatsUpdated = true;
                     } else if (chats[message.chat] && message.data) {
-
                         chats[message.chat].title = title;
                         chats[message.chat].keyAES = keyAES;
                         isChatsUpdated = true;

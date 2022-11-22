@@ -15,6 +15,7 @@ import {ChatApi} from "../../api/chatApi";
 import Notification from "../../Notification";
 import {MessageMapper} from "../../mapper/messageMapper";
 import {CustomerApi} from "../../api/customerApi";
+import {setIsFetching} from "../messenger-controls/messengerControlsActions";
 
 
 export function setIsMembersModalOpened(isOpened: boolean): IPlainDataAction<boolean> {
@@ -51,74 +52,93 @@ export function addUserToRoomTF(me: User, customer: User, otherId: string) {
             receiver: otherId,
             sender: me.id,
             chat: currentChat?.id,
-            //@TODO WARN why you need aes key
             data: currentChat?.title + "__" + currentChat?.keyAES
         } as Message
 
-        //!!!
-        //@TODO WARN no catch clause
         Promise.all([messageToSend].map(message => MessageMapper
             .toDto(message, getState().messenger.globalUsers[message.receiver])))
             .then(dto => {
                 getState().messenger.stompClient
                     .send(`/app/chat/send-message/${me.id}`, {}, JSON.stringify(dto))
             })
+            .catch(e => {
+                Notification.add({message: 'Something went wrong. ', severity: 'error', error: e})
+            });
     }
 }
 
 export function removeCustomerFromChat(customerId: string, chatId: string) {
     return async (dispatch: AppDispatch, getState: () => AppState) => {
-        const state = getState();
-        const user = getState().messenger.user;
-        const globalUsers = getState().messenger.globalUsers;
+        await new Promise((resolve) => {
+            dispatch(setIsFetching(true))
+            resolve(true)
+        }).then(() => {
+            const state = getState();
+            const user = getState().messenger.user;
+            const globalUsers = getState().messenger.globalUsers;
 
-        CustomerApi.getServerUser()
-            //@TODO WARN no catch clause
-            .then(serverUser => {
-                const message = {
-                    sender: state.messenger.user!.id,
-                    receiver: serverUser.id,
-                    data: user!.id,
-                    decrypted: false
-                } as Message
+            CustomerApi.getServerUser()
+                .then(serverUser => {
+                    const message = {
+                        sender: state.messenger.user!.id,
+                        receiver: serverUser.id,
+                        data: user!.id,
+                        decrypted: false
+                    } as Message
 
-                //@TODO WARN no catch clause
-                Promise.all([message].map(message => MessageMapper.toDto(message, globalUsers[message.receiver])))
-                    .then(dto => {
-                        const token = `${dto[0].data}_${dto[0].nonce}_${dto[0].sender}`
+                    Promise.all([message].map(message => MessageMapper.toDto(message, globalUsers[message.receiver])))
+                        .then(dto => {
+                            const token = `${dto[0].data}_${dto[0].nonce}_${dto[0].sender}`
 
-                        ChatApi.removeCustomerFromChat(customerId, chatId, token)
-                            .then(() => {
-                                const messagesLeaveChatToSend: Message[] = [];
-                                const users = getState().messenger.users;
+                            ChatApi.removeCustomerFromChat(customerId, chatId, token)
+                                .then(() => {
+                                    const messagesLeaveChatToSend: Message[] = [];
+                                    const users = getState().messenger.users;
 
-                                for (let id in users) {
-                                    const receiver = users[id];
-                                    const messageLeaveChat = {
-                                        type: MessageType.LEAVE_CHAT,
-                                        sender: customerId,
-                                        receiver: receiver.id!,
-                                        data: state.messenger.user!.id,
-                                        chat: state.messenger.currentChat!,
-                                        decrypted: false
-                                    } as Message
-                                    messagesLeaveChatToSend.push(messageLeaveChat)
-                                }
-                                //@TODO WARN no catch clause
-                                Promise.all(messagesLeaveChatToSend.map(message => MessageMapper.toDto(message, globalUsers[message.receiver])))
-                                    .then(dto => {
-                                        getState().messenger.stompClient
-                                            .send(`/app/chat/send-message/${user?.id}`, {}, JSON.stringify(dto))
-                                    })
+                                    for (let id in users) {
+                                        const receiver = users[id];
+                                        const messageLeaveChat = {
+                                            type: MessageType.LEAVE_CHAT,
+                                            sender: customerId,
+                                            receiver: receiver.id!,
+                                            data: state.messenger.user!.id,
+                                            chat: state.messenger.currentChat!,
+                                            decrypted: false
+                                        } as Message
+                                        messagesLeaveChatToSend.push(messageLeaveChat)
+                                    }
+                                    Promise.all(messagesLeaveChatToSend.map(message =>
+                                        MessageMapper.toDto(message, globalUsers[message.receiver])))
+                                        .then(dto => {
+                                            getState().messenger.stompClient
+                                                .send(`/app/chat/send-message/${user?.id}`, {},
+                                                    JSON.stringify(dto))
+                                        })
+                                        .catch(e => {
+                                            Notification.add({
+                                                message: 'Something went wrong. ',
+                                                severity: 'error',
+                                                error: e
+                                            })
+                                        })
+                                })
+                                .catch((e) => {
+                                    dispatch(setIsFetching(false))
+                                    Notification.add({severity: 'error', message: e.response.data.message})
+                                })
+                                .finally(() => dispatch(setIsFetching(false)))
+                        })
+                        .catch(e => {
+                            dispatch(setIsFetching(false))
+                            Notification.add({message: 'Something went wrong. ', severity: 'error', error: e})
+                        });
+                })
+                .catch(e => {
+                    dispatch(setIsFetching(false))
+                    Notification.add({message: 'Something went wrong. ', severity: 'error', error: e})
+                });
+        })
 
-                                Notification.add({severity: 'success', message: "User removed from chat successfully!"})
-                            })
-                            .catch((e) => {
-                                console.error(e)
-                                Notification.add({severity: 'error', message: e.response.data.message})
-                            });
-                    })
-            })
     }
 
 }

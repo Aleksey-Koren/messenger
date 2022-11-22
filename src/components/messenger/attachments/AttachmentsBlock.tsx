@@ -1,11 +1,11 @@
 import {connect, ConnectedProps} from "react-redux";
 import {AppState} from "../../../index";
 import React, {useEffect, useState} from "react";
-import {TAttachmentFile} from "../../../redux/attachments/attachmentsTypes";
-import LoadingSpinner from "./LoadingSpinner";
 import Attachment from "./Attachment";
 import {Message} from "../../../model/messenger/message";
 import {AttachmentServiceDownload} from "../../../service/messenger/attachments/attachmentServiceDownload";
+import {TAttachmentFile} from "../../../model/messenger/file";
+import {CircularProgress} from "@mui/material";
 
 interface IOwnProps {
     message: Message
@@ -28,7 +28,7 @@ const AttachmentsBlock: React.FC<TProps> = (props) => {
         <div style={{display: "flex", flexDirection: "column"}}>
             {state.isPending &&
                 <div style={{display: "flex", flexDirection: "column"}}>
-                    {props.message.attachmentsFilenames!.map(() => <LoadingSpinner key={props.message.id}/>)}
+                    {props.message.attachmentsFilenames!.map(() => <CircularProgress key={props.message.id}/>)}
                 </div>
             }
             {!state.isPending &&

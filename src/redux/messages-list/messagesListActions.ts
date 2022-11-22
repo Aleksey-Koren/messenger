@@ -26,6 +26,7 @@ import {User} from "../../model/messenger/user";
 import {ChatService} from "../../service/messenger/chatService";
 import {MessageProcessingService} from "../../service/messenger/messageProcessingService";
 import {AdministratorApi} from "../../api/administratorApi";
+import Notification from "../../Notification";
 
 export function setOnscrollMuted(isOnscrollMuted: boolean): ISetOnscrollMuted {
     return {
@@ -74,15 +75,18 @@ export function fetchNextPageTF() {
             page: 0,
             size: 15,
             before: oldestCreated
-        }).then(messages => {
-            if (messages.length > 0) {
-                messages = messages.filter(message => message.type !== MessageType.WHO);
-                dispatch(setMessages([...currentMessages, ...messages]));
-            } else {
-                dispatch(setHasMore(false));
-            }
         })
-        //@TODO WARN no catch clause
+            .then(messages => {
+                if (messages.length > 0) {
+                    messages = messages.filter(message => message.type !== MessageType.WHO);
+                    dispatch(setMessages([...currentMessages, ...messages]));
+                } else {
+                    dispatch(setHasMore(false));
+                }
+            })
+            .catch(e => {
+                Notification.add({message: 'Something went wrong. ', severity: 'error', error: e})
+            });
     }
 }
 
@@ -96,14 +100,12 @@ export function onScrollTF(event: React.UIEvent<HTMLUListElement, UIEvent>) {
             const target = document.elementFromPoint(x, y);
             if (target) {
                 if (MessagesListService.isAfter(target.id, state.messagesList.lastRead)) {
-//                    console.log('setLastRead  :  ' + target.id)
                     dispatch(setLastRead(target.id));
                 }
             }
         }
 
         if (scrollRef.scrollTop > -1 && !state.messagesList.isAtTheBottom) {
-//            console.log("AT THE BOTTOM");
             dispatch(setAtTheBottom(true));
             const messages = state.messenger.messages;
             if (messages.length > 0) {
@@ -112,7 +114,6 @@ export function onScrollTF(event: React.UIEvent<HTMLUListElement, UIEvent>) {
         }
 
         if (scrollRef.scrollTop < -1 && state.messagesList.isAtTheBottom) {
-//            console.log("GO UP");
             dispatch(setAtTheBottom(false));
         }
     }
@@ -131,8 +132,6 @@ export function scrollToUnreadTF(lastReadHtmlId: string, scrollRef: HTMLUListEle
                 return;
             }
         }
-        //@TODO WARN no any handler for that error
-        throw new Error('Error while scrolling to first unread message');
     }
 }
 
@@ -186,8 +185,10 @@ function processChatParticipants(message: Message, dispatch: ThunkDispatch<AppSt
             let nextMessageFetch: Date = new Date();
             dispatch(setLastMessagesFetch(nextMessageFetch));
             MessageProcessingService.processMessages(dispatch, getState, [message]);
+        })
+        .catch(e => {
+            Notification.add({message: 'Something went wrong. ', severity: 'error', error: e})
         });
-//@TODO WARN no catch clause
 }
 
 
@@ -218,7 +219,6 @@ function handleHelloMessage(message: Message, dispatch: ThunkDispatch<AppState, 
     dispatch(setCurrentChat(newChat.id));
 
     dispatch(setIsNewPrivateModalOpened(false));
-    //@TODO WARN no catch clause
     AdministratorApi.getAllAdministratorsByChatId(message.chat)
         .then(administrators => {
             dispatch(setAdministrators(administrators))
@@ -226,6 +226,9 @@ function handleHelloMessage(message: Message, dispatch: ThunkDispatch<AppState, 
                 dispatch(setIsMembersModalOpened(true));
             }
         })
+        .catch(e => {
+            Notification.add({message: 'Something went wrong. ', severity: 'error', error: e})
+        });
 
     if (message.sender === message.receiver || message.receiver === user?.id) {
         dispatch(setHasMore(false))
@@ -245,7 +248,6 @@ function handleLeaveChatMessage(message: Message, dispatch: ThunkDispatch<AppSta
         dispatch(setCurrentChat(null))
         dispatch(setChats(chats));
     } else {
-        //@TODO WARN no catch clause
         AdministratorApi.getAllAdministratorsByChatId(message.chat)
             .then(administrators => {
                 dispatch(setAdministrators(administrators))
@@ -260,6 +262,9 @@ function handleLeaveChatMessage(message: Message, dispatch: ThunkDispatch<AppSta
                 }
                 dispatch(setUsers(updatedMembers, message.chat))
             })
+            .catch(e => {
+                Notification.add({message: 'Something went wrong. ', severity: 'error', error: e})
+            });
 
         const currentMessages = getState().messenger.messages;
         let updateMessages: Message[] = []

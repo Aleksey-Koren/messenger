@@ -12,8 +12,7 @@ const VoiceMessageTimer: React.FC<TProps> = (props) => {
     if (props.duration > maxDuration) {
         VoiceMessagesService.stopRecording(props.recorder);
         Notification.add({
-            //@TODO WARN message looks not serious :-(
-            message: `Max voice message duration is ${maxDuration} seconds :-(   But you can send several one by one :-)`,
+            message: `Max voice message duration is ${maxDuration} seconds!`,
             severity: "info"
         });
     }

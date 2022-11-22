@@ -3,6 +3,7 @@ import {GlobalUser, LocalStorageData, StateData} from "../../model/local-storage
 import {Builder} from "builder-pattern";
 import {StringIndexArray} from "../../model/stringIndexArray";
 import {Chat} from "../../model/messenger/chat";
+import Notification from "../../Notification";
 
 export class LocalStorageService {
 
@@ -114,6 +115,13 @@ function mapLocalStorageToState(localStorageData: LocalStorageData): StateData {
 
 function retrieveParsedLocalStorageData(): LocalStorageData | null {
     const localStorageData = localStorage.getItem('whisper');
-//@TODO WARN JSON.parse throws exception in case if not possible to parse
-    return localStorageData && JSON.parse(localStorageData);
+    try {
+        return localStorageData && JSON.parse(localStorageData)
+    } catch (error) {
+        Notification.add({
+            message: `Can't get data from LocalStorage!`,
+            severity: "error"
+        });
+        return null;
+    }
 }

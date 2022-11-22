@@ -1,7 +1,9 @@
 import React from "react";
 import {AppState} from "../../../index";
 import {connect, ConnectedProps} from "react-redux";
-import {MimeType, TAttachmentFile} from "../../../redux/attachments/attachmentsTypes";
+import {FileType, TAttachmentFile} from "../../../model/messenger/file";
+import {Button} from "@mui/material";
+import {saveAs} from "file-saver";
 
 interface IOwnProps {
     file: TAttachmentFile
@@ -10,30 +12,39 @@ interface IOwnProps {
 const Attachment: React.FC<TProps> = (props) => {
 
     const url = URL.createObjectURL(props.file.data!);
+    const name = URL.createObjectURL(props.file.data!).split('/').pop()
 
-    if (props.file.mimeType === MimeType.IMAGE) {
+
+    const save = () => {
+        saveAs(props.file.data!);
+    }
+
+    const style = {
+        margin: "5px",
+        objectFit: "cover",
+        width: "100%",
+    } as React.CSSProperties
+
+    if (props.file.fileType === FileType.IMAGE) {
         return <>
-            <img style={{margin: "5px"}}
-                 //@TODO WARN why image 200x200 and video is 300x300?
-                 //also it should not scale images, like 1y and 2x.
-                 //check next url: https://stackoverflow.com/questions/11757537/css-image-size-how-to-fill-but-not-stretch
-                 src={url} height={200} width={200} alt={"Can not be displayed"}/>
+            <img style={style}
+                 src={url} alt={"Can not be displayed"}/>
+            <Button onClick={() => save()}>Download {name}</Button>
         </>
-    } else if (props.file.mimeType === MimeType.VIDEO) {
+    } else if (props.file.fileType === FileType.VIDEO) {
         return <>
-            <video height={"300"} width={"300"} controls style={{margin: "5px"}}>
-                {/*@TODO WARN is it work for WEBM?*/}
+            <video style={style} controls>
                 <source src={url} type={"video/mp4"}/>
             </video>
         </>
-    } else if (props.file.mimeType === MimeType.AUDIO) {
+    } else if (props.file.fileType === FileType.AUDIO) {
         return <>
             <audio controls src={url} style={{margin: "5px"}}/>
         </>
     } else {
         //todo we need to implement more convenient component. But not simple <span>
         //@TODO WARN yes. Make it "downloadable"
-        return <span>Undefined attachment type</span>
+        return <Button onClick={() => save()}>Download {name}</Button>
     }
 }
 

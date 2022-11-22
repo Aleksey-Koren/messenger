@@ -20,11 +20,17 @@ const MessageItem: React.FC<TProps> = (props) => {
     const message = props.message;
     const userId = props.user.id;
 
+    const getChatTitle = (data: string) => {
+        const values = data!.split("__");
+        values.pop();
+        return values.join("__")
+    }
+
     return <ListItem id={MessagesListService.mapMessageToHTMLId(message)}
                      key={message.id}
                      style={{
                          display: 'flex',
-                         flexDirection: (message.sender === userId ? 'row-reverse' : 'row'), /* my messages - right, others - left*/
+                         flexDirection: (message.sender === userId ? 'row-reverse' : 'row')
                      }}>
 
         {message.type === MessageType.WHISPER &&
@@ -54,8 +60,7 @@ const MessageItem: React.FC<TProps> = (props) => {
 
         {message.type === MessageType.HELLO &&
             <div className={style.system_message}>
-                {/*@TODO ERROR try to set room name to "ROOM_NAME" */}
-                <span>Room title has been set to '{message.data!.substring(0, message.data!.indexOf('_'))}'</span>
+                <span>Room title has been set to '{getChatTitle(message.data!)}'</span>
             </div>
         }
 

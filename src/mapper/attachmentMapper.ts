@@ -1,7 +1,7 @@
 import {CryptService} from "../service/cryptService";
 import {store} from "../index";
-import {TAttachmentFile} from "../redux/attachments/attachmentsTypes";
 import {FileService} from "../service/fileService";
+import {TAttachmentFile} from "../model/messenger/file";
 
 export class AttachmentMapper {
 
@@ -9,9 +9,8 @@ export class AttachmentMapper {
         const chat = store.getState().messenger.chats[store.getState().messenger.currentChat!];
 
         const encryptedFile = new Uint8Array(array);
-        const encryptedBase64 = CryptService.uint8ToBase64(encryptedFile);
 
-        const decryptedBytes = CryptService.decryptAES(encryptedBase64, chat.keyAES, nonce)
+        const decryptedBytes = CryptService.decryptAES(encryptedFile, chat.keyAES, nonce)
         const decryptedBase64 = CryptService.BytesToBase64(decryptedBytes);
         const decryptedFile = CryptService.base64ToUint8(decryptedBase64);
 
@@ -21,12 +20,16 @@ export class AttachmentMapper {
             }
         }
 
-        const arrayAndType = FileService.identifyMimeTypeAndUnmarkArray(decryptedFile);
+        const arrayAndType = FileService.identifyFileTypeAndUnmarkArray(decryptedFile);
+
+        // let filename = new Blob([arrayAndType.unmarkedArray]).filename;
+        // console.log()
+
 
         return {
             isDecrypted: true,
             data: new Blob([arrayAndType.unmarkedArray]),
-            mimeType: arrayAndType.mimeType
+            fileType: arrayAndType.fileType
         }
     }
 }

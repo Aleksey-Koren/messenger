@@ -22,6 +22,7 @@ import {ThunkDispatch} from "redux-thunk";
 import {MessageType} from "../../model/messenger/messageType";
 import {
     setIsEditUserTitleModalOpen,
+    setIsFetching,
     setIsGlobalUserConfigurationModalOpen
 } from "../messenger-controls/messengerControlsActions";
 import Notification from "../../Notification";
@@ -163,8 +164,9 @@ export function sendMessageNewVersion(messageText: string,
 
 export function sendMessage(messageText: string, messageType: MessageType, attachments?: FileList) {
     return async (dispatch: AppDispatch, getState: () => AppState) => {
-        const currentChatId = getState().messenger.currentChat;
+        dispatch(setIsFetching(false))
 
+        const currentChatId = getState().messenger.currentChat;
         const user = getState().messenger.user;
         const globalUsers = getState().messenger.globalUsers;
         const users = getState().messenger.users;
@@ -190,6 +192,10 @@ export function sendMessage(messageText: string, messageType: MessageType, attac
                 getState().messenger.stompClient
                     .send(`/app/chat/send-message/${user?.id}`, {}, JSON.stringify(dto))
             })
+            .catch(e => {
+                Notification.add({message: 'Something went wrong. ', severity: 'error', error: e})
+            })
+            .finally(() => dispatch(setIsFetching(false)))
     }
 }
 
@@ -388,6 +394,8 @@ export function openChatTF(chatId: string) {
 
 export function updateUserTitle(title: string) {
     return (dispatch: ThunkDispatch<AppState, any, Action>, getState: () => AppState) => {
+        dispatch(setIsFetching(true))
+
         const user = getState().messenger.user;
         if (!user) {
             throw new Error("User is not logged in");
@@ -436,7 +444,8 @@ export function updateUserTitle(title: string) {
                                 message: 'Fail to update user title',
                                 error: e,
                                 severity: "error"
-                            }));
+                            }))
+                            .finally(() => dispatch(setIsFetching(false)))
                     })
 
             })
@@ -444,31 +453,40 @@ export function updateUserTitle(title: string) {
 }
 
 export function addPkToGlobalUserTF(userToEdit: GlobalUser, pkToAdd: string) {
-    return (dispatch: ThunkDispatch<AppState, any, Action>, getState: () => AppState) => {
-
-        const state = getState();
-        const globalUsers = {...state.messenger.globalUsers};
-        if (globalUsers[userToEdit.userId].certificates.indexOf(pkToAdd) === -1) {
-            globalUsers[userToEdit.userId].certificates.unshift(pkToAdd);
-            dispatch(setGlobalUsers(globalUsers));
-        }
+    return async (dispatch: ThunkDispatch<AppState, any, Action>, getState: () => AppState) => {
+        await new Promise((resolve) => {
+            dispatch(setIsFetching(true))
+            resolve(true)
+        }).then(() => {
+            const state = getState();
+            const globalUsers = {...state.messenger.globalUsers};
+            if (globalUsers[userToEdit.userId].certificates.indexOf(pkToAdd) === -1) {
+                globalUsers[userToEdit.userId].certificates.unshift(pkToAdd);
+                dispatch(setGlobalUsers(globalUsers));
+                dispatch(setIsFetching(false))
+            }
+        })
     }
 }
 
 export function addGhostUserTF(id: string) {
-    return (dispatch: ThunkDispatch<AppState, any, Action>, getState: () => AppState) => {
-        const globalUsers = {...getState().messenger.globalUsers};
-        if (!globalUsers[id]) {
+    return async (dispatch: ThunkDispatch<AppState, any, Action>, getState: () => AppState) => {
+        await new Promise((resolve) => {
+            dispatch(setIsFetching(true))
+            resolve(true)
+        }).then(() => {
+            const globalUsers = {...getState().messenger.globalUsers};
+            if (!globalUsers[id]) {
+                const newUser = {
+                    userId: id,
+                    certificates: [],
+                    titles: {}
+                }
+                globalUsers[id] = newUser
 
-            const newUser = {
-                userId: id,
-                certificates: [],
-                titles: {}
+                dispatch(setGlobalUsers(globalUsers));
+                dispatch(setIsGlobalUserConfigurationModalOpen(true, newUser));
             }
-            globalUsers[id] = newUser
-
-            dispatch(setGlobalUsers(globalUsers));
-            dispatch(setIsGlobalUserConfigurationModalOpen(true, newUser));
-        }
+        })
     }
 }

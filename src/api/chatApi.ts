@@ -17,27 +17,16 @@ export class ChatApi {
         });
     }
 
-    //@TODO WARN write appropriate return type
     static removeCustomerFromChat(customerId: string, chatId: string, token: string) {
-        return axiosApi.delete<any>(`chats/${chatId}/customers/${customerId}`, {
+        return axiosApi.delete<void>(`chats/${chatId}/customers/${customerId}`, {
             headers: {
                 Token: token,
             }
         }).then(response => response.data)
     }
-//@TODO WARN unused method
-    static quitFromChat(chatId: string, myId: string, data: { data: string, nonce: string }) {
-        return axiosApi.delete(`chats/${chatId}`, {
-            params: {
-                sender: myId,
-                data: data.data,
-                nonce: data.nonce
-            }
-        });
-    }
-//@TODO WARN return type
+
     static leaveChat(chatId: string, customerId: string, token: string) {
-        return axiosApi.delete<any>(`chats/${chatId}/customers/${customerId}/leave-chat`, {
+        return axiosApi.delete<void>(`chats/${chatId}/customers/${customerId}/leave-chat`, {
             headers: {
                 Token: token,
             }

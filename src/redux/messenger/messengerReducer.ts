@@ -30,7 +30,6 @@ const initialState: IMessengerState = {
     currentChat: null,
     lastMessagesFetch: null,
     stompClient: over(new SockJS(`//${document.location.hostname}:8080/ws`)),
-    // stompClient: over(new SockJS('//46.101.136.62:8080/ws')),
 }
 
 export function messengerReducer(state: IMessengerState = initialState, action: TMessengerAction): IMessengerState {
@@ -89,7 +88,6 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
             return {...state, globalUsers: action.payload.globalUsers};
         case LOGOUT:
             localStorage.clear();
-            // SchedulerService.stopScheduler();
             return {...initialState, globalUsers: {}};
         case SET_LAST_MESSAGES_FETCH:
             LocalStorageService.lastMessagesFetchToStorage(action.payload.lastMessagesFetch!)

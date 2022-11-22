@@ -24,7 +24,6 @@ const CreateNewRoomModal: React.FC<TProps> = (props) => {
             <Formik
                 initialValues={{title: '', userTitle: props.userTitle}}
                 onSubmit={(values) => {
-                    /*@TODO WARN block button, wait for response*/
                     props.createNewRoomTF(values.title, values.userTitle || props.user!.id);
                     props.setUserTitle(values.userTitle)
                 }}
@@ -53,7 +52,7 @@ const CreateNewRoomModal: React.FC<TProps> = (props) => {
                             </DialogContent>
                             <DialogActions className={style.dialog__actions}>
                                 <Button onClick={onClose}>Cancel</Button>
-                                <Button type={"submit"} disabled={!formik.isValid}>Create</Button>
+                                <Button type={"submit"} disabled={!formik.isValid || props.isFetching}>Create</Button>
                             </DialogActions>
                         </Form>
                     </div>
@@ -65,7 +64,8 @@ const CreateNewRoomModal: React.FC<TProps> = (props) => {
 
 const mapStateToProps = (state: AppState) => ({
     user: state.messenger.user,
-    userTitle: state.messenger.user!.title || state.messenger.user!.id
+    userTitle: state.messenger.user!.title || state.messenger.user!.id,
+    isFetching: state.messengerControls.isFetching,
 })
 
 const mapDispatchToProps = {

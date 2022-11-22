@@ -4,7 +4,8 @@ interface IAuthorizationState {
     isWelcomeModalOpen: boolean;
     isLoginModalOpen: boolean;
     isRegistrationModalOpen: boolean;
-    isRegistrationGhost: boolean
+    isRegistrationGhost: boolean,
+    isFetching: boolean;
 }
 
 export interface IRegistrationModalPayload {
@@ -20,3 +21,4 @@ export const LOGOUT = 'LOGOUT';
 export const SET_IS_WELCOME_MODAL_OPEN = 'SET_IS_WELCOME_MODAL_OPEN';
 export const SET_IS_LOGIN_MODAL_OPEN = 'SET_IS_LOGIN_MODAL_OPEN';
 export const SET_IS_REGISTRATION_MODAL_OPEN = 'SET_IS_REGISTRATION_MODAL_OPEN';
+export const SET_IS_FETCHING = 'SET_IS_FETCHING';

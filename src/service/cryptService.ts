@@ -89,13 +89,14 @@ export class CryptService {
     //===============================================AES================================================================
 
 
-    static generateKeyAES(size: number):Bytes {
+    static generateKeyAES(size: number): Bytes {
         return forge.random.getBytesSync(size);
     }
 
-
     static encryptAES(message: string | Uint8Array, key: string, nonce?: string) {
-        const bytes = forge.util.encodeUtf8(message);
+        console.log("encryptAES = " + typeof message)
+
+        const bytes = typeof message === "string" ? forge.util.encodeUtf8(message) : message;
 
         const cipher = forge.cipher.createCipher('AES-CBC', key);
         const nonceValue = nonce || forge.random.getBytesSync(key.length);
@@ -105,23 +106,25 @@ export class CryptService {
         cipher.finish();
 
         const encodedNonce = forge.util.encode64(nonceValue)
-        const data = forge.util.encode64(cipher.output.data);
+        const encodedText = forge.util.encode64(cipher.output.data);
 
         return {
             nonce: encodedNonce,
-            data: data,
+            data: encodedText,
         }
     }
 
-    static decryptAES(message: string | Uint8Array | ArrayBuffer, key: string, nonce: string) {
+    static decryptAES(message: string | Uint8Array, key: string, nonce: string) {
+        const isText = typeof message === "string"
+
         const decipher = forge.cipher.createDecipher('AES-CBC', key);
         decipher.start({iv: forge.util.decode64(nonce)});
-        decipher.update(forge.util.createBuffer(forge.util.decode64(message)));
+        decipher.update(forge.util.createBuffer(isText ? forge.util.decode64(message) : message));
 
         const result = decipher.finish();
-        const text = forge.util.decodeUtf8(decipher.output.data)
+        const decodedText = isText ? forge.util.decodeUtf8(decipher.output.data) : decipher.output.data
 
-        return result ? text : "not decrypted";
+        return result ? decodedText : "not decrypted";
     }
 
 }

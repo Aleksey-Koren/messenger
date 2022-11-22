@@ -9,10 +9,10 @@ import {AppDispatch, AppState} from "../../index";
 import {StringIndexArray} from "../../model/stringIndexArray";
 import {GlobalUser} from "../../model/local-storage/localStorageTypes";
 import {LocalStorageService} from "../local-data/localStorageService";
+import Notification from "../../Notification";
 
 export class ChatService {
 
-    //!!!
     static async tryDecryptChatsTitles(chats: MessageDto[], globalUsers: StringIndexArray<GlobalUser>) {
         const chatsLastSeen = LocalStorageService.chatsLastSeenFromLocalStorage() || {};
 
@@ -20,32 +20,25 @@ export class ChatService {
             const sender = globalUsers[chatDto.sender];
             if (sender) {
                 const chat = await MessageMapper.toEntity(chatDto, sender.userId);
-                //@TODO ERROR how it will work with title "__HAPPY__TREE__FRIENDS__"
-                //you need to do something like
-                //keyAes = values.pop();
-                //titles = values.join("__");
                 const values = chat.data!.split("__");
-                const title = values[0];
-                const keyAES = values[1];
+                const keyAES = values.pop() || "";
+                const title = values.join("__");
 
                 return {
                     id: chat.chat!,
                     title: title,
-                    confirmed: false, //TODO: FLAG DECRYPTED / NON-DECRYPTED??
                     isUnreadMessagesExist: chatsLastSeen[chat.chat] ? chatsLastSeen[chat.chat] < new Date(chatDto.created!) : false,
                     lastSeenAt: chatsLastSeen[chat.chat] ? chatsLastSeen[chat.chat] : new Date(),
                     keyAES: keyAES,
                 }
             }
-            //@TODO ERROR same as in previous
-            const values = chatDto.chat!.split("__");
-            const title = values[0];
-            const keyAES = values[1];
+            const values = chatDto.data!.split("__");
+            const keyAES = values.pop() || "";
+            const title = values.join("__");
 
             return {
                 id: chatDto.chat!,
                 title: title,
-                confirmed: false,
                 isUnreadMessagesExist: false,
                 lastSeenAt: new Date(),
                 keyAES: keyAES,
@@ -54,10 +47,8 @@ export class ChatService {
     }
 
     static processChatParticipants(dispatch: AppDispatch, chatId: string, globalUsers: StringIndexArray<GlobalUser>, currentUserId: string, getState: () => AppState) {
-        //@TODO WARN no catch clause
         return ChatApi.getParticipants(chatId)
             .then((chatParticipants) => {
-                //@TODO WARN no catch clause
                 return MessageApi.getMessages({
                     receiver: currentUserId,
                     chat: chatId,
@@ -68,9 +59,20 @@ export class ChatService {
                         chatParticipants: chatParticipants
                     }
                 })
+                    .catch(() => {
+                        return {
+                            knownParticipants: [],
+                            chatParticipants: []
+                        }
+                    })
             }).then(s => {
-                CustomerService.processUnknownChatParticipants(s.chatParticipants, s.knownParticipants, chatId, currentUserId, dispatch, getState);
+                CustomerService.processUnknownChatParticipants(s?.chatParticipants, s?.knownParticipants, chatId, currentUserId, dispatch, getState);
                 CustomerService.updateChatParticipantsCertificates(globalUsers, s.chatParticipants, dispatch);
+            }).catch(error => {
+                Notification.add({
+                    message: `Error to get participants: ${error.response.data.message}`,
+                    severity: "error"
+                });
             });
 
     }

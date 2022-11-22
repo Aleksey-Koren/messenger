@@ -5,6 +5,7 @@ import {
     SET_IS_CREATE_PRIVATE_MODAL_OPENED,
     SET_IS_CREATE_ROOM_MODAL_OPENED,
     SET_IS_EDIT_USER_TITLE_MODAL_OPEN,
+    SET_IS_FETCHING,
     SET_IS_GLOBAL_USER_CONFIGURATION_MODAL_OPEN,
     SET_IS_LEAVE_CHAT_CONFIRM_MODAL_OPENED,
 } from "./messengerControlsTypes";
@@ -19,6 +20,7 @@ import {CustomerApi} from "../../api/customerApi";
 import {MessageMapper} from "../../mapper/messageMapper";
 import {ChatApi} from "../../api/chatApi";
 import {CryptService} from "../../service/cryptService";
+import Notification from "../../Notification";
 
 export function setIsNewPrivateModalOpened(isOpened: boolean): IPlainDataAction<boolean> {
     return {
@@ -65,9 +67,15 @@ export function setIsLeaveChatConfirmModalOpened(isOpened: boolean): IPlainDataA
     }
 }
 
+export function setIsFetching(isFetching: boolean): IPlainDataAction<boolean> {
+    return {
+        type: SET_IS_FETCHING,
+        payload: isFetching,
+    }
+}
+
 export function removeGlobalUserPublicKeyTF(publicKey: string, globalUser: GlobalUser) {
     return (dispatch: AppDispatch, getState: () => AppState) => {
-
         const globalUsers = {...getState().messenger.globalUsers};
         const globalUserToEdit = globalUsers[globalUser.userId];
 
@@ -77,31 +85,44 @@ export function removeGlobalUserPublicKeyTF(publicKey: string, globalUser: Globa
     }
 }
 
-//!!!
 export function createNewRoomTF(title: string, userTitle: string) {
-    return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
-        const user = getState().messenger.user;
-        const globalUsers = {...getState().messenger.globalUsers};
+    return async (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
+        await new Promise((resolve) => {
+            dispatch(setIsFetching(true))
+            resolve(true)
+        })
+            .then(() => {
+                const user = getState().messenger.user;
+                const globalUsers = {...getState().messenger.globalUsers};
 
-        if (!user) {
-            //@TODO WARN no error handling
-            throw new Error("User is not logged in");
-        }
+                if (user) {
+                    const keyAES = CryptService.generateKeyAES(16);
 
-        const keyAES = CryptService.generateKeyAES(16);
+                    const message = {
+                        type: MessageType.HELLO,
+                        sender: user.id!,
+                        receiver: user.id!,
+                        data: title + "__" + keyAES
+                    } as Message
 
-        const message = {
-            type: MessageType.HELLO,
-            sender: user.id!,
-            receiver: user.id!,
-            //@TODO WARN why you need aes key here?
-            data: title + "__" + keyAES
-        } as Message
-        //@TODO WARN no catch clause
-        Promise.all([message].map(message => MessageMapper.toDto(message, globalUsers[message.receiver])))
-            .then(dto => {
-                getState().messenger.stompClient
-                    .send(`/app/chat/send-message/${user?.id}`, {}, JSON.stringify(dto))
+                    Promise.all([message].map(message => MessageMapper.toDto(message, globalUsers[message.receiver])))
+                        .then(dto => {
+                            getState().messenger.stompClient
+                                .send(`/app/chat/send-message/${user?.id}`, {}, JSON.stringify(dto))
+                        })
+                        .catch(e => {
+                            Notification.add({
+                                message: `Can't encrypt message! ${e}`,
+                                severity: "error"
+                            });
+                        })
+                        .finally(() => dispatch(setIsFetching(false)))
+                } else {
+                    Notification.add({
+                        message: `User is not logged in!`,
+                        severity: "error"
+                    });
+                }
             })
     }
 }
@@ -111,7 +132,7 @@ export function leaveChatTF() {
         const user = getState().messenger.user;
         const globalUsers = {...getState().messenger.globalUsers};
         const users = getState().messenger.users;
-//@TODO WARN no catch clause
+
         CustomerApi.getServerUser()
             .then(serverUser => {
                 const state = getState();
@@ -123,12 +144,11 @@ export function leaveChatTF() {
                     chat: state.messenger.currentChat!,
                     decrypted: false
                 } as Message
-//@TODO WARN no catch clause
+
                 Promise.all([message].map(message => MessageMapper.toDto(message, globalUsers[message.receiver])))
                     .then(dto => {
                         const token = `${dto[0].data}_${dto[0].nonce}_${dto[0].sender}`
                         ChatApi.leaveChat(state.messenger.currentChat!, dto[0].sender, token)
-                            //@TODO WARN no catch clause
                             .then(() => {
                                 const messagesLeaveChatToSend: Message[] = [];
 
@@ -144,15 +164,38 @@ export function leaveChatTF() {
                                     } as Message
                                     messagesLeaveChatToSend.push(messageLeaveChat)
                                 }
-//@TODO WARN no catch clause
+
                                 Promise.all(messagesLeaveChatToSend.map(message => MessageMapper.toDto(message, globalUsers[message.receiver])))
                                     .then(dto => {
                                         getState().messenger.stompClient
                                             .send(`/app/chat/send-message/${user?.id}`, {}, JSON.stringify(dto))
                                     })
+                                    .catch(e => {
+                                        Notification.add({
+                                            message: `Can't encrypt message! ${e}`,
+                                            severity: "error"
+                                        });
+                                    })
                             })
-
+                            .catch(e => {
+                                Notification.add({
+                                    message: `Error to leave chat! ${e}`,
+                                    severity: "error"
+                                });
+                            })
                     })
+                    .catch(e => {
+                        Notification.add({
+                            message: `Can't encrypt message! ${e}`,
+                            severity: "error"
+                        });
+                    })
+            })
+            .catch(e => {
+                Notification.add({
+                    message: `Can't get server user! ${e}`,
+                    severity: "error"
+                });
             })
     }
 }

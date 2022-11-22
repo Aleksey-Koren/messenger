@@ -14,7 +14,7 @@ const validationSchema = yup.object().shape({
 
 const EditUserTitleModal: React.FC<Props> = (props) => {
     return (
-        <Dialog open={true} maxWidth={"sm"} fullWidth>
+        <Dialog open={true} fullWidth>
             <DialogTitle className={style.dialog__title}>Update your name</DialogTitle>
             <Formik
                 initialValues={{title: props.user?.title}}
@@ -33,11 +33,9 @@ const EditUserTitleModal: React.FC<Props> = (props) => {
                                     fullWidth variant="standard" placeholder={"User title"}
                                 />
                             </DialogContent>
-
                             <DialogActions className={style.dialog__actions}>
                                 <Button onClick={() => props.setIsEditUserTitleModalOpen(false)}>Cancel</Button>
-                                {/*@TODO WARN disable till action finished*/}
-                                <Button type={"submit"} disabled={!formik.isValid}>Save</Button>
+                                <Button type={"submit"} disabled={!formik.isValid || props.isFetching}>Save</Button>
                             </DialogActions>
                         </Form>
                     </div>
@@ -47,12 +45,10 @@ const EditUserTitleModal: React.FC<Props> = (props) => {
     )
 }
 
-const mapStateToProps = (state: AppState) => {
-    const user = state.messenger.user;
-    return {
-        user: user,
-    }
-}
+const mapStateToProps = (state: AppState) => ({
+    isFetching: state.messengerControls.isFetching,
+    user: state.messenger.user,
+})
 
 const mapDispatchToProps = {
     setIsEditUserTitleModalOpen,

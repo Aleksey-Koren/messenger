@@ -31,19 +31,16 @@ export function TimeSince(props: { time?: Date }) {
 }
 
 export function UnreadDelimiter() {
-    /*@TODO WARN please check on small screen (chat is not adapted to small screens, make "message list" small"*/
-    return <div>
-        <h3 style={{textAlign: 'center', color: 'yellow'}}>----------------- unread messages -----------------</h3>
-    </div>
+    return <div style={{textAlign: 'center', color: 'yellow', fontSize: "1.8vw"}}>unread messages</div>
 }
 
 function timeSince(date?: Date) {
     if (!date) {
         return '';
     }
-    var seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
+    const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
 
-    var interval = seconds / 31536000;
+    let interval = seconds / 31536000;
     if (interval > 1) {
         return Math.floor(interval) + " years";
     }

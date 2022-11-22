@@ -78,8 +78,7 @@ const ParticipantsListModal: React.FC<Props> = (props) => {
     }
 
     return (<>
-            {/*@TODO WARN maxWidth vs fullWidth*/}
-            <Dialog open={true} maxWidth="sm" fullWidth>
+            <Dialog open={true} fullWidth>
                 {removeDialog()}
                 <AppBar classes={{root: style.dialog__app_bar}}>
                     <Toolbar>
@@ -169,11 +168,11 @@ const ParticipantsListModal: React.FC<Props> = (props) => {
                     <Button onClick={() => setRemoveMemberConfirm(false)}>
                         No
                     </Button>
-                    <Button onClick={() => {
-                        //@TODO WARN disable button, wait response from server
-                        props.removeCustomerFromChat(currentMember!.id, props.currentChat!);
-                        setRemoveMemberConfirm(false);
-                    }}>
+                    <Button disabled={props.isFetching}
+                            onClick={() => {
+                                props.removeCustomerFromChat(currentMember!.id, props.currentChat!);
+                                setRemoveMemberConfirm(false);
+                            }}>
                         Yes
                     </Button>
                 </DialogActions>
@@ -256,7 +255,8 @@ const mapStateToProps = (state: AppState) => ({
     chatParticipants: state.messenger.users,
     administrators: state.messenger.administrators,
     user: state.messenger.user,
-    currentChat: state.messenger.currentChat
+    currentChat: state.messenger.currentChat,
+    isFetching: state.messengerControls.isFetching,
 })
 
 const mapDispatchToProps = {

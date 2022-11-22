@@ -89,7 +89,6 @@ const LoginModal: React.FC<Props> = (props) => {
                             }}>
                                 Back</Button>
 
-
                             <Button component="label">
                                 Credentials from file
                                 <input
@@ -100,8 +99,7 @@ const LoginModal: React.FC<Props> = (props) => {
                                 />
                             </Button>
                             <Button type={"submit"}
-                                    //@TODO WARN should be also disabled during request
-                                    disabled={!formik.isValid}
+                                    disabled={!formik.isValid || props.isFetching}
                             >
                                 Login
                             </Button>
@@ -114,7 +112,9 @@ const LoginModal: React.FC<Props> = (props) => {
     );
 }
 
-const mapStateToProps = (state: AppState) => ({})
+const mapStateToProps = (state: AppState) => ({
+    isFetching: state.authorizationReducer.isFetching,
+})
 
 const mapDispatchToProps = {
     authenticateRSA,

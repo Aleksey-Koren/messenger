@@ -34,7 +34,6 @@ const MessengerFooter: React.FC<TProps> = (props) => {
 
     function send(text: string, attachments: FileList) {
         if (MessageService.isMessageNotEmpty(text, attachments)) {
-            //SEND
             props.sendMessage(text, MessageType.WHISPER, attachments);
             formik.setFieldValue('message', '', false);
             formik.setFieldValue('attachments', {attachments: null, fileNames: []})
@@ -44,7 +43,6 @@ const MessengerFooter: React.FC<TProps> = (props) => {
 
     const [attachmentsState, setAttachmentsState] = useState<IAttachmentsState>({attachments: null, fileNames: []});
     props.prepareAudioStreamTF();
-
 
     const validationSchema = Yup.object().shape({
         currentChat: Yup.string().required("No active chat selected")
@@ -78,7 +76,7 @@ const MessengerFooter: React.FC<TProps> = (props) => {
             <div style={{display: "flex", flexDirection: "column", minHeight: '90%', marginRight: "10px"}}>
                 <label>
                     <AttachFileIcon style={{color: "white"}}/>
-                    <input type={"file"} style={{display: "none"}} accept="image/*,video/*" multiple
+                    <input type={"file"} style={{display: "none"}} accept="*" multiple
                            onChange={e => AttachmentsServiceUpload.processUploading(e, attachmentsState, setAttachmentsState, formik)}
                     />
                 </label>
@@ -119,16 +117,14 @@ const MessengerFooter: React.FC<TProps> = (props) => {
                                }}
                                onChange={(event) => {
                                    formik.handleChange(event)
-                                   //props.setMessageText(event.target.value)
                                }}
                     />
 
                 </form>
             </PerfectScrollbar>
 
-            {<Fab className={style.send_icon} size={"large"} disabled={!props.currentChat}
+            {<Fab className={style.send_icon} size={"large"} disabled={!props.currentChat || props.isFetching}
                   onClick={() => {
-                      //@TODO WARN disable till end of action
                       formik.submitForm().then();
                   }}
             >
@@ -141,7 +137,8 @@ const MessengerFooter: React.FC<TProps> = (props) => {
 const mapStateToProps = (state: AppState, ownProps: MessengerFooterProps) => ({
     currentChat: ownProps.currentChat,
     audioRecorder: state.voiceMessages.audioRecorder,
-    isRecording: state.voiceMessages.isRecording
+    isRecording: state.voiceMessages.isRecording,
+    isFetching: state.messengerControls.isFetching,
 })
 
 const mapDispatchToProps = {

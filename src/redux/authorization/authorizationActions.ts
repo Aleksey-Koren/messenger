@@ -1,6 +1,7 @@
 import {
     IRegistrationModalPayload,
     LOGOUT,
+    SET_IS_FETCHING,
     SET_IS_LOGIN_MODAL_OPEN,
     SET_IS_REGISTRATION_MODAL_OPEN,
     SET_IS_WELCOME_MODAL_OPEN
@@ -21,7 +22,6 @@ import {AuthorizationService} from "../../service/authorizationService";
 import {saveAs} from 'file-saver';
 
 export function setIsWelcomeModalOpen(isOpen: boolean): IPlainDataAction<boolean> {
-
     return {
         type: SET_IS_WELCOME_MODAL_OPEN,
         payload: isOpen
@@ -29,7 +29,6 @@ export function setIsWelcomeModalOpen(isOpen: boolean): IPlainDataAction<boolean
 }
 
 export function setIsLoginModalOpen(isOpen: boolean): IPlainDataAction<boolean> {
-
     return {
         type: SET_IS_LOGIN_MODAL_OPEN,
         payload: isOpen
@@ -37,7 +36,6 @@ export function setIsLoginModalOpen(isOpen: boolean): IPlainDataAction<boolean> 
 }
 
 export function setIsRegistrationModalOpen(isOpen: boolean, isGhost: boolean): IPlainDataAction<IRegistrationModalPayload> {
-
     return {
         type: SET_IS_REGISTRATION_MODAL_OPEN,
         payload: {
@@ -47,8 +45,17 @@ export function setIsRegistrationModalOpen(isOpen: boolean, isGhost: boolean): I
     }
 }
 
+export function setIsFetching(isFetching: boolean): IPlainDataAction<boolean> {
+    console.log(isFetching)
+    return {
+        type: SET_IS_FETCHING,
+        payload: isFetching
+    }
+}
+
 export function authenticateRSA(id: string, privateKeyPem: string) {
     return (dispatch: ThunkDispatch<AppState, void, Action>) => {
+        dispatch(setIsFetching(true))
         CustomerApi.getCustomer(id)
             .then(user => {
                 const publicKeyPem = user.publicKeyPem!;
@@ -63,19 +70,28 @@ export function authenticateRSA(id: string, privateKeyPem: string) {
                 } else {
                     Notification.add({message: 'ID or PRIVATE KEY is incorrect', severity: 'error'});
                 }
-            }).catch((e) => {
+            })
+            .catch((e) => {
                 Notification.add({error: e, message: 'ID or PRIVATE KEY is incorrect', severity: 'error'});
             })
+            .finally(() => dispatch(setIsFetching(false)))
     }
 }
 
 export function registerRSA(isGhost?: boolean) {
-    return (dispatch: ThunkDispatch<AppState, void, Action>) => {
+    return async (dispatch: ThunkDispatch<AppState, void, Action>) => {
+        dispatch(setIsFetching(true))
         const forge = require("node-forge");
 
-        const keypair = forge.pki.rsa.generateKeyPair({bits: 2048});
-        const privateKeyPem = forge.pki.privateKeyToPem(keypair.privateKey)
-        const publicKeyPem = forge.pki.publicKeyToPem(keypair.publicKey)
+        let privateKeyPem = "";
+        let publicKeyPem = "";
+        await new Promise((resolve, reject) =>
+            forge.pki.rsa.generateKeyPair(2048, (error: Error, keys: any) => {
+                privateKeyPem = forge.pki.privateKeyToPem(keys.privateKey)
+                publicKeyPem = forge.pki.publicKeyToPem(keys.publicKey)
+                if (error) reject(error);
+                resolve(keys);
+            }))
 
         const customer = Builder(Customer)
             .pk(publicKeyPem)
@@ -90,7 +106,6 @@ export function registerRSA(isGhost?: boolean) {
             }
         ) : CustomerApi.register(customer))
             .then((user: User) => {
-                console.log(user)
                 user.privateKeyPem = privateKeyPem
                 dispatch(setIsRegistrationModalOpen(true, !!isGhost));
                 dispatch(setIsWelcomeModalOpen(false));
@@ -98,9 +113,9 @@ export function registerRSA(isGhost?: boolean) {
                 dispatch(connectStompClient(user.id!));
                 LocalStorageService.userToStorage(user);
             }).catch((e) => {
-                dispatch(setIsWelcomeModalOpen(true));
-                Notification.add({message: 'Something went wrong. ', severity: 'error', error: e})
-            })
+            dispatch(setIsWelcomeModalOpen(true));
+            Notification.add({message: 'Something went wrong. ', severity: 'error', error: e})
+        }).finally(() => dispatch(setIsFetching(false)))
     }
 }
 

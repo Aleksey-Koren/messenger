@@ -1,18 +1,17 @@
-//@TODO ERROR it is not mime types
-export enum MimeType {
+export enum FileType {
     IMAGE = 1,
     VIDEO = 2,
     AUDIO = 3,
-    UNKNOWN
+    UNKNOWN = 4
 }
 
 export type TArrayWithMimeType = {
-    mimeType: MimeType,
+    fileType: FileType,
     unmarkedArray: Uint8Array
 }
 
 export type TAttachmentFile = {
     data?: Blob;
-    mimeType?: MimeType,
+    fileType?: FileType,
     isDecrypted: boolean
 }

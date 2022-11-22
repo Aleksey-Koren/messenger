@@ -53,7 +53,6 @@ const GlobalUserConfigurationModal: React.FC<TProps> = (props) => {
                     <Formik
                         initialValues={{userId: ''}}
                         validationSchema={validationSchema}
-                        //@TODO WARN check if submit button is blocked untill current request is done
                         onSubmit={(values) => props.addGhostUserTF(values.userId)}
                         validateOnChange
                     >
@@ -70,8 +69,10 @@ const GlobalUserConfigurationModal: React.FC<TProps> = (props) => {
                                             <Field className={style.id_input} name={'userId'}/>
                                         </label>
                                     </Tooltip>
-                                    <button type={'submit'} className={style.add_key_button}
-                                            disabled={!formik.isValid}>ADD
+                                    <button type={'submit'}
+                                            className={style.add_key_button}
+                                            disabled={!formik.isValid || props.isFetching}>
+                                        ADD
                                     </button>
                                 </div>
                             </Form>
@@ -95,9 +96,7 @@ const GlobalUserConfigurationModal: React.FC<TProps> = (props) => {
                                               </IconButton>
                                           }
                                 >
-                                    <ListItemText
-                                        primary={cert}
-                                    />
+                                    <ListItemText primary={cert}/>
                                 </ListItem>
                             )}
                         </List>
@@ -113,13 +112,12 @@ const GlobalUserConfigurationModal: React.FC<TProps> = (props) => {
                     </label>
 
                     <button className={style.add_key_button}
+                            disabled={!props.globalUserToEdit || pkInputValue.length === 0 || props.isFetching}
                             onClick={() => {
-                                //@TODO make button disabled until request is done
                                 props.addPkToGlobalUserTF(props.globalUserToEdit!, pkInputValue);
                                 setPkInputValue('');
-                            }}
-                            disabled={!props.globalUserToEdit || pkInputValue.length === 0}
-                    >ADD
+                            }}>
+                        ADD
                     </button>
                 </div>
 
@@ -145,7 +143,8 @@ const GlobalUserConfigurationModal: React.FC<TProps> = (props) => {
 const mapStateToProps = (state: AppState) => ({
     globalUserToEdit: state.messengerControls.globalUserConfigurationState.globalUserToEdit,
     globalUsers: state.messenger.globalUsers,
-    isConfirmModalOpen: state.messengerControls.isConfirmModalOpen
+    isConfirmModalOpen: state.messengerControls.isConfirmModalOpen,
+    isFetching: state.messengerControls.isFetching,
 })
 
 const mapDispatchToProps = {

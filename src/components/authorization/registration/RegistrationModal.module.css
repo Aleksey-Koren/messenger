@@ -20,7 +20,8 @@
 }
 
 .dialog__content_row_input {
-    width: 550px;
+    /*width: 550px;*/
+    width: 35.5vw;
     border-radius: 2px;
     padding: 10px 10px;
     font-size: 15px;
@@ -37,8 +38,7 @@
 .dialog__actions button {
     border-radius: 2px;
     /*@TODO WARN use theme colors*/
-    /*@TODO WARN why dotted? It should be everywhere?*/
-    border: 1px dotted #90caf9;
+    border: 1px solid #90caf9;
 }
 
 .dialog__actions button:hover {
