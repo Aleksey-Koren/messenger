@@ -45,6 +45,7 @@ export class MessageProcessingService {
             switch (message.type) {
                 case MessageType.hello:
                     const values = message.data!.split("__");
+
                     const title = values[0];
                     const keyAES = values[1];
 
