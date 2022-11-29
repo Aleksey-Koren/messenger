@@ -111,7 +111,8 @@ export class CryptService {
         const decipher = forge.cipher.createDecipher('AES-CBC', key);
         decipher.start({iv: forge.util.decode64(nonce)});
         decipher.update(forge.util.createBuffer(forge.util.decode64(message)));
-
+        // console.log("some buffer: " + forge.util.createBuffer(forge.util.decode64(message)));
+        
         const result = decipher.finish();
 
         return result ? decipher.output.data : "not decrypted";

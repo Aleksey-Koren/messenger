@@ -3,6 +3,7 @@ import {MessageDto} from "../dto/messageDto";
 import {CustomerDto} from "../dto/CustomerDto";
 import {CustomerMapper} from "../mapper/customerMapper";
 
+
 export class ChatApi {
 
     static getChats(receiverId: string) {

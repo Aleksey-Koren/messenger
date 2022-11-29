@@ -6,6 +6,8 @@ import {MessageType} from "../model/messenger/messageType";
 import {StringIndexArray} from "../model/stringIndexArray";
 import {GlobalUser} from "../model/local-storage/localStorageTypes";
 
+import {store} from "../index";
+
 export class MessageApi {
 
     static async sendMessages(messages: Message[], users: StringIndexArray<GlobalUser>) {
@@ -13,7 +15,7 @@ export class MessageApi {
             return axiosApi.post<MessageDto[]>('messages?iam=' + messages[0].sender, dto);
         })
     }
-
+    
     static async getMessages(request: {
         receiver?: string,
         chat?: string,
@@ -24,7 +26,20 @@ export class MessageApi {
         size?: number
     }) {
         let dto = (await axiosApi.get<{ content: MessageDto[] }>('messages', {params: request})).data;
+        
+        const currentChat = store.getState().messenger.chats[store.getState().messenger.currentChat!];
 
+        // TODO: delete this lines latter
+        console.log("current AES key: " + currentChat.keyAES);
+        let utf8Encode = new TextEncoder()
+        let encodedKey: Uint8Array = utf8Encode.encode(currentChat.keyAES);
+        console.log("current AES key in bytes(uint8): " + encodedKey);
+        let byteArray = new Int8Array(encodedKey);
+        console.log("real byte array: " + byteArray);
+        
+
+        
+        
         return await Promise.all(dto.content.map(async dto => await MessageMapper.toEntity(dto, dto.sender)));
     }
 
