@@ -7,26 +7,8 @@ const forge = require("node-forge");
 //@TODO ERROR please cover it with tests, positive and negative for each (used) method
 export class CryptService {
 
-    static uint8ToBase64(array: Uint8Array) {
-        return naclUtil.encodeBase64(array);
-    }
-
     static base64ToUint8(string: string) {
         return naclUtil.decodeBase64(string);
-    }
-
-    static plainStringToUint8(string: string) {
-        return naclUtil.decodeUTF8(string);
-    }
-
-    static uint8ToPlainString(data: Uint8Array) {
-        return naclUtil.encodeUTF8(data);
-    }
-
-    static JSONByteStringToUint8(userInput: string) {
-        return Uint8Array.from(userInput.split(",")
-            .map(str => parseInt(str))
-        );
     }
 
     static BytesToBase64(data: Bytes) {
@@ -94,8 +76,7 @@ export class CryptService {
     }
 
     static encryptAES(message: string | Uint8Array, key: string, nonce?: string) {
-        console.log("encryptAES = " + typeof message)
-
+        console.log("ENCRYPT AES (NONCE): " + nonce)
         const bytes = typeof message === "string" ? forge.util.encodeUtf8(message) : message;
 
         const cipher = forge.cipher.createCipher('AES-CBC', key);
@@ -111,7 +92,7 @@ export class CryptService {
         return {
             nonce: encodedNonce,
             data: encodedText,
-        }
+        };
     }
 
     static decryptAES(message: string | Uint8Array, key: string, nonce: string) {

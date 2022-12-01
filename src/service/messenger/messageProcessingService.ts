@@ -95,8 +95,6 @@ export class MessageProcessingService {
                         const found = currentMessages.find(item => item.type === MessageType.IAM
                             && item.sender === message.sender)
 
-                        console.log(found)
-
                         if (found === undefined) {
                             incoming.push(message);
                         } else {

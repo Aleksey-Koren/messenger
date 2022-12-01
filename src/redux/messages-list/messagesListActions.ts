@@ -151,7 +151,6 @@ export function getLastMessage(payload: any) {
             decrypted: false
         };
 
-        //console.log("type: " + message.type)
         MessageService.decryptMessageDataByIterateOverPublicKeys(message, payload.sender)
             .then(() => {
                 switch (message.type) {

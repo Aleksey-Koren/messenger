@@ -5,24 +5,27 @@ import {AttachmentApi} from "../../../api/attachmentApi";
 import {AttachmentMapper} from "../../../mapper/attachmentMapper";
 import {TAttachmentFile} from "../../../model/messenger/file";
 import Notification from "../../../Notification";
+import {FileApi} from "../../../api/fileApi";
 
 export class AttachmentServiceDownload {
 
-    static fetchAttachments(message: Message,
-                            setComponentState: React.Dispatch<React.SetStateAction<IAttachmentsBlockState>>) {
-        AttachmentApi.getAttachments(message.id!, message.attachmentsFilenames!)
-            .then(dto => {
-                const attachmentFiles: TAttachmentFile[] =
-                    dto.map(arrayBuffer =>
-                        AttachmentMapper.toAttachmentFile(arrayBuffer, message.sender, message.nonce!));
+    static fetchAttachments(message: Message, setComponentState: React.Dispatch<React.SetStateAction<IAttachmentsBlockState>>) {
+        FileApi.getFiles(message.id!, message.attachmentsFilenames!)
+            .then(files => {
+                AttachmentApi.getAttachments(message.id!, message.attachmentsFilenames!)
+                    .then(attachments => {
+                        const attachmentFiles: TAttachmentFile[] =
+                            attachments.map((arrayBuffer, index) =>
+                                AttachmentMapper.toAttachmentFile(arrayBuffer, files[index], message.sender, message.nonce!));
 
-                setComponentState({
-                    isPending: false,
-                    files: attachmentFiles
-                })
-            })
-            .catch(e => {
-                Notification.add({message: 'Something went wrong. ', severity: 'error', error: e})
+                        setComponentState({
+                            isPending: false,
+                            files: attachmentFiles
+                        })
+                    })
+                    .catch(e => {
+                        Notification.add({message: 'Something went wrong. ', severity: 'error', error: e})
+                    })
             })
     }
 }

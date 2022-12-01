@@ -9,7 +9,6 @@ axiosApi.interceptors.request.use(request => {
 })
 
 axiosApi.interceptors.response.use(response => {
-        // console.log('RESPONSE INTERCEPTOR. ' + response)
         return response;
     },
     (error) => {

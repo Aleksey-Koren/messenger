@@ -125,8 +125,9 @@ export function setGlobalUsers(globalUsers: StringIndexArray<GlobalUser>): IPlai
 export function connectStompClient(UUID: string) {
     return (dispatch: ThunkDispatch<AppState, void, Action>, getState: () => AppState) => {
         let stompClient = getState().messenger.stompClient;
-        // stompClient = over(new SockJS('//46.101.136.62:8080/ws'))
-        stompClient = over(new SockJS(`//${document.location.hostname}:8080/ws`))
+        stompClient = over(new SockJS(`//${document.location.hostname}:8080/ws`, {debug: false}))
+        stompClient.debug = () => {
+        };
         stompClient.connect({},
             () => {
                 if (stompClient.connected) {
@@ -135,7 +136,8 @@ export function connectStompClient(UUID: string) {
                     stompClient.send("/app/chat/addUser", {}, UUID)
                 }
             },
-            () => console.log("ERROR TO CONNECT"));
+            (e) => Notification.add({message: 'Something went wrong. ', severity: 'error', error: e})
+        );
     }
 }
 
@@ -162,7 +164,7 @@ export function sendMessageNewVersion(messageText: string,
     }
 }
 
-export function sendMessage(messageText: string, messageType: MessageType, attachments?: FileList) {
+export function sendMessage(messageText: string, messageType: MessageType, fileList?: FileList) {
     return async (dispatch: AppDispatch, getState: () => AppState) => {
         dispatch(setIsFetching(false))
 
@@ -171,14 +173,14 @@ export function sendMessage(messageText: string, messageType: MessageType, attac
         const globalUsers = getState().messenger.globalUsers;
         const users = getState().messenger.users;
         const messagesToSend: Message[] = []
-        const attachArrays = !!attachments ? await AttachmentsServiceUpload.prepareByteArrays(attachments) : null;
+        const files = !!fileList ? await AttachmentsServiceUpload.prepareToFileEntity(fileList) : null;
 
         for (let id in users) {
             const member = users[id];
             const message = {
                 chat: currentChatId!,
                 data: messageText,
-                attachments: attachArrays,
+                files: files,
                 type: messageType,
                 sender: user?.id!,
                 receiver: member.id!
@@ -186,6 +188,7 @@ export function sendMessage(messageText: string, messageType: MessageType, attac
 
             messagesToSend.push(message);
         }
+
 
         Promise.all(messagesToSend.map(message => MessageMapper.toDto(message, globalUsers[message.receiver])))
             .then(dto => {

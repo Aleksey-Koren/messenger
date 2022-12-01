@@ -4,7 +4,6 @@ export class FileService {
 
     static readBytesAndMarkMimeType(file: File): Promise<Uint8Array> {
         return new Promise((resolve, reject) => {
-            console.log("readBytesAndMarkMimeType")
             const reader = new FileReader();
             reader.onload = e => {
                 const arr = new Uint8Array(e.target!.result as ArrayBuffer);
@@ -18,6 +17,21 @@ export class FileService {
                     resolve(this.addByteMarker(arr, 4));
                     // throw new Error('Unknown MIME type');
                 }
+            }
+
+            reader.onerror = e => reject(e.target!.error);
+
+            reader.readAsArrayBuffer(file);
+        })
+    }
+
+
+    static readBytesOfFile(file: File): Promise<Uint8Array> {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = e => {
+                const arr = new Uint8Array(e.target!.result as ArrayBuffer);
+                resolve(arr);
             }
 
             reader.onerror = e => reject(e.target!.error);
@@ -44,7 +58,6 @@ export class FileService {
 }
 
 function identifyFileType(array: Uint8Array) {
-    console.log(array)
     let name = FileType[array[0]];
     const type = name as keyof typeof FileType;
     return FileType[type]

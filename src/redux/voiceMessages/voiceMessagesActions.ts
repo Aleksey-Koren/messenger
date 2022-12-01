@@ -3,8 +3,8 @@ import {IPlainDataAction} from "../redux-types";
 import {AppDispatch, AppState, store} from "../../index";
 import {Message} from "../../model/messenger/message";
 import {MessageType} from "../../model/messenger/messageType";
-import {FileService} from "../../service/fileService";
 import {MessageMapper} from "../../mapper/messageMapper";
+import {MyFile} from "../../model/messenger/MyFile";
 
 
 export function setIsRecording(isRecording: boolean): IPlainDataAction<IVoiceMessagesStateOpt> {
@@ -81,14 +81,22 @@ export function sendVoiceMessage(attachment: Uint8Array) {
     const globalUsers = state.messenger.globalUsers;
     const users = state.messenger.users;
     const messagesToSend: Message[] = []
-    const attachArrays = [FileService.addByteMarker(attachment, 3)]
+
+    const file = {
+        name: "audio_" + (Math.random() + 1).toString(36).substring(2),
+        type: "audio/mp3",
+        data: attachment,
+    } as MyFile
+
+    console.log("NAME: " + file.name)
 
     for (let id in users) {
         const member = users[id];
         const message = {
             chat: currentChatId!,
             data: '',
-            attachments: attachArrays,
+            // attachments: attachArrays,
+            files: [file],
             type: MessageType.WHISPER,
             sender: user?.id!,
             receiver: member.id!

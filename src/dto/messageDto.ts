@@ -1,4 +1,5 @@
 import {MessageType} from "../model/messenger/messageType";
+import {MyFile} from "../model/messenger/MyFile";
 
 export interface MessageDto {
     id?: string;
@@ -7,7 +8,8 @@ export interface MessageDto {
     type: MessageType;
     chat: string | null;
     data?: string;
-    attachments?: string
+    files?: MyFile[];
+    attachments?: string,
     nonce?: string;
     created?: string;
 }

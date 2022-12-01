@@ -12,6 +12,7 @@ export type TArrayWithMimeType = {
 
 export type TAttachmentFile = {
     data?: Blob;
-    fileType?: FileType,
+    name?: string,
+    type?: string,
     isDecrypted: boolean
 }

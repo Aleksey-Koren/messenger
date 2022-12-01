@@ -22,17 +22,18 @@ const AttachmentsBlock: React.FC<TProps> = (props) => {
 
     useEffect(() => {
         AttachmentServiceDownload.fetchAttachments(props.message, setState);
+
     }, [])
 
     return <>
         <div style={{display: "flex", flexDirection: "column"}}>
             {state.isPending &&
                 <div style={{display: "flex", flexDirection: "column"}}>
-                    {props.message.attachmentsFilenames!.map(() => <CircularProgress key={props.message.id}/>)}
+                    {props.message.attachmentsFilenames!.map((name, index) => <CircularProgress key={index}/>)}
                 </div>
             }
             {!state.isPending &&
-                <div style={{display: "flex"}}>
+                <div style={{display: "flex", flexDirection: "column"}}>
                     {state.files.map((file, index) => <Attachment file={file} key={index}/>)}
                 </div>
             }

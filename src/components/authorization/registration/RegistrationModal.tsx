@@ -20,11 +20,11 @@ import {saveCredentials, setIsRegistrationModalOpen} from "../../../redux/author
 
 const RegistrationModal: React.FC<Props> = (props) => {
     return (
-        <Dialog className="dialog__full_width_small" open={true}>
+        <Dialog open={true} maxWidth={"sm"} fullWidth={true}>
             <DialogTitle className={globalStyles.dialog__title}>
                 Done!
             </DialogTitle>
-            <DialogContent className={globalStyles.dialog__content}>
+            <DialogContent className={globalStyles.dialog__content} style={{paddingTop: "0px"}}>
                 <Typography style={{paddingTop: "5px"}}>
                     {props.isGhost &&
                         <>
@@ -39,9 +39,6 @@ const RegistrationModal: React.FC<Props> = (props) => {
                         </>}
                     Please save your id and private key, it's your credentials.
                 </Typography>
-                {/*@TODO WARN create component for same for LoginModal.
-                 Replace <div> with <table><tbody><tr><td>, on small screen it is shown not as expected
-                */}
                 <TableContainer>
                     <Table aria-label="simple table">
                         <TableBody>
@@ -75,35 +72,16 @@ const RegistrationModal: React.FC<Props> = (props) => {
                         </TableBody>
                     </Table>
                 </TableContainer>
-                {/*<div className={style.dialog__info_container}>*/}
-                {/*    <div className={style.dialog__content_row}>*/}
-                {/*        <strong className={style.dialog__content_row_label}>ID: </strong>*/}
-                {/*        <br/>*/}
-                {/*        <textarea rows={1} readOnly className={style.dialog__content_row_input}*/}
-                {/*                  defaultValue={props.userId!}/>*/}
-                {/*    </div>*/}
-                {/*    <div className={style.dialog__content_row}>*/}
-                {/*        <strong className={style.dialog__content_row_label}>Private Key:</strong>*/}
-                {/*        <textarea rows={8} readOnly className={style.dialog__content_row_input}*/}
-                {/*                  defaultValue={props.privateKey!}/>*/}
-                {/*    </div>*/}
-                {/*    <div className={style.dialog__content_row}>*/}
-                {/*        <strong className={style.dialog__content_row_label}>Public Key:</strong>*/}
-                {/*        <textarea rows={10} readOnly className={style.dialog__content_row_input}*/}
-                {/*                  defaultValue={props.publicKey!}/>*/}
-                {/*    </div>*/}
-                {/*</div>*/}
             </DialogContent>
-            <DialogActions className={style.dialog__actions}>
+            <DialogActions className={globalStyles.dialog__actions}>
                 <Button onClick={() => {
                     props.setIsRegistrationModalOpen(false, false)
-                }}>I save it, go to the chats</Button>
+                }}>I save it, go next</Button>
                 <Button onClick={props.saveCredentials}>
-                    Download credentials file</Button>
+                    Download file</Button>
             </DialogActions>
         </Dialog>
-    )
-        ;
+    );
 }
 
 const mapStateToProps = (state: AppState) => {

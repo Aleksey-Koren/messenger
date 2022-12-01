@@ -25,8 +25,11 @@
 }
 
 .dialog__input_field {
-    width: 400px;
-    /*overflow-y: hidden;*/
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    border-radius: 2px;
     padding: 10px 10px;
     font-size: 15px;
     resize: none;

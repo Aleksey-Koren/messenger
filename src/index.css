@@ -35,7 +35,11 @@ code {
     }
     .MuiDialogActions-root button {
         width: auto;
-        margin: 16px !important;
+        margin: 0 16px 0 16px !important;
+    }
+    .MuiDialogActions-root label {
+        width: auto;
+        margin: 0 16px 0 16px !important;
     }
 }
 

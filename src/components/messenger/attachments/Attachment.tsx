@@ -1,22 +1,20 @@
 import React from "react";
 import {AppState} from "../../../index";
 import {connect, ConnectedProps} from "react-redux";
-import {FileType, TAttachmentFile} from "../../../model/messenger/file";
-import {Button} from "@mui/material";
+import {TAttachmentFile} from "../../../model/messenger/file";
 import {saveAs} from "file-saver";
+import {Button} from "@mui/material";
 
 interface IOwnProps {
-    file: TAttachmentFile
+    file: TAttachmentFile,
 }
 
 const Attachment: React.FC<TProps> = (props) => {
 
     const url = URL.createObjectURL(props.file.data!);
-    const name = URL.createObjectURL(props.file.data!).split('/').pop()
 
-
-    const save = () => {
-        saveAs(props.file.data!);
+    const save = (file: TAttachmentFile) => {
+        saveAs(new Blob([file.data!], {type: file.type!}), file.name!);
     }
 
     const style = {
@@ -25,31 +23,28 @@ const Attachment: React.FC<TProps> = (props) => {
         width: "100%",
     } as React.CSSProperties
 
-    if (props.file.fileType === FileType.IMAGE) {
+    if (props.file.type!.match(/^image\//)) {
         return <>
             <img style={style}
                  src={url} alt={"Can not be displayed"}/>
-            <Button onClick={() => save()}>Download {name}</Button>
         </>
-    } else if (props.file.fileType === FileType.VIDEO) {
+    } else if (props.file.type!.match(/^video\//)) {
         return <>
             <video style={style} controls>
                 <source src={url} type={"video/mp4"}/>
             </video>
         </>
-    } else if (props.file.fileType === FileType.AUDIO) {
+    } else if (props.file.type!.match(/^audio\//)) {
         return <>
             <audio controls src={url} style={{margin: "5px"}}/>
         </>
     } else {
-        //todo we need to implement more convenient component. But not simple <span>
-        //@TODO WARN yes. Make it "downloadable"
-        return <Button onClick={() => save()}>Download {name}</Button>
+        return <Button onClick={() => save(props.file)}>Download '{props.file.name!}'</Button>
     }
 }
 
 const mapStateToProps = (state: AppState, ownProps: IOwnProps) => ({
-    file: ownProps.file
+    file: ownProps.file,
 })
 
 const connector = connect(mapStateToProps);

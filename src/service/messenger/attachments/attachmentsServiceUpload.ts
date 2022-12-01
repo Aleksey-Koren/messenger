@@ -3,6 +3,7 @@ import {FieldHelperProps, FieldInputProps, FieldMetaProps, FormikErrors, FormikS
 import {IFormikValues} from "../../../components/messenger/footer/MessengerFooter";
 import {FileService} from "../../fileService";
 import Notification from "../../../Notification";
+import {MyFile} from "../../../model/messenger/MyFile";
 
 export interface IAttachmentValidation {
     isValid: boolean,
@@ -23,12 +24,9 @@ export class AttachmentsServiceUpload {
                                 initialValues: IFormikValues; initialErrors: FormikErrors<unknown>; initialTouched: FormikTouched<unknown>; initialStatus: any; handleBlur: { (e: React.FocusEvent<any>): void; <T = any>(fieldOrEvent: T): T extends string ? ((e: any) => void) : void }; handleChange: { (e: React.ChangeEvent<any>): void; <T_1 = string | React.ChangeEvent<any>>(field: T_1): T_1 extends React.ChangeEvent<any> ? void : ((e: (string | React.ChangeEvent<any>)) => void) }; handleReset: (e: any) => void; handleSubmit: (e?: (React.FormEvent<HTMLFormElement> | undefined)) => void; resetForm: (nextState?: (Partial<FormikState<IFormikValues>> | undefined)) => void; setErrors: (errors: FormikErrors<IFormikValues>) => void; setFormikState: (stateOrCb: (FormikState<IFormikValues> | ((state: FormikState<IFormikValues>) => FormikState<IFormikValues>))) => void; setFieldTouched: (field: string, touched?: boolean, shouldValidate?: (boolean | undefined)) => (Promise<FormikErrors<IFormikValues>> | Promise<void>); setFieldValue: (field: string, value: any, shouldValidate?: (boolean | undefined)) => (Promise<FormikErrors<IFormikValues>> | Promise<void>); setFieldError: (field: string, value: (string | undefined)) => void; setStatus: (status: any) => void; setSubmitting: (isSubmitting: boolean) => void; setTouched: (touched: FormikTouched<IFormikValues>, shouldValidate?: (boolean | undefined)) => (Promise<FormikErrors<IFormikValues>> | Promise<void>); setValues: (values: React.SetStateAction<IFormikValues>, shouldValidate?: (boolean | undefined)) => (Promise<FormikErrors<IFormikValues>> | Promise<void>); submitForm: () => Promise<any>; validateForm: (values?: IFormikValues) => Promise<FormikErrors<IFormikValues>>; validateField: (name: string) => (Promise<void> | Promise<string | undefined>); isValid: boolean; dirty: boolean; unregisterField: (name: string) => void; registerField: (name: string, {validate}: any) => void; getFieldProps: (nameOrOptions: any) => FieldInputProps<any>; getFieldMeta: (name: string) => FieldMetaProps<any>; getFieldHelpers: (name: string) => FieldHelperProps<any>; validateOnBlur: boolean; validateOnChange: boolean; validateOnMount: boolean; values: IFormikValues; errors: FormikErrors<IFormikValues>; touched: FormikTouched<IFormikValues>; isSubmitting: boolean; isValidating: boolean; status?: any; submitCount: number
                             }) {
         const files = e.target.files;
-        console.log(e.target.files![0])
-        console.log(e.target.files![0].name)
         let attachments: IAttachmentsState = {attachments: null, fileNames: []};
         if (files) {
             const validation = validateAttachments(files);
-            console.log(validation)
             if (validation.isValid) {
                 attachments = {attachments: files, fileNames: retrieveFilenames(files)}
             } else {
@@ -39,17 +37,21 @@ export class AttachmentsServiceUpload {
         formik.values.attachments = attachments;
     }
 
-    static prepareByteArrays(fileList: FileList) {
-        console.log("prepareByteArrays")
-        const promises: Promise<Uint8Array>[] = []
+    static async prepareToFileEntity(fileList: FileList) {
+        const files: MyFile[] = []
         for (let i = 0; i < fileList.length; i++) {
-            promises.push(FileService.readBytesAndMarkMimeType(fileList.item(i)!));
+            const file = {
+                name: fileList[i].name,
+                type: fileList[i].type,
+                data: await FileService.readBytesOfFile(fileList[i]),
+            } as MyFile
+
+            files.push(file);
         }
-        return Promise.all(promises)
-            .catch(e => {
-                Notification.add({message: 'Something went wrong. ', severity: 'error', error: e})
-            });
+
+        return Promise.all(files);
     }
+
 }
 
 function retrieveFilenames(files: FileList) {

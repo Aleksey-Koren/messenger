@@ -6,6 +6,8 @@ import {CustomerApi} from "../api/customerApi";
 import {GlobalUser} from "../model/local-storage/localStorageTypes";
 import {MessageType} from "../model/messenger/messageType";
 import {store} from "../index";
+import {MyFile} from "../model/messenger/MyFile";
+import forge from "node-forge";
 
 export class MessageMapper {
 
@@ -31,7 +33,6 @@ export class MessageMapper {
     }
 
     static async toDto(message: Message, receiver: GlobalUser) {
-        console.log(message)
         const chat = store.getState().messenger.chats[message.chat];
 
         const dto = {
@@ -63,21 +64,34 @@ export class MessageMapper {
                 dto.data = result.data;
                 dto.nonce = result.nonce;
             }
-
         }
-        const nonce = dto.nonce;
 
-        if (message.attachments) {
-            const files: string[] = [];
-            for (let attachment of message.attachments) {
-                const result = CryptService.encryptAES(attachment, chat.keyAES!, nonce);
-
-                files.push(result.data);
-                dto.nonce = result.nonce
+        if (message.files) {
+            if (dto.nonce === undefined) {
+                dto.nonce = forge.random.getBytesSync(chat.keyAES!.length);
+                dto.nonce = forge.util.encode64(dto.nonce);
             }
 
-            dto.attachments = files.join(";");
+            const nonce = forge.util.decode64(dto.nonce);
+            const encryptedFiles: MyFile[] = [];
+            for (let file of message.files) {
+                const encryptedName = CryptService.encryptAES(file.name, chat.keyAES!, nonce);
+                const encryptedType = CryptService.encryptAES(file.type, chat.keyAES!, nonce);
+                const encryptedData = CryptService.encryptAES(file.data, chat.keyAES!, nonce);
+
+                const encryptedFile = {
+                    name: encryptedName.data,
+                    type: encryptedType.data,
+                    data: encryptedData.data,
+                } as MyFile
+
+                encryptedFiles.push(encryptedFile);
+            }
+
+            dto.files = await Promise.all(encryptedFiles);
         }
+
         return dto;
     }
+
 }

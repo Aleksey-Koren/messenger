@@ -46,7 +46,6 @@ export function setIsRegistrationModalOpen(isOpen: boolean, isGhost: boolean): I
 }
 
 export function setIsFetching(isFetching: boolean): IPlainDataAction<boolean> {
-    console.log(isFetching)
     return {
         type: SET_IS_FETCHING,
         payload: isFetching

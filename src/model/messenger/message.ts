@@ -1,4 +1,5 @@
 import {MessageType} from "./messageType";
+import {MyFile} from "./MyFile";
 
 export interface Message {
     id?: string;
@@ -9,6 +10,7 @@ export interface Message {
     data?: string;
     nonce?: string;
     created?: Date;
+    files?: MyFile[];
     attachments?: Uint8Array[];
     attachmentsFilenames?: string[];
     decrypted: boolean
