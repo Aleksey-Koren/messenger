@@ -1,0 +1,10 @@
+.dialog__app_bar {
+    position: relative !important;
+    background: #262424 !important;
+}
+
+.dialog__bots_list {
+    max-height: 400px;
+    background: #262424;
+    overflow-y: auto;
+}

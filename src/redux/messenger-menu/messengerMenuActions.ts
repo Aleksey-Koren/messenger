@@ -3,7 +3,8 @@ import {User} from "../../model/messenger/user";
 import {
     SET_IS_EDIT_GLOBAL_USERS_MODAL_OPENED,
     SET_IS_EDIT_ROOM_TITLE_MODAL_OPEN,
-    SET_IS_MEMBERS_MODAL_OPEN
+    SET_IS_MEMBERS_MODAL_OPEN,
+    SET_IS_BOTS_MODAL_OPEN
 } from "./messengerMenuTypes";
 import {MessageType} from "../../model/messenger/messageType";
 import {Message} from "../../model/messenger/message";
@@ -27,6 +28,13 @@ export function setIsMembersModalOpened(isOpened: boolean): IPlainDataAction<boo
 export function setIsEditRoomTitleModalOpen(isOpen: boolean): IPlainDataAction<boolean> {
     return {
         type: SET_IS_EDIT_ROOM_TITLE_MODAL_OPEN,
+        payload: isOpen
+    }
+}
+
+export function setIsBotsModalOpened(isOpen: boolean): IPlainDataAction<boolean> {
+    return {
+        type: SET_IS_BOTS_MODAL_OPEN,
         payload: isOpen
     }
 }

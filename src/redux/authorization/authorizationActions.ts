@@ -98,9 +98,9 @@ export function registerRSA(isGhost?: boolean) {
                 dispatch(connectStompClient(user.id!));
                 LocalStorageService.userToStorage(user);
             }).catch((e) => {
-            dispatch(setIsWelcomeModalOpen(true));
-            Notification.add({message: 'Something went wrong. ', severity: 'error', error: e})
-        })
+                dispatch(setIsWelcomeModalOpen(true));
+                Notification.add({message: 'Something went wrong. ', severity: 'error', error: e})
+            })
     }
 }
 

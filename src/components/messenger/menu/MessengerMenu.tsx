@@ -2,6 +2,7 @@ import {Divider, IconButton, Menu, MenuItem} from "@mui/material";
 import React, {useState} from "react";
 import EditIcon from '@mui/icons-material/Edit';
 import Groups from '@mui/icons-material/Groups';
+import SmartToyIcon from '@mui/icons-material/SmartToy';
 import MenuIcon from '@mui/icons-material/Menu';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import {IPlainDataAction} from "../../../redux/redux-types";
@@ -9,7 +10,8 @@ import {AppState, useAppDispatch} from "../../../index";
 import {
     setIsEditGlobalUsersModalOpened,
     setIsEditRoomTitleModalOpen,
-    setIsMembersModalOpened
+    setIsMembersModalOpened,
+    setIsBotsModalOpened
 } from "../../../redux/messenger-menu/messengerMenuActions";
 import EditUserTitleButton from "../edit-user-title/EditUserTitleButton";
 import IconedButton from "../../button/IconedButton";
@@ -20,6 +22,7 @@ import {
     setIsNewRoomModalOpened
 } from "../../../redux/messenger-controls/messengerControlsActions";
 import Chat from "@mui/icons-material/Chat";
+import { Group } from "@mui/icons-material";
 
 
 function MessengerMenu(props: TProps) {
@@ -58,6 +61,11 @@ function MessengerMenu(props: TProps) {
                                 <IconedButton onClick={() => onMenuItemClick(props.setIsMembersModalOpened)}
                                               icon={<Groups style={{marginRight: '10px'}} fontSize={"medium"}/>}
                                               text={"Members"}/>
+                            </MenuItem>
+                            <MenuItem>
+                                <IconedButton onClick={() => onMenuItemClick(props.setIsBotsModalOpened)}
+                                              icon={<SmartToyIcon style={{marginRight: '10px'}} fontSize={"medium"}/>}
+                                              text={"Bots"}/>
                             </MenuItem>
                             <MenuItem>
                                 <IconedButton onClick={() => onMenuItemClick(props.setIsLeaveChatConfirmModalOpened)}
@@ -99,6 +107,7 @@ const mapDispatchToProps = {
     setIsEditGlobalUsersModalOpened,
     setIsEditRoomTitleModalOpen,
     setIsMembersModalOpened,
+    setIsBotsModalOpened,
     setIsNewRoomModalOpened,
     setIsLeaveChatConfirmModalOpened,
     logout
