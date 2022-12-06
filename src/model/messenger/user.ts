@@ -3,4 +3,5 @@ export interface User {
     publicKeyPem?: string;
     privateKeyPem?: string;
     title?: string;
+    webhookUrl?: string;
 }

@@ -16,6 +16,11 @@ import {ChatApi} from "../../api/chatApi";
 import Notification from "../../Notification";
 import {MessageMapper} from "../../mapper/messageMapper";
 import {CustomerApi} from "../../api/customerApi";
+import { string } from "yup";
+import { Bot } from "../../model/messenger/bot";
+import { Builder } from "builder-pattern";
+import { BotApi } from "../../api/botApi";
+import { setIsRegistrationModalOpen } from "../authorization/authorizationActions";
 
 
 export function setIsMembersModalOpened(isOpened: boolean): IPlainDataAction<boolean> {
@@ -69,6 +74,31 @@ export function addUserToRoomTF(me: User, customer: User, otherId: string) {
                 getState().messenger.stompClient
                     .send(`/app/chat/send-message/${me.id}`, {}, JSON.stringify(dto))
             })
+    }
+}
+
+export function registerBotWebhookUrl(webhookUrl: string) {
+    return (dispatch: ThunkDispatch<AppState, void, Action>) => {
+
+        const forge = require("node-forge");
+
+        const keypair = forge.pki.rsa.generateKeyPair({bits: 2048});
+        const privateKeyPem = forge.pki.privateKeyToPem(keypair.privateKey)
+        const publicKeyPem = forge.pki.publicKeyToPem(keypair.publicKey)
+        
+        const bot = Builder(Bot)
+            .pk(publicKeyPem)
+            .webhookUrl(webhookUrl)
+            .build();
+        
+            BotApi.register(bot)
+                .then((user: User) => {
+                    console.log(bot)
+                    user.privateKeyPem = privateKeyPem
+                    dispatch(setIsRegistrationModalOpen(true, false));
+                }).catch((e) => {
+                    Notification.add({message: 'Something went wrong. ', severity: 'error', error: e})
+                })
     }
 }
 
