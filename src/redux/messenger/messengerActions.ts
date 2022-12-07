@@ -7,6 +7,7 @@ import {
     SET_LAST_MESSAGES_FETCH,
     SET_MESSAGES,
     SET_USER,
+    SET_BOT,
     SET_USER_TITLE,
     SET_USERS
 } from "./messengerTypes";
@@ -46,6 +47,15 @@ export function setUser(user: User): IPlainDataAction<IMessengerStateOpt> {
         type: SET_USER,
         payload: {
             user: user
+        }
+    }
+}
+
+export function setBot(bot: User): IPlainDataAction<IMessengerStateOpt> {
+    return {
+        type: SET_BOT,
+        payload: {
+            bot: bot
         }
     }
 }

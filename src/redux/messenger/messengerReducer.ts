@@ -7,6 +7,7 @@ import {
     SET_LAST_MESSAGES_FETCH,
     SET_MESSAGES,
     SET_USER,
+    SET_BOT,
     SET_USER_TITLE,
     SET_USERS,
     TMessengerAction
@@ -52,6 +53,18 @@ export function messengerReducer(state: IMessengerState = initialState, action: 
                 user: user,
                 users: {...state.users, [user.id]: user},
                 globalUsers: touchGlobalUsers(state.globalUsers, {[user.id]: user})
+            }
+        }
+        case SET_BOT: {
+            const bot = action.payload.bot;
+            if (!bot) {
+                return state;
+            }
+            
+            // TODO: maybe change in future
+            return {
+                ...state,
+                bot: bot
             }
         }
         case SET_CURRENT_CHAT: {

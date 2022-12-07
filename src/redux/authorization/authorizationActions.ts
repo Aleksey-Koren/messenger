@@ -3,6 +3,7 @@ import {
     LOGOUT,
     SET_IS_LOGIN_MODAL_OPEN,
     SET_IS_REGISTRATION_MODAL_OPEN,
+    SET_IS_BOT_REGISTRATION_MODAL_OPEN,
     SET_IS_WELCOME_MODAL_OPEN
 } from "./authorizationTypes";
 import {IPlainDataAction} from "../redux-types";
@@ -40,6 +41,18 @@ export function setIsRegistrationModalOpen(isOpen: boolean, isGhost: boolean): I
 
     return {
         type: SET_IS_REGISTRATION_MODAL_OPEN,
+        payload: {
+            isOpen,
+            isGhost
+        }
+    }
+}
+
+export function setIsBotRegistrationModalOpen(isOpen: boolean): IPlainDataAction<IRegistrationModalPayload> {
+    
+    const isGhost: boolean = false;
+    return {
+        type: SET_IS_BOT_REGISTRATION_MODAL_OPEN,
         payload: {
             isOpen,
             isGhost

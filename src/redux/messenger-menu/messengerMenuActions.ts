@@ -11,7 +11,7 @@ import {Message} from "../../model/messenger/message";
 import {ThunkDispatch} from "redux-thunk";
 import {AppDispatch, AppState} from "../../index";
 import {Action} from "redux";
-import {setUsers} from "../messenger/messengerActions";
+import {setBot, setUsers} from "../messenger/messengerActions";
 import {ChatApi} from "../../api/chatApi";
 import Notification from "../../Notification";
 import {MessageMapper} from "../../mapper/messageMapper";
@@ -20,7 +20,7 @@ import { string } from "yup";
 import { Bot } from "../../model/messenger/bot";
 import { Builder } from "builder-pattern";
 import { BotApi } from "../../api/botApi";
-import { setIsRegistrationModalOpen } from "../authorization/authorizationActions";
+import { setIsBotRegistrationModalOpen } from "../authorization/authorizationActions";
 
 
 export function setIsMembersModalOpened(isOpened: boolean): IPlainDataAction<boolean> {
@@ -93,9 +93,9 @@ export function registerBotWebhookUrl(webhookUrl: string) {
         
             BotApi.register(bot)
                 .then((user: User) => {
-                    console.log(bot)
                     user.privateKeyPem = privateKeyPem
-                    dispatch(setIsRegistrationModalOpen(true, false));
+                    dispatch(setBot(user))
+                    dispatch(setIsBotRegistrationModalOpen(true));
                 }).catch((e) => {
                     Notification.add({message: 'Something went wrong. ', severity: 'error', error: e})
                 })

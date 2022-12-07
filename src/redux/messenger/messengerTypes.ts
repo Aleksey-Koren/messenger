@@ -16,6 +16,7 @@ export interface IMessengerStateOpt {
     user?: User | null;
     currentChat?: string | null;
     lastMessagesFetch?: Date | null;
+    bot?: User | null;
 }
 
 export interface IMessengerState extends IMessengerStateOpt {
@@ -33,6 +34,7 @@ export interface IMessengerState extends IMessengerStateOpt {
 export type TMessengerAction = IPlainDataAction<IMessengerState>
 
 export const SET_USER = 'SET_USER';
+export const SET_BOT = 'SET_BOT';
 export const SET_CURRENT_CHAT = 'SET_CURRENT_CHAT';
 export const SET_MESSAGES = 'SET_MESSAGES';
 export const SET_USER_TITLE = 'SET_USER_TITLE';

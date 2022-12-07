@@ -5,6 +5,7 @@ import {
     setIsLeaveChatConfirmModalOpened
 } from "../../../redux/messenger-controls/messengerControlsActions";
 import LoginModal from "../../authorization/login-modal/LoginModal";
+import BotRegistrationModal from "../../authorization/registration/BotRegistrationModal";
 import RegistrationModal from "../../authorization/registration/RegistrationModal";
 import WelcomeModal from "../../authorization/welcome-modal/WelcomeModal";
 import ConfirmModal from "../../confirm-modal/ConfirmModal";
@@ -24,6 +25,7 @@ function MessengerModalWindows(props: TProps) {
             {props.isWelcomeModalOpen && <WelcomeModal/>}
             {props.isLoginModalOpen && <LoginModal/>}
             {props.isRegistrationModalOpen && <RegistrationModal/>}
+            {props.isBotRegistrationModalOpen && <BotRegistrationModal/>}
             {props.isMembersModalOpen && <ParticipantsListModal/>}
             {props.isCreateNewRoomModalOpened && <CreateNewRoomModal/>}
             {props.isEditRoomTitleModalOpen && <EditTitleModal/>}
@@ -43,6 +45,7 @@ function MessengerModalWindows(props: TProps) {
 const mapStateToProps = (state: AppState) => ({
     isWelcomeModalOpen: state.authorizationReducer.isWelcomeModalOpen,
     isRegistrationModalOpen: state.authorizationReducer.isRegistrationModalOpen,
+    isBotRegistrationModalOpen: state.authorizationReducer.isBotRegistrationModalOpen,
     isMembersModalOpen: state.messengerMenu.isMembersModalOpen,
     isBotsModalOpen: state.messengerMenu.isBotsModalOpen,
     isLoginModalOpen: state.authorizationReducer.isLoginModalOpen,
