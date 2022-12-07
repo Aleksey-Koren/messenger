@@ -47,7 +47,7 @@ const BotsModal: React.FC<Props> = (props) => {
                                 value={formik.values.webhookUrl}
                                 onChange={(event) => formik.setFieldValue('webhookUrl', event.target.value)}
                                 error={!!formik.errors.webhookUrl} helperText={formik.errors.webhookUrl}
-                                fullWidth variant="standard" placeholder={"Enter bot webhook url"}
+                                fullWidth variant="standard" placeholder={"Enter bot webhook url: http://localhost:8081/ - example"}
                             />
                         </DialogContent>
                         <DialogActions className={style.dialog__actions} style={{marginLeft: 'auto'}}>
