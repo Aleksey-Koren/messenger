@@ -10,7 +10,7 @@ const TimerString: React.FC<TProps> = (props) => {
     const minutes = Math.floor(props.duration / 60);
     const seconds = props.duration % 60;
     return <>
-        <span style={{color: "white"}}>
+        <span style={{color: "#ffffff"}}>
             {`${minutes < 10 ? "0" + minutes : minutes} : ${seconds < 10 ? "0" + seconds : seconds}`}
         </span>
     </>

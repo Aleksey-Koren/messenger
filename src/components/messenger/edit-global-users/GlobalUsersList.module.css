@@ -1,13 +1,11 @@
-
 .search_container {
     display: flex;
     justify-content: space-around;
     align-items: center;
     height: 100px;
     margin: 0 20px;
-    /*@TODO WARN use theme colors*/
-    border-bottom: 4px white solid;
-    border-top: 4px white solid;
+    border-bottom: 4px #ffffff solid;
+    border-top: 4px #ffffff solid;
 }
 
 .search_element_label {
@@ -29,7 +27,6 @@
 
 .dialog__app_bar {
     position: relative !important;
-    /*@TODO WARN use theme colors*/
     background: #262424 !important;
 }
 
@@ -43,8 +40,7 @@
 
 .list_element_container {
     display: flex;
-    /*@TODO WARN use theme colors*/
-    border-bottom: 2px deepskyblue dashed;
+    border-bottom: 2px #00bfff dashed;
 }
 
 .list_element_container:last-child {
@@ -57,15 +53,12 @@
 }
 
 .list_id:hover {
-    /*@TODO WARN use theme colors*/
-    color: royalblue;
+    color: #4169e1;
     cursor: pointer;
-    /*@TODO WARN use theme colors*/
-    text-decoration: 2px underline royalblue;
+    text-decoration: 2px underline #4169e1;
 }
 
 .list_id:after {
     content: '*';
-    /*@TODO WARN use theme colors*/
-    color: red;
+    color: #de1f1f;
 }

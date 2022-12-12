@@ -36,7 +36,6 @@ const MessageItem: React.FC<TProps> = (props) => {
         {message.type === MessageType.WHISPER &&
             <Paper color={"primary"} className={style.message_container} style={{
                 minWidth: "40%",
-                //@TODO WARN theme color
                 backgroundColor: "#182533"
             }}>
                 <ListItemText>

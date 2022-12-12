@@ -1,5 +1,4 @@
 .dialog__info_container {
-    /*@TODO WARN use theme colors*/
     background: #262424;
     display: flex;
     flex-direction: column;

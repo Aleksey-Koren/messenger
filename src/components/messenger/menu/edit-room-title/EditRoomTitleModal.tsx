@@ -20,7 +20,7 @@ const EditRoomTitleModal: React.FC<Props> = (props) => {
     return (
         <Dialog open={true} onClose={() => {
         }} maxWidth={"sm"} fullWidth>
-            <DialogTitle className={style.dialog__title}>Enter room title</DialogTitle>
+            <DialogTitle>Enter room title</DialogTitle>
             <Formik
                 initialValues={{title: chat?.title}}
                 onSubmit={(values) => {

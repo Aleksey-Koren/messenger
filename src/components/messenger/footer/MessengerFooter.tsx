@@ -7,9 +7,7 @@ import {useFormik} from "formik";
 import style from "../Messenger.module.css";
 import React, {useEffect, useState} from "react";
 import {sendMessage} from "../../../redux/messenger/messengerActions";
-import PerfectScrollbar from "react-perfect-scrollbar";
 import {MessageType} from "../../../model/messenger/messageType";
-import AttachFileIcon from '@mui/icons-material/AttachFile';
 import {
     AttachmentsServiceUpload,
     IAttachmentsState
@@ -17,8 +15,11 @@ import {
 import {AppState} from "../../../index";
 import {prepareAudioRecorderTF} from "../../../redux/voiceMessages/voiceMessagesActions";
 import {MessageService} from "../../../service/messenger/messageService";
+import Grid from "@mui/material/Grid/Grid";
+import {Divider} from "@mui/material";
 import VoiceMessage from "./VoiceMessage";
-
+import AttachFileIcon from '@mui/icons-material/AttachFile';
+import VoiceMessageTimer from "./VoiceMessageTimer";
 
 interface MessengerFooterProps {
     currentChat: string | undefined | null;
@@ -65,71 +66,74 @@ const MessengerFooter: React.FC<TProps> = (props) => {
     }, [props.currentChat])
 
     return (
-        <div style={{
-            display: "flex",
-            height: 110,
-            paddingBottom: 10,
-            flexDirection: "row",
-            alignItems: "center",
-            borderTop: '1px solid#90caf9'
-        }}>
-            <div style={{display: "flex", flexDirection: "column", minHeight: '90%', marginRight: "10px"}}>
-                <label>
-                    <AttachFileIcon style={{color: "white"}}/>
-                    <input type={"file"} style={{display: "none"}} accept="*" multiple
-                           onChange={e => AttachmentsServiceUpload.processUploading(e, attachmentsState, setAttachmentsState, formik)}
-                    />
-                </label>
-
-                {props.audioRecorder !== null &&
-                    <VoiceMessage audioRecorder={props.audioRecorder} isRecording={props.isRecording}/>
+        <div>
+            <Divider/>
+            <Grid container style={{marginTop: "15px"}}>
+                <Grid item xs={1} xl={0.5}>
+                    <label>
+                        <AttachFileIcon style={{color: "white", cursor: "pointer"}}/>
+                        <input type={"file"} style={{display: "none"}} accept="*" multiple
+                               onChange={e => AttachmentsServiceUpload.processUploading(e, attachmentsState, setAttachmentsState, formik)}
+                        />
+                    </label>
+                    {props.audioRecorder !== null &&
+                        <VoiceMessage audioRecorder={props.audioRecorder} isRecording={props.isRecording}/>
+                    }
+                </Grid>
+                {
+                    props.isRecording ?
+                        <VoiceMessageTimer/>
+                        :
+                        <Grid item xs={9} xl={10.5}>
+                            <form onSubmit={formik.submitForm}>
+                                <TextField placeholder="Type your message"
+                                           fullWidth
+                                           minRows={1}
+                                           maxRows={10}
+                                           disabled={!props.currentChat}
+                                           name={'message'}
+                                           multiline={true}
+                                           value={formik.values.message}
+                                           error={formik.touched.message && Boolean(formik.errors.message)}
+                                           onKeyUp={e => {
+                                               if (e.ctrlKey && e.key === 'Enter') {
+                                                   formik.submitForm()
+                                               }
+                                           }}
+                                           onChange={(event) => {
+                                               formik.handleChange(event)
+                                           }}
+                                />
+                            </form>
+                        </Grid>
                 }
-            </div>
-            {attachmentsState.fileNames.length !== 0 &&
-                <div style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    marginRight: "10px",
-                    color: "white",
-                    maxHeight: "110"
-                }}>
-                    {attachmentsState.fileNames.map(filename => <span key={filename}
-                                                                      style={{fontSize: "10px"}}>{filename}</span>)}
-                </div>
-            }
-            <PerfectScrollbar style={{height: 110, flex: 1}}>
-                <form
-                    onSubmit={formik.submitForm}
-                >
-                    <TextField placeholder="Type your message"
-                               fullWidth
-                               minRows={4}
-                               disabled={!props.currentChat}
-                               name={'message'}
-                               variant="standard"
-                               multiline={true}
-                               value={formik.values.message}
-                               error={formik.touched.message && Boolean(formik.errors.message)}
-                               onKeyUp={e => {
-                                   if (e.ctrlKey && e.key === 'Enter') {
-                                       formik.submitForm()
-                                   }
-                               }}
-                               onChange={(event) => {
-                                   formik.handleChange(event)
-                               }}
-                    />
 
-                </form>
-            </PerfectScrollbar>
-
-            {<Fab className={style.send_icon} size={"large"} disabled={!props.currentChat || props.isFetching}
-                  onClick={() => {
-                      formik.submitForm().then();
-                  }}
-            >
-                <SendIcon/>
-            </Fab>}
+                {
+                    !props.isRecording &&
+                    <Grid item xs={2} xl={1} style={{paddingLeft: "1.5%"}}>
+                        <Fab className={style.send_icon} size={"large"}
+                             disabled={!props.currentChat || props.isFetching}
+                             onClick={() => {
+                                 formik.submitForm().then();
+                             }}
+                        >
+                            <SendIcon/>
+                        </Fab>
+                    </Grid>
+                }
+                {attachmentsState.fileNames.length !== 0 &&
+                    <div style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        marginRight: "10px",
+                        color: "white",
+                        maxHeight: "110"
+                    }}>
+                        {attachmentsState.fileNames.map(filename =>
+                            <span key={filename} style={{fontSize: "10px"}}>{filename}</span>)}
+                    </div>
+                }
+            </Grid>
         </div>
     );
 }

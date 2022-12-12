@@ -111,8 +111,7 @@ const LoginModal: React.FC<Props> = (props) => {
                                         >
                                             <TableRow>
                                                 <TableCell className={style.dialog__no_margin}>
-                                                    <strong className={style.dialog__content_row_label}>Public
-                                                        Key</strong>
+                                                    <strong>Public Key</strong>
                                                 </TableCell>
                                                 <TableCell>
                                                     <Field as={"textarea"} name={"publicKey"} rows={10}

@@ -16,7 +16,7 @@ export class AdministratorApi {
     }
 
     static denyRole(customerId: string, chatId: string, token: string) {
-        return axiosApi.delete<any>(`administrators/customers/${customerId}/chats/${chatId}`, {
+        return axiosApi.delete<void>(`administrators/customers/${customerId}/chats/${chatId}`, {
             headers: {
                 Token: token,
             }

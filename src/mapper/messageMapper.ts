@@ -55,12 +55,20 @@ export class MessageMapper {
 
         if (message.data) {
             if (message.type === MessageType.WHISPER) {
-                const result = CryptService.encryptAES(message.data, chat.keyAES!);
+                const dataEncodedUtf8 = CryptService.encodeUtf8(message.data)
+                const result = CryptService.encryptAES(dataEncodedUtf8, chat.keyAES!);
+
                 dto.data = result.data
                 dto.nonce = result.nonce
-
             } else {
-                const result = CryptService.encryptRSA(message.data, receiver.certificates[0]);
+                const privateKey = store.getState().messenger.user?.privateKeyPem!
+
+                if (!privateKey) {
+                    throw new Error("User is not logged in");
+                }
+
+                const result = CryptService.encryptRSA(message.data, receiver.certificates[0], privateKey);
+
                 dto.data = result.data;
                 dto.nonce = result.nonce;
             }

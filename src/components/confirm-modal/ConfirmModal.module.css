@@ -3,9 +3,7 @@
     justify-content: left;
     align-items: center;
     padding: 10px;
-    /*@TODO WARN use theme colors*/
     color: #de1f1f;
-    /*@TODO WARN use theme colors*/
     background: #312d2d;
     font-weight: bold;
     font-size: 20px !important;
@@ -13,7 +11,6 @@
 
 .dialog__title_icon {
     margin-right: 20px;
-    /*@TODO WARN use theme colors*/
     color: #de1f1f;
 }
 
@@ -22,37 +19,31 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    /*@TODO WARN use theme colors*/
     background: #312d2d;
     font-size: 18px;
 }
 
 .dialog__content_text {
     padding-top: 20px;
-    /*@TODO WARN use theme colors*/
-    color: white;
+    color: #ffffff;
 }
 
 .dialog__actions {
     display: flex !important;
     justify-content: space-around !important;
-    /*@TODO WARN use theme colors*/
     background: #312d2d;
 }
 
 .dialog__actions button {
-    /*@TODO WARN use theme colors*/
-    color: white;
+    color: #ffffff;
     font-size: 15px;
     width: 100px;
 }
 
 .dialog__disagree_button:hover {
-    /*@TODO WARN use theme colors*/
     color: #de1f1f;
 }
 
 .dialog__agree_button:hover {
-    /*@TODO WARN use theme colors*/
     color: #00b600;
 }

@@ -68,7 +68,7 @@ const Messenger: React.FC<TProps> = (props) => {
                     className={chat.id === currentChat ? style.chat_selected : style.chat_unselected}>&nbsp;</div>
                 <Typography color={'primary'}>
                     {chat.title} {chat.isUnreadMessagesExist &&
-                    <span style={{color: "red", fontWeight: "bold", fontSize: "24px"}}>*</span>}
+                    <span style={{color: "#de1f1f", fontWeight: "bold", fontSize: "24px"}}>*</span>}
                 </Typography>
             </ListItemButton>);
         }
@@ -111,7 +111,8 @@ const Messenger: React.FC<TProps> = (props) => {
                             }}
                                           setScroll={(container) => scrollContext.container = container}/>
                         </div>
-                        <div style={{margin: 'auto 15px 0', height: 120}}>
+
+                        <div style={{margin: 'auto 15px 0', paddingBottom: "20px"}}>
                             <MessengerFooter currentChat={props.currentChat}/>
                         </div>
                     </div>
@@ -121,7 +122,6 @@ const Messenger: React.FC<TProps> = (props) => {
         </div>
     );
 }
-
 
 const mapStateToProps = (state: AppState) => ({
     chats: state.messenger.chats,

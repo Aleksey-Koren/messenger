@@ -5,39 +5,14 @@
     height: 100vh;
 }
 
-/* ------------ TITLE ------------ */
-.page_title {
-    display: flex;
-    justify-content: center;
-    /*@TODO WARN theme color*/
-    color: white;
-    margin: 10px 0;
-    letter-spacing: 5px;
-}
-
-/* ------------ TABLE HEADER CHECKBOX ------------ */
-.header_checkbox {
-    /*@TODO WARN theme color*/
-    color: #90caf9 !important;
-    padding-left: 12px !important;
-}
-
-/* ------------ TABLE BODY CHECKBOX ------------ */
-.body_checkbox {
-    /*@TODO WARN theme color*/
-    color: white !important;
-}
-
 /* ------------ DELETE ICON ------------ */
 .delete_icon {
     position: fixed;
     left: 20px;
     bottom: 90px;
     padding: 10px;
-    /*@TODO WARN theme color*/
-    color: white;
-    /*@TODO WARN theme color*/
-    background: red;
+    color: #ffffff;
+    background: #de1f1f;
     border-radius: 50%;
     transition: all .3s ease-in-out !important;
 }
@@ -52,9 +27,7 @@
     left: 20px;
     bottom: 20px;
     padding: 10px;
-    /*@TODO WARN theme color*/
-    color: white;
-    /*@TODO WARN theme color*/
+    color: #ffffff;
     background: #60ad60;
     border-radius: 50%;
     transition: all .3s ease-in-out !important;

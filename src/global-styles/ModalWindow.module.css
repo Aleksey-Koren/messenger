@@ -1,6 +1,4 @@
-
 .dialog__content {
-    /*@TODO WARN theme color*/
     background: #262424;
 }
 
@@ -8,10 +6,8 @@
     margin-top: 15px !important;
 }
 
-
 .dialog__actions {
     display: flex !important;
     justify-content: space-around !important;
-    /*@TODO WARN theme color*/
     background: #262424;
 }

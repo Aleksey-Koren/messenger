@@ -31,7 +31,12 @@ export function TimeSince(props: { time?: Date }) {
 }
 
 export function UnreadDelimiter() {
-    return <div style={{textAlign: 'center', color: 'yellow', fontSize: "1.8vw"}}>unread messages</div>
+    return <div style={{
+        textAlign: 'center',
+        backgroundColor: "#3d84a8",
+        color: '#ffffff',
+        fontSize: "1.1vw",
+    }}>unread messages</div>
 }
 
 function timeSince(date?: Date) {

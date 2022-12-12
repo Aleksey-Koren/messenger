@@ -20,7 +20,7 @@ const CreateNewRoomModal: React.FC<TProps> = (props) => {
 
     return (
         <Dialog open={true} onClose={onClose} maxWidth={"sm"} fullWidth>
-            <DialogTitle className={style.dialog__title}>Create new room</DialogTitle>
+            <DialogTitle>Create new room</DialogTitle>
             <Formik
                 initialValues={{title: '', userTitle: props.userTitle}}
                 onSubmit={(values) => {

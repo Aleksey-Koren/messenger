@@ -12,9 +12,11 @@ export class AttachmentMapper {
         const decryptedName = CryptService.decryptAES(file.name, keyAES, nonce)
         const decryptedType = CryptService.decryptAES(file.type, keyAES, nonce)
 
-        const decryptedBytes = CryptService.decryptAES(encryptedFile, keyAES, nonce)
-        const decryptedBase64 = CryptService.BytesToBase64(decryptedBytes);
-        const decryptedFile = CryptService.base64ToUint8(decryptedBase64);
+        const fileInBase64 = CryptService.Uint8ToBase64(encryptedFile)
+        const decryptedFileData = CryptService.decryptAES(fileInBase64, keyAES, nonce)
+
+        const decryptedFileInBase64 = CryptService.textToBase64(decryptedFileData);
+        const decryptedFile = CryptService.base64ToUint8(decryptedFileInBase64);
 
         if (decryptedFile === null) {
             return {

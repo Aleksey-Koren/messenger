@@ -19,11 +19,6 @@
     margin-bottom: 0;
 }
 
-.dialog__content_row_label {
-    /*@TODO WARN use theme colors*/
-    color: white;
-}
-
 .dialog__input_field {
     display: block;
     width: 100%;

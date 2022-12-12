@@ -9,7 +9,6 @@ export class MessageService {
 
     static async decryptMessageDataByIterateOverPublicKeys(message: Message, userId: string) {
         const userPublicKeys = store.getState().messenger.globalUsers[userId]?.certificates;
-
         if (userPublicKeys) {
             for (const publicKey of userPublicKeys) {
                 try {
@@ -43,7 +42,6 @@ export class MessageService {
 
                 await CustomerApi.getCustomer(senderId)
                     .then(user => {
-                        // const foundedPublicKey = CryptService.uint8ToBase64(user.publicKey!);
                         const foundedPublicKey = user.publicKeyPem!;
                         const decryptedMessageData = decryptMessageData(message, foundedPublicKey);
 
@@ -73,7 +71,6 @@ export class MessageService {
                     })
 
             } else {
-                // const foundedPublicKey = CryptService.uint8ToBase64(messagesSenders.get(senderId)!);
                 const foundedPublicKey = messagesSenders.get(senderId)!;
                 const decryptedMessageData = decryptMessageData(message, foundedPublicKey);
                 message.data = decryptedMessageData;
@@ -102,7 +99,8 @@ function decryptMessageData(message: Message, publicKeyToVerify: string, private
     }
 
     if (message.type === MessageType.WHISPER) {
-        return CryptService.decryptAES(message.data!, currentChat.keyAES, message.nonce!)
+        const data = CryptService.decryptAES(message.data!, currentChat.keyAES, message.nonce!);
+        return CryptService.decodeUtf8(data);
     }
     return CryptService.decryptRSA(message.data!, publicKeyToVerify, privateKeyToDecrypt, message.nonce!);
 

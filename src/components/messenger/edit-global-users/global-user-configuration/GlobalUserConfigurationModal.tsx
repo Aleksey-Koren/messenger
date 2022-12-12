@@ -44,10 +44,7 @@ const GlobalUserConfigurationModal: React.FC<TProps> = (props) => {
 
     return (
         <Dialog open={true} maxWidth="md" fullWidth>
-            <DialogTitle
-                className={style.dialog__title}>{isGlobalUserToEditExist ? props.globalUserToEdit?.userId : 'Add Ghost User'}
-            </DialogTitle>
-
+            <DialogTitle>{isGlobalUserToEditExist ? props.globalUserToEdit?.userId : 'Add Ghost User'}</DialogTitle>
             <DialogContent className={globalModalStyles.dialog__content}>
                 {!isGlobalUserToEditExist &&
                     <Formik

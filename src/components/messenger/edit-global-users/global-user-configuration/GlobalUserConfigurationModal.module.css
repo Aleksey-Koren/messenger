@@ -7,8 +7,7 @@
     display: flex;
     justify-content: space-around;
     align-items: center;
-    /*@TODO WARN use theme colors*/
-    border-bottom: 2px #00BFFFFF dashed;
+    border-bottom: 2px #00bfff dashed;
 }
 
 .id_input {
@@ -24,8 +23,7 @@
 
 .keys_list_container {
     height: 200px;
-    /*@TODO WARN use theme colors*/
-    border-bottom: 2px #00BFFFFF dashed;
+    border-bottom: 2px #00bfff dashed;
 }
 
 .add_key_container {

@@ -54,7 +54,7 @@ export function prepareAudioRecorderTF() {
                         }
 
                         recorder.onstop = () => {
-                            document.getElementById("mic")!.style.color = "white";
+                            document.getElementById("mic")!.style.color = "#ffffff";
                             clearInterval(intervalId);
                             dispatch(setDuration(0));
                             dispatch(setIsRecording(false));

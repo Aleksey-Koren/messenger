@@ -352,6 +352,7 @@ export function openChatTF(chatId: string) {
         chats[chatId].lastSeenAt = new Date();
         chats[chatId].isUnreadMessagesExist = false;
 
+        dispatch(setHasMore(true));
         dispatch(setChats(chats))
         dispatch(setCurrentChat(chatId));
 

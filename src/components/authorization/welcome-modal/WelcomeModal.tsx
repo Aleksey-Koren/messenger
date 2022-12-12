@@ -13,10 +13,7 @@ import {connect, ConnectedProps} from "react-redux";
 function WelcomeModal(props: Props) {
     return (
         <Dialog open={true}>
-            <DialogTitle className={style.dialog__title}>
-                Hello! Who are you?
-            </DialogTitle>
-
+            <DialogTitle>Hello! Who are you?</DialogTitle>
             <DialogActions className={style.dialog__actions}>
                 <Button disabled={props.isFetching}
                         onClick={() => {

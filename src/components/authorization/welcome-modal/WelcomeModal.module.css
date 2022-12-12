@@ -13,6 +13,5 @@
     width: fit-content;
     padding: 5px 30px;
     font-size: 15px;
-    /*@TODO WARN use theme colors*/
     border: 1px #90caf9 solid;
 }

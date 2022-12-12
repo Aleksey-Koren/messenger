@@ -17,13 +17,13 @@ const VoiceMessageTimer: React.FC<TProps> = (props) => {
         });
     }
 
-    return <>
+    return <div>
         {props.duration % 2 === 0
-            ? <Timer style={{color: "white"}}/>
+            ? <Timer style={{color: "#ffffff"}}/>
             : <Timer style={{color: "red"}}/>
         }
         <TimerString duration={props.duration}/>
-    </>
+    </div>
 }
 
 const mapStateToProps = (state: AppState) => ({
